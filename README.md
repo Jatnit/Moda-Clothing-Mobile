@@ -39,7 +39,7 @@ mysql -u root -e "CREATE DATABASE jwt CHARACTER SET utf8mb4 COLLATE utf8mb4_unic
 
 ```bash
 # Mở Terminal 1 - Navigate đến thư mục backend
-cd /Users/jatnit/Documents/GitHub/Moda-Clothing-Mobile/backend
+cd /Moda-Clothing-Mobile/backend
 
 # Cài đặt dependencies (chỉ cần lần đầu)
 npm install
@@ -74,7 +74,7 @@ npm start
 
 ```bash
 # Mở Terminal 2 - Navigate đến thư mục app
-cd /Users/jatnit/Documents/GitHub/Moda-Clothing-Mobile/Moda-Clothing-App
+cd /Moda-Clothing-Mobile/Moda-Clothing-App
 
 # Cài đặt dependencies (chỉ cần lần đầu)
 npm install
@@ -154,14 +154,14 @@ ifconfig | grep "inet " | grep -v 127.0.0.1
 ### Terminal 1 - Backend
 
 ```bash
-cd /Users/jatnit/Documents/GitHub/Moda-Clothing-Mobile/backend
+cd /Moda-Clothing-Mobile/backend
 npm run dev
 ```
 
 ### Terminal 2 - Frontend
 
 ```bash
-cd /Users/jatnit/Documents/GitHub/Moda-Clothing-Mobile/Moda-Clothing-App
+cd /Moda-Clothing-Mobile/Moda-Clothing-App
 npm start
 ```
 
@@ -258,4 +258,4 @@ Sau khi chạy cả 2 terminal:
 - **API Documentation**: http://localhost:8080/api/docs
 - **Mobile App**: Quét QR code trên Expo Go hoặc chạy simulator
 
-Chúc bạn code vui vẻ! 🚀
+
