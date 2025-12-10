@@ -1,1414 +1,1107 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Moda Clothing API Documentation</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --primary: #6366f1;
-        --primary-dark: #4f46e5;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --info: #3b82f6;
-        --dark: #1e293b;
-        --light: #f8fafc;
-        --border: #e2e8f0;
-        --text: #334155;
-        --text-light: #64748b;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        color: var(--text);
-        line-height: 1.6;
-      }
-
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-
-      /* Header */
-      .header {
-        text-align: center;
-        padding: 60px 20px;
-        color: white;
-      }
-
-      .header h1 {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .header p {
-        font-size: 1.2rem;
-        opacity: 0.9;
-      }
-
-      .header .version {
-        display: inline-block;
-        background: rgba(255, 255, 255, 0.2);
-        padding: 5px 15px;
-        border-radius: 20px;
-        margin-top: 15px;
-        font-size: 0.9rem;
-      }
-
-      .base-url {
-        background: rgba(0, 0, 0, 0.3);
-        padding: 15px 25px;
-        border-radius: 10px;
-        margin-top: 20px;
-        display: inline-block;
-        font-family: "Monaco", "Consolas", monospace;
-        font-size: 1rem;
-      }
-
-      /* Main Content */
-      .main-content {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        padding: 40px;
-        margin-bottom: 40px;
-      }
-
-      /* Quick Start */
-      .quick-start {
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        border-radius: 15px;
-        padding: 30px;
-        margin-bottom: 40px;
-        border-left: 4px solid var(--info);
-      }
-
-      .quick-start h2 {
-        color: var(--info);
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .quick-start code {
-        background: var(--dark);
-        color: #10b981;
-        padding: 15px 20px;
-        border-radius: 8px;
-        display: block;
-        margin: 10px 0;
-        font-family: "Monaco", "Consolas", monospace;
-        overflow-x: auto;
-      }
-
-      /* API Section */
-      .api-section {
-        margin-bottom: 40px;
-      }
-
-      .api-section h2 {
-        font-size: 1.8rem;
-        color: var(--dark);
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 3px solid var(--primary);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .api-section h2 .icon {
-        font-size: 1.5rem;
-      }
-
-      /* Endpoint Card */
-      .endpoint {
-        background: var(--light);
-        border-radius: 12px;
-        margin-bottom: 15px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        transition: all 0.3s ease;
-      }
-
-      .endpoint:hover {
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-      }
-
-      .endpoint-header {
-        display: flex;
-        align-items: center;
-        padding: 15px 20px;
-        cursor: pointer;
-        gap: 15px;
-      }
-
-      .method {
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        min-width: 70px;
-        text-align: center;
-      }
-
-      .method.get {
-        background: #dcfce7;
-        color: #166534;
-      }
-      .method.post {
-        background: #dbeafe;
-        color: #1e40af;
-      }
-      .method.put {
-        background: #fef3c7;
-        color: #92400e;
-      }
-      .method.delete {
-        background: #fee2e2;
-        color: #991b1b;
-      }
-
-      .endpoint-path {
-        font-family: "Monaco", "Consolas", monospace;
-        font-weight: 500;
-        color: var(--dark);
-        flex: 1;
-      }
-
-      .endpoint-desc {
-        color: var(--text-light);
-        font-size: 0.9rem;
-      }
-
-      .auth-badge {
-        background: var(--warning);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        font-weight: 600;
-      }
-
-      .endpoint-details {
-        display: none;
-        padding: 20px;
-        background: white;
-        border-top: 1px solid var(--border);
-      }
-
-      .endpoint.active .endpoint-details {
-        display: block;
-      }
-
-      .endpoint.active .endpoint-header {
-        background: white;
-      }
-
-      /* Detail sections */
-      .detail-section {
-        margin-bottom: 20px;
-      }
-
-      .detail-section h4 {
-        color: var(--primary);
-        margin-bottom: 10px;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .params-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.9rem;
-      }
-
-      .params-table th,
-      .params-table td {
-        padding: 10px 15px;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .params-table th {
-        background: var(--light);
-        font-weight: 600;
-        color: var(--dark);
-      }
-
-      .param-name {
-        font-family: "Monaco", "Consolas", monospace;
-        color: var(--primary);
-      }
-
-      .param-type {
-        background: var(--light);
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        color: var(--text-light);
-      }
-
-      .required {
-        color: var(--danger);
-        font-weight: 600;
-      }
-
-      .optional {
-        color: var(--success);
-      }
-
-      /* Code block */
-      .code-block {
-        background: var(--dark);
-        color: #e2e8f0;
-        padding: 20px;
-        border-radius: 10px;
-        overflow-x: auto;
-        font-family: "Monaco", "Consolas", monospace;
-        font-size: 0.85rem;
-        line-height: 1.5;
-      }
-
-      .code-block .string {
-        color: #a5d6ff;
-      }
-      .code-block .number {
-        color: #79c0ff;
-      }
-      .code-block .boolean {
-        color: #ff7b72;
-      }
-      .code-block .key {
-        color: #7ee787;
-      }
-      .code-block .comment {
-        color: #8b949e;
-      }
-
-      /* Status Cards */
-      .status-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 40px;
-      }
-
-      .status-card {
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-      }
-
-      .status-card.success {
-        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-      }
-      .status-card.warning {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      }
-      .status-card.error {
-        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-      }
-      .status-card.info {
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-      }
-
-      .status-card .code {
-        font-size: 2rem;
-        font-weight: 700;
-      }
-
-      .status-card .label {
-        font-size: 0.9rem;
-        color: var(--text-light);
-        margin-top: 5px;
-      }
-
-      /* Footer */
-      .footer {
-        text-align: center;
-        padding: 30px;
-        color: white;
-        opacity: 0.8;
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        .header h1 {
-          font-size: 2rem;
-        }
-        .main-content {
-          padding: 20px;
-        }
-        .endpoint-header {
-          flex-wrap: wrap;
-        }
-        .endpoint-desc {
-          width: 100%;
-          margin-top: 10px;
-        }
-      }
-
-      /* Toggle icon */
-      .toggle-icon {
-        transition: transform 0.3s ease;
-      }
-
-      .endpoint.active .toggle-icon {
-        transform: rotate(180deg);
-      }
-
-      /* Navigation */
-      .nav {
-        position: sticky;
-        top: 20px;
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-      }
-
-      .nav h3 {
-        margin-bottom: 15px;
-        color: var(--dark);
-      }
-
-      .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .nav-link {
-        padding: 8px 16px;
-        background: var(--light);
-        border-radius: 8px;
-        text-decoration: none;
-        color: var(--text);
-        font-size: 0.9rem;
-        transition: all 0.2s;
-      }
-
-      .nav-link:hover {
-        background: var(--primary);
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <h1>🛍️ Moda Clothing API</h1>
-      <p>RESTful API cho ứng dụng thời trang Moda Clothing</p>
-      <span class="version">Version 1.0.0</span>
-      <div class="base-url">Base URL: http://localhost:{{PORT}}/api</div>
-    </div>
-
-    <div class="container">
-      <div class="main-content">
-        <!-- Quick Start -->
-        <div class="quick-start">
-          <h2>🚀 Quick Start</h2>
-          <p>
-            Để bắt đầu sử dụng API, hãy gửi request đến các endpoint bên dưới:
-          </p>
-          <code
-            >curl -X POST http://localhost:{{PORT}}/api/auth/login \ -H
-            "Content-Type: application/json" \ -d '{"email": "your@email.com",
-            "password": "yourpassword"}'</code
-          >
-          <p style="margin-top: 15px">
-            <strong>Lưu ý:</strong> Các endpoint có 🔒 yêu cầu gửi token trong
-            header:
-            <code style="display: inline; padding: 2px 8px"
-              >Authorization: Bearer &lt;token&gt;</code
-            >
-          </p>
-        </div>
-
-        <!-- Status Codes -->
-        <h2 style="margin-bottom: 20px">📊 HTTP Status Codes</h2>
-        <div class="status-cards">
-          <div class="status-card success">
-            <div class="code">200</div>
-            <div class="label">Thành công</div>
-          </div>
-          <div class="status-card success">
-            <div class="code">201</div>
-            <div class="label">Tạo mới thành công</div>
-          </div>
-          <div class="status-card warning">
-            <div class="code">400</div>
-            <div class="label">Dữ liệu không hợp lệ</div>
-          </div>
-          <div class="status-card warning">
-            <div class="code">401</div>
-            <div class="label">Chưa xác thực</div>
-          </div>
-          <div class="status-card error">
-            <div class="code">404</div>
-            <div class="label">Không tìm thấy</div>
-          </div>
-          <div class="status-card error">
-            <div class="code">500</div>
-            <div class="label">Lỗi server</div>
-          </div>
-        </div>
-
-        <!-- Navigation -->
-        <div class="nav">
-          <h3>📑 Mục lục</h3>
-          <div class="nav-links">
-            <a href="#auth" class="nav-link">🔐 Authentication</a>
-            <a href="#products" class="nav-link">📦 Products</a>
-            <a href="#categories" class="nav-link">📁 Categories</a>
-            <a href="#orders" class="nav-link">🛒 Orders</a>
-            <a href="#addresses" class="nav-link">📍 Addresses</a>
-            <a href="#reviews" class="nav-link">⭐ Reviews</a>
-          </div>
-        </div>
-
-        <!-- Authentication -->
-        <div class="api-section" id="auth">
-          <h2><span class="icon">🔐</span> Authentication</h2>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method post">POST</span>
-              <span class="endpoint-path">/auth/register</span>
-              <span class="endpoint-desc">Đăng ký tài khoản mới</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Request Body</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">email</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Email đăng ký</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">password</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Mật khẩu (tối thiểu 6 ký tự)</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">fullName</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Họ và tên</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">phone</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>Số điện thoại</td>
-                  </tr>
-                </table>
-              </div>
-              <div class="detail-section">
-                <h4>Response Example</h4>
-                <pre class="code-block">{
-  <span class="key">"success"</span>: <span class="boolean">true</span>,
-  <span class="key">"message"</span>: <span class="string">"Đăng ký thành công!"</span>,
-  <span class="key">"data"</span>: {
-    <span class="key">"user"</span>: { <span class="key">"id"</span>: <span class="number">1</span>, <span class="key">"email"</span>: <span class="string">"user@example.com"</span>, ... },
-    <span class="key">"accessToken"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIs..."</span>,
-    <span class="key">"refreshToken"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIs..."</span>
-  }
-}</pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method post">POST</span>
-              <span class="endpoint-path">/auth/login</span>
-              <span class="endpoint-desc">Đăng nhập</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Request Body</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">email</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Email hoặc Username</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">password</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Mật khẩu</td>
-                  </tr>
-                </table>
-              </div>
-              <div class="detail-section">
-                <h4>Response Example</h4>
-                <pre class="code-block">{
-  <span class="key">"success"</span>: <span class="boolean">true</span>,
-  <span class="key">"message"</span>: <span class="string">"Đăng nhập thành công!"</span>,
-  <span class="key">"data"</span>: {
-    <span class="key">"user"</span>: {
-      <span class="key">"id"</span>: <span class="number">1</span>,
-      <span class="key">"email"</span>: <span class="string">"user@example.com"</span>,
-      <span class="key">"fullName"</span>: <span class="string">"Nguyễn Văn A"</span>,
-      <span class="key">"role"</span>: <span class="string">"Customer"</span>
-    },
-    <span class="key">"accessToken"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIs..."</span>,
-    <span class="key">"refreshToken"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIs..."</span>
-  }
-}</pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/auth/me</span>
-              <span class="endpoint-desc">Lấy thông tin user hiện tại</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Headers</h4>
-                <pre class="code-block">
-Authorization: Bearer &lt;accessToken&gt;</pre
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method put">PUT</span>
-              <span class="endpoint-path">/auth/profile</span>
-              <span class="endpoint-desc">Cập nhật thông tin profile</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Request Body</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">fullName</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>Họ và tên</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">phone</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>Số điện thoại</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">avatarUrl</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>URL ảnh đại diện</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method put">PUT</span>
-              <span class="endpoint-path">/auth/change-password</span>
-              <span class="endpoint-desc">Đổi mật khẩu</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Request Body</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">currentPassword</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Mật khẩu hiện tại</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">newPassword</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Mật khẩu mới (tối thiểu 6 ký tự)</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Products -->
-        <div class="api-section" id="products">
-          <h2><span class="icon">📦</span> Products</h2>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/products</span>
-              <span class="endpoint-desc"
-                >Lấy danh sách sản phẩm (có phân trang, lọc, sắp xếp)</span
-              >
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Query Parameters</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Mặc định</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">page</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>1</td>
-                    <td>Số trang</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">limit</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>10</td>
-                    <td>Số sản phẩm mỗi trang</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">category</td>
-                    <td><span class="param-type">string</span></td>
-                    <td>-</td>
-                    <td>ID hoặc slug danh mục</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">search</td>
-                    <td><span class="param-type">string</span></td>
-                    <td>-</td>
-                    <td>Từ khóa tìm kiếm</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">minPrice</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>-</td>
-                    <td>Giá tối thiểu</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">maxPrice</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>-</td>
-                    <td>Giá tối đa</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">sortBy</td>
-                    <td><span class="param-type">string</span></td>
-                    <td>CreatedAt</td>
-                    <td>CreatedAt | BasePrice | Name | TotalSold</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">sortOrder</td>
-                    <td><span class="param-type">string</span></td>
-                    <td>DESC</td>
-                    <td>ASC | DESC</td>
-                  </tr>
-                </table>
-              </div>
-              <div class="detail-section">
-                <h4>Response Example</h4>
-                <pre class="code-block">{
-  <span class="key">"success"</span>: <span class="boolean">true</span>,
-  <span class="key">"data"</span>: {
-    <span class="key">"products"</span>: [
-      {
-        <span class="key">"Id"</span>: <span class="number">1</span>,
-        <span class="key">"Name"</span>: <span class="string">"Áo Thun Basic"</span>,
-        <span class="key">"Slug"</span>: <span class="string">"ao-thun-basic"</span>,
-        <span class="key">"BasePrice"</span>: <span class="string">"150000.00"</span>,
-        <span class="key">"ThumbnailUrl"</span>: <span class="string">"https://..."</span>,
-        <span class="key">"AvgRating"</span>: <span class="number">4.5</span>,
-        <span class="key">"categories"</span>: [{ <span class="key">"Name"</span>: <span class="string">"Áo Thun"</span> }]
-      }
-    ],
-    <span class="key">"pagination"</span>: { <span class="key">"page"</span>: <span class="number">1</span>, <span class="key">"limit"</span>: <span class="number">10</span>, <span class="key">"total"</span>: <span class="number">36</span>, <span class="key">"totalPages"</span>: <span class="number">4</span> }
-  }
-}</pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/products/:idOrSlug</span>
-              <span class="endpoint-desc"
-                >Chi tiết sản phẩm (bao gồm colors, sizes, SKUs, reviews)</span
-              >
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Path Parameters</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">idOrSlug</td>
-                    <td><span class="param-type">string | number</span></td>
-                    <td>ID hoặc slug sản phẩm</td>
-                  </tr>
-                </table>
-              </div>
-              <div class="detail-section">
-                <h4>Response bao gồm</h4>
-                <ul style="margin-left: 20px; color: var(--text-light)">
-                  <li><strong>categories</strong> - Danh mục sản phẩm</li>
-                  <li><strong>gallery</strong> - Ảnh gallery</li>
-                  <li><strong>colorImages</strong> - Ảnh theo màu sắc</li>
-                  <li>
-                    <strong>skus</strong> - Các biến thể (size + color + giá +
-                    tồn kho)
-                  </li>
-                  <li><strong>colors</strong> - Danh sách màu sắc</li>
-                  <li><strong>sizes</strong> - Danh sách size</li>
-                  <li><strong>reviews</strong> - Đánh giá sản phẩm</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/products/featured</span>
-              <span class="endpoint-desc">Sản phẩm bán chạy</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Query Parameters</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Mặc định</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">limit</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>8</td>
-                    <td>Số sản phẩm</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/products/new</span>
-              <span class="endpoint-desc">Sản phẩm mới nhất</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Query Parameters</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Mặc định</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">limit</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>8</td>
-                    <td>Số sản phẩm</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/products/search</span>
-              <span class="endpoint-desc">Tìm kiếm sản phẩm</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Query Parameters</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">q</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Từ khóa tìm kiếm (tối thiểu 2 ký tự)</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">page</td>
-                    <td><span class="param-type">number</span></td>
-                    <td class="optional">○</td>
-                    <td>Số trang</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">limit</td>
-                    <td><span class="param-type">number</span></td>
-                    <td class="optional">○</td>
-                    <td>Số kết quả mỗi trang</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Categories -->
-        <div class="api-section" id="categories">
-          <h2><span class="icon">📁</span> Categories</h2>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/categories</span>
-              <span class="endpoint-desc"
-                >Lấy tất cả danh mục (dạng cây phân cấp)</span
-              >
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Response Example</h4>
-                <pre class="code-block">{
-  <span class="key">"success"</span>: <span class="boolean">true</span>,
-  <span class="key">"data"</span>: [
-    {
-      <span class="key">"Id"</span>: <span class="number">1</span>,
-      <span class="key">"Name"</span>: <span class="string">"Nam"</span>,
-      <span class="key">"Slug"</span>: <span class="string">"nam"</span>,
-      <span class="key">"ProductCount"</span>: <span class="number">30</span>,
-      <span class="key">"children"</span>: []
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moda Clothing API Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+      --text: #334155;
+      --text-light: #64748b;
     }
-  ]
-}</pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/categories/:idOrSlug</span>
-              <span class="endpoint-desc">Chi tiết danh mục</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Path Parameters</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">idOrSlug</td>
-                    <td><span class="param-type">string | number</span></td>
-                    <td>ID hoặc slug danh mục</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Orders -->
-        <div class="api-section" id="orders">
-          <h2><span class="icon">🛒</span> Orders</h2>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/orders</span>
-              <span class="endpoint-desc">Lấy danh sách đơn hàng của user</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Query Parameters</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Mặc định</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">page</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>1</td>
-                    <td>Số trang</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">limit</td>
-                    <td><span class="param-type">number</span></td>
-                    <td>10</td>
-                    <td>Số đơn hàng mỗi trang</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">status</td>
-                    <td><span class="param-type">string</span></td>
-                    <td>-</td>
-                    <td>Mới | Đang xử lý | Đang giao | Hoàn thành | Đã hủy</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method post">POST</span>
-              <span class="endpoint-path">/orders</span>
-              <span class="endpoint-desc">Tạo đơn hàng mới</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Request Body</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">items</td>
-                    <td><span class="param-type">array</span></td>
-                    <td class="required">✓</td>
-                    <td>[{skuId: number, quantity: number}]</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">shippingName</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Tên người nhận</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">shippingPhone</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Số điện thoại</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">shippingAddress</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Địa chỉ giao hàng</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">paymentMethod</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>COD | Banking | VNPAY | MOMO (mặc định: COD)</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">note</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>Ghi chú</td>
-                  </tr>
-                </table>
-              </div>
-              <div class="detail-section">
-                <h4>Request Example</h4>
-                <pre class="code-block">{
-  <span class="key">"items"</span>: [
-    { <span class="key">"skuId"</span>: <span class="number">123</span>, <span class="key">"quantity"</span>: <span class="number">2</span> },
-    { <span class="key">"skuId"</span>: <span class="number">456</span>, <span class="key">"quantity"</span>: <span class="number">1</span> }
-  ],
-  <span class="key">"shippingName"</span>: <span class="string">"Nguyễn Văn A"</span>,
-  <span class="key">"shippingPhone"</span>: <span class="string">"0909123456"</span>,
-  <span class="key">"shippingAddress"</span>: <span class="string">"123 Đường ABC, Quận 1, TP.HCM"</span>,
-  <span class="key">"paymentMethod"</span>: <span class="string">"COD"</span>
-}</pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/orders/:id</span>
-              <span class="endpoint-desc">Chi tiết đơn hàng</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Response bao gồm</h4>
-                <ul style="margin-left: 20px; color: var(--text-light)">
-                  <li>
-                    Thông tin đơn hàng: Status, TotalAmount, PaymentMethod...
-                  </li>
-                  <li><strong>items</strong> - Danh sách sản phẩm trong đơn</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method put">PUT</span>
-              <span class="endpoint-path">/orders/:id/cancel</span>
-              <span class="endpoint-desc"
-                >Hủy đơn hàng (chỉ với trạng thái Mới hoặc Đang xử lý)</span
-              >
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Lưu ý</h4>
-                <p style="color: var(--text-light)">
-                  Chỉ có thể hủy đơn hàng khi trạng thái là
-                  <strong>"Mới"</strong> hoặc <strong>"Đang xử lý"</strong>. Số
-                  lượng tồn kho sẽ được hoàn lại.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Addresses -->
-        <div class="api-section" id="addresses">
-          <h2><span class="icon">📍</span> Addresses</h2>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/addresses</span>
-              <span class="endpoint-desc">Lấy danh sách địa chỉ giao hàng</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Response Example</h4>
-                <pre class="code-block">{
-  <span class="key">"success"</span>: <span class="boolean">true</span>,
-  <span class="key">"data"</span>: [
-    {
-      <span class="key">"Id"</span>: <span class="number">1</span>,
-      <span class="key">"RecipientName"</span>: <span class="string">"Nguyễn Văn A"</span>,
-      <span class="key">"PhoneNumber"</span>: <span class="string">"0909123456"</span>,
-      <span class="key">"AddressLine"</span>: <span class="string">"123 Đường ABC"</span>,
-      <span class="key">"Ward"</span>: <span class="string">"Phường 1"</span>,
-      <span class="key">"District"</span>: <span class="string">"Quận 1"</span>,
-      <span class="key">"City"</span>: <span class="string">"TP. Hồ Chí Minh"</span>,
-      <span class="key">"IsDefault"</span>: <span class="boolean">true</span>
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--text);
+      line-height: 1.6;
     }
-  ]
-}</pre>
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 60px 20px;
+      color: white;
+    }
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .header p { font-size: 1.2rem; opacity: 0.9; }
+    .header .version {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+    .base-url {
+      background: rgba(0,0,0,0.3);
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: inline-block;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 1rem;
+    }
+    
+    /* Main Content */
+    .main-content {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+    
+    /* Navigation */
+    .nav {
+      position: sticky;
+      top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      z-index: 100;
+    }
+    .nav h3 { margin-bottom: 15px; color: var(--dark); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .nav-link {
+      padding: 8px 16px;
+      background: var(--light);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .nav-link:hover { background: var(--primary); color: white; }
+    
+    /* API Section */
+    .api-section { margin-bottom: 40px; }
+    .api-section h2 {
+      font-size: 1.8rem;
+      color: var(--dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    /* Endpoint Card */
+    .endpoint {
+      background: var(--light);
+      border-radius: 12px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .endpoint:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      cursor: pointer;
+      gap: 15px;
+    }
+    .method {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      min-width: 70px;
+      text-align: center;
+    }
+    .method.get { background: #dcfce7; color: #166534; }
+    .method.post { background: #dbeafe; color: #1e40af; }
+    .method.put { background: #fef3c7; color: #92400e; }
+    .method.delete { background: #fee2e2; color: #991b1b; }
+    
+    .endpoint-path {
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-weight: 500;
+      color: var(--dark);
+      flex: 1;
+    }
+    .endpoint-desc { color: var(--text-light); font-size: 0.9rem; }
+    .auth-badge {
+      background: var(--warning);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .endpoint-details {
+      display: none;
+      padding: 20px;
+      background: white;
+      border-top: 1px solid var(--border);
+    }
+    .endpoint.active .endpoint-details { display: block; }
+    .endpoint.active .endpoint-header { background: white; }
+    
+    /* Try It Section */
+    .try-section {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      border: 2px solid var(--info);
+    }
+    .try-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .try-header h4 {
+      color: var(--info);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .try-btn {
+      background: var(--info);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .try-btn:hover { background: #2563eb; transform: scale(1.02); }
+    .try-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    .try-btn.loading { pointer-events: none; }
+    
+    /* Form Inputs */
+    .form-group { margin-bottom: 15px; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+    .form-group label span.required { color: var(--danger); }
+    .form-group label span.optional { color: var(--text-light); font-weight: 400; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--info);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .form-group textarea { min-height: 100px; resize: vertical; }
+    .form-group .hint {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    /* Response Section */
+    .response-section {
+      margin-top: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+    }
+    .response-header {
+      padding: 12px 16px;
+      background: var(--dark);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .response-header .status {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .response-header .status.success { background: var(--success); }
+    .response-header .status.error { background: var(--danger); }
+    .response-header .status.warning { background: var(--warning); }
+    .response-body {
+      background: #1e293b;
+      padding: 16px;
+      max-height: 400px;
+      overflow: auto;
+    }
+    .response-body pre {
+      color: #e2e8f0;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+    .response-body .json-key { color: #7ee787; }
+    .response-body .json-string { color: #a5d6ff; }
+    .response-body .json-number { color: #79c0ff; }
+    .response-body .json-boolean { color: #ff7b72; }
+    .response-body .json-null { color: #8b949e; }
+    
+    /* Copy button */
+    .copy-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.1); }
+    
+    /* Loading spinner */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Token input */
+    .token-section {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid var(--warning);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .token-section h3 {
+      color: #92400e;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .token-input-wrapper {
+      display: flex;
+      gap: 10px;
+    }
+    .token-input-wrapper input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.9rem;
+    }
+    .token-input-wrapper button {
+      background: #92400e;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 30px;
+      color: white;
+      opacity: 0.8;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 { font-size: 2rem; }
+      .main-content { padding: 20px; }
+      .endpoint-header { flex-wrap: wrap; }
+      .endpoint-desc { width: 100%; margin-top: 10px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    
+    .toggle-icon { transition: transform 0.3s ease; }
+    .endpoint.active .toggle-icon { transform: rotate(180deg); }
+    
+    /* Params table */
+    .params-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 15px; }
+    .params-table th, .params-table td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+    .params-table th { background: var(--light); font-weight: 600; color: var(--dark); }
+    .param-name { font-family: 'Monaco', 'Consolas', monospace; color: var(--primary); }
+    .param-type { background: var(--light); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; color: var(--text-light); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🛍️ Moda Clothing API</h1>
+    <p>RESTful API cho ứng dụng thời trang Moda Clothing</p>
+    <span class="version">Version 1.0.0</span>
+    <div class="base-url" id="baseUrl">Base URL: http://localhost:{{PORT}}/api</div>
+  </div>
+
+  <div class="container">
+    <div class="main-content">
+      <!-- Token Section -->
+      <div class="token-section">
+        <h3>🔑 Bearer Token (cho các API yêu cầu xác thực)</h3>
+        <p style="color: #92400e; margin-bottom: 12px; font-size: 0.9rem;">
+          Đăng nhập để lấy token, sau đó paste vào đây để test các API yêu cầu auth.
+        </p>
+        <div class="token-input-wrapper">
+          <input type="text" id="globalToken" placeholder="Paste your access token here..." />
+          <button onclick="saveToken()">💾 Lưu Token</button>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="nav">
+        <h3>📑 Mục lục</h3>
+        <div class="nav-links">
+          <a href="#auth" class="nav-link">🔐 Authentication</a>
+          <a href="#products" class="nav-link">📦 Products</a>
+          <a href="#categories" class="nav-link">📁 Categories</a>
+          <a href="#orders" class="nav-link">🛒 Orders</a>
+          <a href="#addresses" class="nav-link">📍 Addresses</a>
+          <a href="#reviews" class="nav-link">⭐ Reviews</a>
+        </div>
+      </div>
+
+      <!-- ============== AUTHENTICATION ============== -->
+      <div class="api-section" id="auth">
+        <h2>🔐 Authentication</h2>
+
+        <!-- Login -->
+        <div class="endpoint" id="endpoint-login">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-login')">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/auth/login</span>
+            <span class="endpoint-desc">Đăng nhập</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <table class="params-table">
+              <tr><th>Tham số</th><th>Kiểu</th><th>Mô tả</th></tr>
+              <tr><td class="param-name">email</td><td><span class="param-type">string</span></td><td>Email hoặc Username</td></tr>
+              <tr><td class="param-name">password</td><td><span class="param-type">string</span></td><td>Mật khẩu</td></tr>
+            </table>
+            
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
               </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method post">POST</span>
-              <span class="endpoint-path">/addresses</span>
-              <span class="endpoint-desc">Thêm địa chỉ mới</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Request Body</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">recipientName</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Tên người nhận</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">phoneNumber</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Số điện thoại</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">addressLine</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Địa chỉ chi tiết</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">ward</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>Phường/Xã</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">district</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Quận/Huyện</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">city</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="required">✓</td>
-                    <td>Tỉnh/Thành phố</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">isDefault</td>
-                    <td><span class="param-type">boolean</span></td>
-                    <td class="optional">○</td>
-                    <td>Đặt làm mặc định</td>
-                  </tr>
-                </table>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Email / Username <span class="required">*</span></label>
+                  <input type="text" id="login-email" placeholder="vd: test@example.com" />
+                </div>
+                <div class="form-group">
+                  <label>Password <span class="required">*</span></label>
+                  <input type="password" id="login-password" placeholder="Nhập mật khẩu" />
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method put">PUT</span>
-              <span class="endpoint-path">/addresses/:id</span>
-              <span class="endpoint-desc">Cập nhật địa chỉ</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <p style="color: var(--text-light)">Tương tự POST /addresses</p>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method delete">DELETE</span>
-              <span class="endpoint-path">/addresses/:id</span>
-              <span class="endpoint-desc">Xóa địa chỉ</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <p style="color: var(--text-light)">Xóa địa chỉ theo ID</p>
-            </div>
-          </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method put">PUT</span>
-              <span class="endpoint-path">/addresses/:id/default</span>
-              <span class="endpoint-desc">Đặt làm địa chỉ mặc định</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <p style="color: var(--text-light)">
-                Đặt địa chỉ làm mặc định, các địa chỉ khác sẽ bỏ mặc định.
-              </p>
+              <button class="try-btn" onclick="tryLogin()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="login-response"></div>
             </div>
           </div>
         </div>
 
-        <!-- Reviews -->
-        <div class="api-section" id="reviews">
-          <h2><span class="icon">⭐</span> Reviews</h2>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/reviews/product/:productId</span>
-              <span class="endpoint-desc">Lấy đánh giá của sản phẩm</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Response bao gồm</h4>
-                <ul style="margin-left: 20px; color: var(--text-light)">
-                  <li><strong>reviews</strong> - Danh sách đánh giá</li>
-                  <li><strong>stats</strong> - Thống kê: avgRating, star1-5</li>
-                  <li><strong>pagination</strong></li>
-                </ul>
+        <!-- Register -->
+        <div class="endpoint" id="endpoint-register">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-register')">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/auth/register</span>
+            <span class="endpoint-desc">Đăng ký tài khoản mới</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
               </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Username <span class="required">*</span></label>
+                  <input type="text" id="register-username" placeholder="vd: johndoe" />
+                </div>
+                <div class="form-group">
+                  <label>Email <span class="required">*</span></label>
+                  <input type="email" id="register-email" placeholder="vd: john@example.com" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Password <span class="required">*</span></label>
+                  <input type="password" id="register-password" placeholder="Tối thiểu 6 ký tự" />
+                </div>
+                <div class="form-group">
+                  <label>Full Name <span class="required">*</span></label>
+                  <input type="text" id="register-fullname" placeholder="vd: John Doe" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Phone <span class="optional">(optional)</span></label>
+                <input type="text" id="register-phone" placeholder="vd: 0909123456" />
+              </div>
+              <button class="try-btn" onclick="tryRegister()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="register-response"></div>
             </div>
           </div>
+        </div>
 
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method post">POST</span>
-              <span class="endpoint-path">/reviews</span>
-              <span class="endpoint-desc"
-                >Tạo đánh giá sản phẩm (phải mua hàng trước)</span
-              >
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <div class="detail-section">
-                <h4>Request Body</h4>
-                <table class="params-table">
-                  <tr>
-                    <th>Tham số</th>
-                    <th>Kiểu</th>
-                    <th>Bắt buộc</th>
-                    <th>Mô tả</th>
-                  </tr>
-                  <tr>
-                    <td class="param-name">productId</td>
-                    <td><span class="param-type">number</span></td>
-                    <td class="required">✓</td>
-                    <td>ID sản phẩm</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">orderId</td>
-                    <td><span class="param-type">number</span></td>
-                    <td class="required">✓</td>
-                    <td>ID đơn hàng đã hoàn thành</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">rating</td>
-                    <td><span class="param-type">number</span></td>
-                    <td class="required">✓</td>
-                    <td>Điểm đánh giá (1-5)</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">comment</td>
-                    <td><span class="param-type">string</span></td>
-                    <td class="optional">○</td>
-                    <td>Nhận xét</td>
-                  </tr>
-                  <tr>
-                    <td class="param-name">images</td>
-                    <td><span class="param-type">string[]</span></td>
-                    <td class="optional">○</td>
-                    <td>Mảng URL hình ảnh (tối đa 5)</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
+        <!-- Get Me -->
+        <div class="endpoint" id="endpoint-me">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-me')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/auth/me</span>
+            <span class="endpoint-desc">Lấy thông tin user hiện tại</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
           </div>
-
-          <div class="endpoint">
-            <div class="endpoint-header" onclick="toggleEndpoint(this)">
-              <span class="method get">GET</span>
-              <span class="endpoint-path">/reviews/my</span>
-              <span class="endpoint-desc">Lấy đánh giá của user</span>
-              <span class="auth-badge">🔒 AUTH</span>
-              <span class="toggle-icon">▼</span>
-            </div>
-            <div class="endpoint-details">
-              <p style="color: var(--text-light)">
-                Lấy tất cả đánh giá mà user đã viết.
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.9rem;">
+                ⚠️ Yêu cầu Bearer Token. Hãy đăng nhập trước và lưu token ở phần trên.
               </p>
+              <button class="try-btn" onclick="tryGetMe()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="me-response"></div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- ============== PRODUCTS ============== -->
+      <div class="api-section" id="products">
+        <h2>📦 Products</h2>
+
+        <!-- Get Products -->
+        <div class="endpoint" id="endpoint-products">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-products')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/products</span>
+            <span class="endpoint-desc">Lấy danh sách sản phẩm (phân trang, lọc, sắp xếp)</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Page <span class="optional">(default: 1)</span></label>
+                  <input type="number" id="products-page" placeholder="1" value="1" />
+                </div>
+                <div class="form-group">
+                  <label>Limit <span class="optional">(default: 10)</span></label>
+                  <input type="number" id="products-limit" placeholder="10" value="5" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Category (ID hoặc Slug)</label>
+                  <input type="text" id="products-category" placeholder="vd: ao-thun" />
+                </div>
+                <div class="form-group">
+                  <label>Search</label>
+                  <input type="text" id="products-search" placeholder="Tìm kiếm theo tên..." />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Min Price</label>
+                  <input type="number" id="products-minprice" placeholder="0" />
+                </div>
+                <div class="form-group">
+                  <label>Max Price</label>
+                  <input type="number" id="products-maxprice" placeholder="1000000" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Sort By</label>
+                  <select id="products-sortby">
+                    <option value="CreatedAt">CreatedAt (Ngày tạo)</option>
+                    <option value="BasePrice">BasePrice (Giá)</option>
+                    <option value="Name">Name (Tên)</option>
+                    <option value="TotalSold">TotalSold (Đã bán)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Sort Order</label>
+                  <select id="products-sortorder">
+                    <option value="DESC">DESC (Giảm dần)</option>
+                    <option value="ASC">ASC (Tăng dần)</option>
+                  </select>
+                </div>
+              </div>
+              <button class="try-btn" onclick="tryGetProducts()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="products-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Get Product Detail -->
+        <div class="endpoint" id="endpoint-product-detail">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-product-detail')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/products/:idOrSlug</span>
+            <span class="endpoint-desc">Chi tiết sản phẩm (colors, sizes, SKUs, reviews)</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-group">
+                <label>Product ID hoặc Slug <span class="required">*</span></label>
+                <input type="text" id="product-id" placeholder="vd: 1 hoặc ao-thun-basic" />
+                <div class="hint">Nhập ID (số) hoặc slug của sản phẩm</div>
+              </div>
+              <button class="try-btn" onclick="tryGetProductDetail()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="product-detail-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Products -->
+        <div class="endpoint" id="endpoint-featured">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-featured')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/products/featured</span>
+            <span class="endpoint-desc">Sản phẩm bán chạy</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-group">
+                <label>Limit <span class="optional">(default: 8)</span></label>
+                <input type="number" id="featured-limit" placeholder="8" value="4" />
+              </div>
+              <button class="try-btn" onclick="tryGetFeatured()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="featured-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Products -->
+        <div class="endpoint" id="endpoint-search">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-search')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/products/search</span>
+            <span class="endpoint-desc">Tìm kiếm sản phẩm</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Query <span class="required">*</span></label>
+                  <input type="text" id="search-query" placeholder="vd: áo thun" />
+                  <div class="hint">Tối thiểu 2 ký tự</div>
+                </div>
+                <div class="form-group">
+                  <label>Limit</label>
+                  <input type="number" id="search-limit" placeholder="10" value="5" />
+                </div>
+              </div>
+              <button class="try-btn" onclick="trySearch()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="search-response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== CATEGORIES ============== -->
+      <div class="api-section" id="categories">
+        <h2>📁 Categories</h2>
+
+        <div class="endpoint" id="endpoint-categories">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-categories')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/categories</span>
+            <span class="endpoint-desc">Lấy tất cả danh mục</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <button class="try-btn" onclick="tryGetCategories()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="categories-response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== ORDERS ============== -->
+      <div class="api-section" id="orders">
+        <h2>🛒 Orders</h2>
+
+        <!-- Get Orders -->
+        <div class="endpoint" id="endpoint-orders">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-orders')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/orders</span>
+            <span class="endpoint-desc">Lấy danh sách đơn hàng của user</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Page</label>
+                  <input type="number" id="orders-page" placeholder="1" value="1" />
+                </div>
+                <div class="form-group">
+                  <label>Status</label>
+                  <select id="orders-status">
+                    <option value="">Tất cả</option>
+                    <option value="Mới">Mới</option>
+                    <option value="Đang xử lý">Đang xử lý</option>
+                    <option value="Đang giao">Đang giao</option>
+                    <option value="Hoàn thành">Hoàn thành</option>
+                    <option value="Đã hủy">Đã hủy</option>
+                  </select>
+                </div>
+              </div>
+              <button class="try-btn" onclick="tryGetOrders()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="orders-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Order -->
+        <div class="endpoint" id="endpoint-create-order">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-create-order')">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/orders</span>
+            <span class="endpoint-desc">Tạo đơn hàng mới</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-group">
+                <label>Items (JSON Array) <span class="required">*</span></label>
+                <textarea id="order-items" placeholder='[{"skuId": 1, "quantity": 2}]'>[{"skuId": 1, "quantity": 1}]</textarea>
+                <div class="hint">Format: [{"skuId": number, "quantity": number}, ...]</div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Shipping Name <span class="required">*</span></label>
+                  <input type="text" id="order-name" placeholder="Nguyễn Văn A" />
+                </div>
+                <div class="form-group">
+                  <label>Shipping Phone <span class="required">*</span></label>
+                  <input type="text" id="order-phone" placeholder="0909123456" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Shipping Address <span class="required">*</span></label>
+                <input type="text" id="order-address" placeholder="123 Đường ABC, Quận 1, TP.HCM" />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Payment Method</label>
+                  <select id="order-payment">
+                    <option value="COD">COD</option>
+                    <option value="Banking">Banking</option>
+                    <option value="VNPAY">VNPAY</option>
+                    <option value="MOMO">MOMO</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Note</label>
+                  <input type="text" id="order-note" placeholder="Ghi chú..." />
+                </div>
+              </div>
+              <button class="try-btn" onclick="tryCreateOrder()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="create-order-response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== ADDRESSES ============== -->
+      <div class="api-section" id="addresses">
+        <h2>📍 Addresses</h2>
+
+        <div class="endpoint" id="endpoint-addresses">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-addresses')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/addresses</span>
+            <span class="endpoint-desc">Lấy danh sách địa chỉ giao hàng</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <button class="try-btn" onclick="tryGetAddresses()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="addresses-response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== REVIEWS ============== -->
+      <div class="api-section" id="reviews">
+        <h2>⭐ Reviews</h2>
+
+        <div class="endpoint" id="endpoint-reviews">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-reviews')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/reviews/product/:productId</span>
+            <span class="endpoint-desc">Lấy đánh giá của sản phẩm</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-group">
+                <label>Product ID <span class="required">*</span></label>
+                <input type="number" id="reviews-productid" placeholder="1" />
+              </div>
+              <button class="try-btn" onclick="tryGetReviews()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="reviews-response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <div class="footer">
-      <p>💜 Moda Clothing API Documentation | Version 1.0.0</p>
-      <p style="margin-top: 5px; font-size: 0.9rem">
-        Built with ❤️ for Frontend Developers
-      </p>
-    </div>
+  <div class="footer">
+    <p>💜 Moda Clothing API Documentation | Version 1.0.0</p>
+    <p style="margin-top: 5px; font-size: 0.9rem;">Built with ❤️ for Frontend Developers</p>
+  </div>
 
-    <script>
-      function toggleEndpoint(header) {
-        const endpoint = header.parentElement;
-        endpoint.classList.toggle("active");
-      }
-
-      // Smooth scroll for navigation
-      document.querySelectorAll(".nav-link").forEach((link) => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const target = document.querySelector(link.getAttribute("href"));
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
+  <script>
+    const API_BASE = 'http://localhost:{{PORT}}/api';
+    
+    // Toggle endpoint
+    function toggleEndpoint(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('active');
+    }
+    
+    // Save token
+    function saveToken() {
+      const token = document.getElementById('globalToken').value;
+      localStorage.setItem('moda_token', token);
+      alert('✅ Token đã được lưu!');
+    }
+    
+    // Get token
+    function getToken() {
+      return localStorage.getItem('moda_token') || document.getElementById('globalToken').value;
+    }
+    
+    // Format JSON with syntax highlighting
+    function formatJSON(json) {
+      const str = JSON.stringify(json, null, 2);
+      return str.replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+                .replace(/: "([^"]+)"/g, ': <span class="json-string">"$1"</span>')
+                .replace(/: (\d+)/g, ': <span class="json-number">$1</span>')
+                .replace(/: (true|false)/g, ': <span class="json-boolean">$1</span>')
+                .replace(/: (null)/g, ': <span class="json-null">$1</span>');
+    }
+    
+    // Show response
+    function showResponse(containerId, status, data, time) {
+      const container = document.getElementById(containerId);
+      const statusClass = status >= 200 && status < 300 ? 'success' : status >= 400 ? 'error' : 'warning';
+      
+      container.innerHTML = `
+        <div class="response-section">
+          <div class="response-header">
+            <span>Response (${time}ms)</span>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span class="status ${statusClass}">${status}</span>
+              <button class="copy-btn" onclick="copyResponse(this)">📋 Copy</button>
+            </div>
+          </div>
+          <div class="response-body">
+            <pre>${formatJSON(data)}</pre>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Copy response
+    function copyResponse(btn) {
+      const pre = btn.closest('.response-section').querySelector('pre');
+      navigator.clipboard.writeText(pre.textContent);
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy', 2000);
+    }
+    
+    // API Calls
+    async function apiCall(endpoint, options = {}) {
+      const start = Date.now();
+      try {
+        const res = await fetch(API_BASE + endpoint, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(options.auth ? { 'Authorization': 'Bearer ' + getToken() } : {}),
+            ...options.headers
+          },
+          ...options
         });
+        const data = await res.json();
+        return { status: res.status, data, time: Date.now() - start };
+      } catch (err) {
+        return { status: 500, data: { error: err.message }, time: Date.now() - start };
+      }
+    }
+    
+    // Try Login
+    async function tryLogin() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      const result = await apiCall('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
       });
-    </script>
-  </body>
+      
+      // Auto save token if login success
+      if (result.status === 200 && result.data.data?.accessToken) {
+        document.getElementById('globalToken').value = result.data.data.accessToken;
+        localStorage.setItem('moda_token', result.data.data.accessToken);
+      }
+      
+      showResponse('login-response', result.status, result.data, result.time);
+    }
+    
+    // Try Register
+    async function tryRegister() {
+      const result = await apiCall('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: document.getElementById('register-username').value,
+          email: document.getElementById('register-email').value,
+          password: document.getElementById('register-password').value,
+          fullName: document.getElementById('register-fullname').value,
+          phone: document.getElementById('register-phone').value
+        })
+      });
+      showResponse('register-response', result.status, result.data, result.time);
+    }
+    
+    // Try Get Me
+    async function tryGetMe() {
+      const result = await apiCall('/auth/me', { auth: true });
+      showResponse('me-response', result.status, result.data, result.time);
+    }
+    
+    // Try Get Products
+    async function tryGetProducts() {
+      const params = new URLSearchParams();
+      const page = document.getElementById('products-page').value;
+      const limit = document.getElementById('products-limit').value;
+      const category = document.getElementById('products-category').value;
+      const search = document.getElementById('products-search').value;
+      const minPrice = document.getElementById('products-minprice').value;
+      const maxPrice = document.getElementById('products-maxprice').value;
+      const sortBy = document.getElementById('products-sortby').value;
+      const sortOrder = document.getElementById('products-sortorder').value;
+      
+      if (page) params.append('page', page);
+      if (limit) params.append('limit', limit);
+      if (category) params.append('category', category);
+      if (search) params.append('search', search);
+      if (minPrice) params.append('minPrice', minPrice);
+      if (maxPrice) params.append('maxPrice', maxPrice);
+      if (sortBy) params.append('sortBy', sortBy);
+      if (sortOrder) params.append('sortOrder', sortOrder);
+      
+      const result = await apiCall('/products?' + params.toString());
+      showResponse('products-response', result.status, result.data, result.time);
+    }
+    
+    // Try Get Product Detail
+    async function tryGetProductDetail() {
+      const id = document.getElementById('product-id').value;
+      if (!id) return alert('Vui lòng nhập Product ID');
+      const result = await apiCall('/products/' + id);
+      showResponse('product-detail-response', result.status, result.data, result.time);
+    }
+    
+    // Try Get Featured
+    async function tryGetFeatured() {
+      const limit = document.getElementById('featured-limit').value || 8;
+      const result = await apiCall('/products/featured?limit=' + limit);
+      showResponse('featured-response', result.status, result.data, result.time);
+    }
+    
+    // Try Search
+    async function trySearch() {
+      const q = document.getElementById('search-query').value;
+      const limit = document.getElementById('search-limit').value || 10;
+      if (!q) return alert('Vui lòng nhập từ khóa tìm kiếm');
+      const result = await apiCall('/products/search?q=' + encodeURIComponent(q) + '&limit=' + limit);
+      showResponse('search-response', result.status, result.data, result.time);
+    }
+    
+    // Try Get Categories
+    async function tryGetCategories() {
+      const result = await apiCall('/categories');
+      showResponse('categories-response', result.status, result.data, result.time);
+    }
+    
+    // Try Get Orders
+    async function tryGetOrders() {
+      const page = document.getElementById('orders-page').value || 1;
+      const status = document.getElementById('orders-status').value;
+      let url = '/orders?page=' + page;
+      if (status) url += '&status=' + encodeURIComponent(status);
+      const result = await apiCall(url, { auth: true });
+      showResponse('orders-response', result.status, result.data, result.time);
+    }
+    
+    // Try Create Order
+    async function tryCreateOrder() {
+      try {
+        const items = JSON.parse(document.getElementById('order-items').value);
+        const result = await apiCall('/orders', {
+          method: 'POST',
+          auth: true,
+          body: JSON.stringify({
+            items,
+            shippingName: document.getElementById('order-name').value,
+            shippingPhone: document.getElementById('order-phone').value,
+            shippingAddress: document.getElementById('order-address').value,
+            paymentMethod: document.getElementById('order-payment').value,
+            note: document.getElementById('order-note').value
+          })
+        });
+        showResponse('create-order-response', result.status, result.data, result.time);
+      } catch (e) {
+        alert('Items phải là JSON hợp lệ: ' + e.message);
+      }
+    }
+    
+    // Try Get Addresses
+    async function tryGetAddresses() {
+      const result = await apiCall('/addresses', { auth: true });
+      showResponse('addresses-response', result.status, result.data, result.time);
+    }
+    
+    // Try Get Reviews
+    async function tryGetReviews() {
+      const productId = document.getElementById('reviews-productid').value;
+      if (!productId) return alert('Vui lòng nhập Product ID');
+      const result = await apiCall('/reviews/product/' + productId);
+      showResponse('reviews-response', result.status, result.data, result.time);
+    }
+    
+    // Load saved token on page load
+    window.onload = function() {
+      const savedToken = localStorage.getItem('moda_token');
+      if (savedToken) {
+        document.getElementById('globalToken').value = savedToken;
+      }
+    };
+    
+    // Smooth scroll
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
 </html>
