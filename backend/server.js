@@ -196,12 +196,13 @@ const startServer = async () => {
     // Hiển thị các bảng có trong database
     await getTables();
 
-    // Start listening
-    app.listen(PORT, () => {
+    // Start listening - bind to 0.0.0.0 to allow connections from other devices
+    app.listen(PORT, '0.0.0.0', () => {
       console.log('\n🚀 ════════════════════════════════════════');
       console.log('   🌟 Moda Clothing API Server');
       console.log('═══════════════════════════════════════════');
       console.log(`   📍 Server:  http://localhost:${PORT}`);
+      console.log(`   📱 Mobile:  http://YOUR_IP:${PORT}`);
       console.log(`   📚 API Docs: http://localhost:${PORT}/api/docs`);
       console.log(`   🔄 Database: ${process.env.DB_NAME || 'jwt'}`);
       console.log('═══════════════════════════════════════════\n');
