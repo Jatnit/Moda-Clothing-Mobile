@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, shadows } from '../theme/colors';
 import productService from '../services/productService';
+import wishlistService from '../services/wishlistService';
 
 const { width } = Dimensions.get('window');
 
@@ -60,11 +61,55 @@ const ProductDetailScreen = ({ navigation, route }) => {
         setProduct(response);
         initializeSelections(response);
       }
+      
+      // Check wishlist status
+      checkWishlistStatus(id);
     } catch (error) {
       console.error('❌ Error fetching product:', error);
       Alert.alert('Lỗi', error.message || 'Không thể tải thông tin sản phẩm');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Check if product is in wishlist
+  const checkWishlistStatus = async (prodId) => {
+    try {
+      const response = await wishlistService.checkInWishlist(prodId);
+      if (response.success) {
+        setIsFavorite(response.data?.isInWishlist || false);
+      }
+    } catch (error) {
+      // Ignore error - user might not be logged in
+      console.log('Wishlist check skipped (not logged in)');
+    }
+  };
+
+  // Toggle favorite
+  const toggleFavorite = async () => {
+    const prodId = productId || initialProduct?.Id || product?.Id;
+    if (!prodId) return;
+
+    try {
+      const response = await wishlistService.toggleWishlist(prodId);
+      if (response.success) {
+        setIsFavorite(response.data?.isInWishlist || false);
+        Alert.alert('Thành công', response.message);
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+        Alert.alert(
+          'Chưa đăng nhập',
+          'Vui lòng đăng nhập để thêm sản phẩm yêu thích',
+          [
+            { text: 'Đóng', style: 'cancel' },
+            { text: 'Đăng nhập', onPress: () => navigation.navigate('Login') }
+          ]
+        );
+      } else {
+        Alert.alert('Lỗi', 'Không thể cập nhật danh sách yêu thích');
+      }
     }
   };
 
@@ -284,7 +329,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
         {/* Favorite button */}
         <TouchableOpacity 
           style={styles.favoriteButton} 
-          onPress={() => setIsFavorite(!isFavorite)}
+          onPress={toggleFavorite}
         >
           <Ionicons 
             name={isFavorite ? "heart" : "heart-outline"} 

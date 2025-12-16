@@ -6,7 +6,7 @@ import { colors, shadows } from '../theme/colors';
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
 
-const ProductCard = ({ product, onPress, onFavorite, style }) => {
+const ProductCard = ({ product, onPress, onFavorite, isFavorite, style }) => {
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
@@ -30,10 +30,20 @@ const ProductCard = ({ product, onPress, onFavorite, style }) => {
         
         {/* Favorite Button */}
         <TouchableOpacity 
-          style={styles.favoriteButton}
-          onPress={() => onFavorite?.(product)}
+          style={[
+            styles.favoriteButton,
+            isFavorite && styles.favoriteButtonActive
+          ]}
+          onPress={(e) => {
+            e.stopPropagation?.();
+            onFavorite?.(product);
+          }}
         >
-          <Ionicons name="heart-outline" size={20} color={colors.gray600} />
+          <Ionicons 
+            name={isFavorite ? "heart" : "heart-outline"} 
+            size={20} 
+            color={isFavorite ? colors.error : colors.gray600} 
+          />
         </TouchableOpacity>
 
         {/* Badge - New or Sale */}
@@ -113,6 +123,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     ...shadows.small,
+  },
+  favoriteButtonActive: {
+    backgroundColor: '#FFE8E8',
   },
   badge: {
     position: 'absolute',

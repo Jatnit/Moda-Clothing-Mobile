@@ -12,6 +12,7 @@ import {
   StatusBar,
   Modal,
   Pressable,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +21,7 @@ import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import SectionHeader from '../components/SectionHeader';
 import { productService, categoryService } from '../services/productService';
+import wishlistService from '../services/wishlistService';
 
 const { width } = Dimensions.get('window');
 const BANNER_HEIGHT = 200;
@@ -57,7 +59,25 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [wishlistIds, setWishlistIds] = useState(new Set()); // Track wishlist product IDs
   const bannerRef = useRef(null);
+
+  // Fetch wishlist IDs
+  const fetchWishlistIds = useCallback(async () => {
+    if (!user) {
+      setWishlistIds(new Set());
+      return;
+    }
+    try {
+      const response = await wishlistService.getWishlist();
+      if (response.success && response.data?.items) {
+        const ids = new Set(response.data.items.map(item => item.ProductId));
+        setWishlistIds(ids);
+      }
+    } catch (error) {
+      console.log('Wishlist fetch skipped:', error.message);
+    }
+  }, [user]);
 
   // Fetch data
   const fetchData = useCallback(async () => {
@@ -71,13 +91,16 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
       setCategories(categoriesRes.data || []);
       setFeaturedProducts(featuredRes.data || []);
       setNewProducts(newRes.data || []);
+      
+      // Fetch wishlist after products loaded
+      fetchWishlistIds();
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [fetchWishlistIds]);
 
   useEffect(() => {
     fetchData();
@@ -106,6 +129,40 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
   // Navigate to product detail
   const handleProductPress = (product) => {
     navigation?.navigate?.('ProductDetail', { productId: product.Id, product });
+  };
+
+  // Handle favorite toggle
+  const handleFavorite = async (product) => {
+    if (!user) {
+      Alert.alert(
+        'Chưa đăng nhập',
+        'Vui lòng đăng nhập để thêm sản phẩm yêu thích',
+        [
+          { text: 'Đóng', style: 'cancel' },
+          { text: 'Đăng nhập', onPress: () => navigation?.navigate?.('Login') }
+        ]
+      );
+      return;
+    }
+
+    try {
+      const response = await wishlistService.toggleWishlist(product.Id);
+      if (response.success) {
+        // Update local state
+        setWishlistIds(prev => {
+          const newSet = new Set(prev);
+          if (response.data?.isInWishlist) {
+            newSet.add(product.Id);
+          } else {
+            newSet.delete(product.Id);
+          }
+          return newSet;
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+      Alert.alert('Lỗi', 'Không thể cập nhật danh sách yêu thích');
+    }
   };
 
   // Navigate to category
@@ -392,6 +449,8 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
             key={product.Id}
             product={product}
             onPress={handleProductPress}
+            onFavorite={handleFavorite}
+            isFavorite={wishlistIds.has(product.Id)}
           />
         ))}
       </View>

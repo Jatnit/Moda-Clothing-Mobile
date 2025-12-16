@@ -109,7 +109,7 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
     {
       icon: 'heart-outline',
       label: 'Sản phẩm yêu thích',
-      onPress: () => console.log('Wishlist'),
+      onPress: () => navigation?.navigate?.('Wishlist'),
       badge: null,
     },
     {
@@ -121,7 +121,7 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
     {
       icon: 'notifications-outline',
       label: 'Thông báo',
-      onPress: () => console.log('Notifications'),
+      onPress: () => navigation?.navigate?.('Notifications'),
       badge: '3',
     },
     {

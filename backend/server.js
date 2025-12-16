@@ -13,6 +13,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const addressRoutes = require('./routes/addressRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const wishlistRoutes = require('./routes/wishlistRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -50,6 +51,7 @@ app.get('/', (req, res) => {
       orders: '/api/orders',
       addresses: '/api/addresses',
       reviews: '/api/reviews',
+      wishlist: '/api/wishlist',
       docs: '/api/docs'
     }
   });
@@ -62,6 +64,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/wishlist', wishlistRoutes);
 
 // API Documentation - Beautiful HTML page
 app.get('/api/docs', (req, res) => {

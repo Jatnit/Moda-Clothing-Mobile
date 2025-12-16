@@ -16,6 +16,7 @@ import CartScreen from './src/screens/CartScreen';
 import NotificationsScreen from './src/screens/NotificationsScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
+import WishlistScreen from './src/screens/WishlistScreen';
 
 // Services
 import authService from './src/services/authService';
@@ -163,6 +164,13 @@ export default function App() {
           <Stack.Screen name="Checkout">
             {(props) => (
               <CheckoutScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* Wishlist Screen */}
+          <Stack.Screen name="Wishlist">
+            {(props) => (
+              <WishlistScreen {...props} />
             )}
           </Stack.Screen>
         </Stack.Navigator>
