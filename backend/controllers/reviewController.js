@@ -167,8 +167,123 @@ const getMyReviews = async (req, res) => {
   }
 };
 
+/**
+ * Lấy sản phẩm chờ đánh giá (đơn hàng đã nhận trong 15 ngày, chưa đánh giá)
+ * GET /api/reviews/pending
+ */
+const getPendingReviews = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Lấy các sản phẩm từ đơn hàng đã hoàn thành trong 15 ngày, chưa được đánh giá
+    // Sử dụng OrderDate vì bảng hiện tại chưa có CompletedAt
+    const [pendingItems] = await pool.execute(`
+      SELECT 
+        od.Id as OrderDetailId,
+        o.Id as OrderId,
+        o.OrderDate,
+        DATEDIFF(DATE_ADD(o.OrderDate, INTERVAL 15 DAY), NOW()) as DaysLeft,
+        ps.Id as SkuId,
+        ps.ProductId,
+        p.Name as ProductName,
+        p.ThumbnailUrl,
+        av_color.Value as ColorName,
+        av_size.Value as SizeName,
+        od.Quantity
+      FROM Orders o
+      JOIN OrderDetails od ON o.Id = od.OrderId
+      JOIN ProductSKUs ps ON od.ProductSkuId = ps.Id
+      JOIN Products p ON ps.ProductId = p.Id
+      LEFT JOIN AttributeValues av_color ON ps.ColorValueId = av_color.Id
+      LEFT JOIN AttributeValues av_size ON ps.SizeValueId = av_size.Id
+      WHERE o.UserId = ? 
+        AND o.Status = 'Hoàn thành'
+        AND o.OrderDate >= DATE_SUB(NOW(), INTERVAL 15 DAY)
+        AND NOT EXISTS (
+          SELECT 1 FROM Reviews r 
+          WHERE r.UserId = ? AND r.ProductId = ps.ProductId AND r.OrderId = o.Id
+        )
+      ORDER BY o.OrderDate DESC
+    `, [userId, userId]);
+
+    // Group by order
+    const groupedByOrder = {};
+    pendingItems.forEach(item => {
+      if (!groupedByOrder[item.OrderId]) {
+        groupedByOrder[item.OrderId] = {
+          orderId: item.OrderId,
+          orderCode: `MO${String(item.OrderId).padStart(6, '0')}`, // Generate order code from ID
+          completedAt: item.OrderDate,
+          daysLeft: item.DaysLeft,
+          items: []
+        };
+      }
+      groupedByOrder[item.OrderId].items.push({
+        orderDetailId: item.OrderDetailId,
+        productId: item.ProductId,
+        productName: item.ProductName,
+        thumbnailUrl: item.ThumbnailUrl,
+        colorName: item.ColorName,
+        sizeName: item.SizeName,
+        quantity: item.Quantity
+      });
+    });
+
+    res.json({
+      success: true,
+      data: {
+        orders: Object.values(groupedByOrder),
+        totalItems: pendingItems.length
+      }
+    });
+  } catch (error) {
+    console.error('Get pending reviews error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server. Vui lòng thử lại.'
+    });
+  }
+};
+
+/**
+ * Lấy số lượng sản phẩm chờ đánh giá
+ * GET /api/reviews/pending/count
+ */
+const getPendingReviewsCount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const [result] = await pool.execute(`
+      SELECT COUNT(DISTINCT od.Id) as count
+      FROM Orders o
+      JOIN OrderDetails od ON o.Id = od.OrderId
+      JOIN ProductSKUs ps ON od.ProductSkuId = ps.Id
+      WHERE o.UserId = ? 
+        AND o.Status = 'Hoàn thành'
+        AND o.OrderDate >= DATE_SUB(NOW(), INTERVAL 15 DAY)
+        AND NOT EXISTS (
+          SELECT 1 FROM Reviews r 
+          WHERE r.UserId = ? AND r.ProductId = ps.ProductId AND r.OrderId = o.Id
+        )
+    `, [userId, userId]);
+
+    res.json({
+      success: true,
+      data: { count: result[0].count }
+    });
+  } catch (error) {
+    console.error('Get pending reviews count error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server. Vui lòng thử lại.'
+    });
+  }
+};
+
 module.exports = {
   getProductReviews,
   createReview,
-  getMyReviews
+  getMyReviews,
+  getPendingReviews,
+  getPendingReviewsCount
 };

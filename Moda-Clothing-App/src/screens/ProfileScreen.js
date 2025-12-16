@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,17 +13,32 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { colors, shadows } from '../theme/colors';
 import authService from '../services/authService';
+import wishlistService from '../services/wishlistService';
 
 const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const [formData, setFormData] = useState({
     fullName: user?.FullName || '',
     phone: user?.PhoneNumber || '',
     email: user?.Email || '',
   });
+
+  // Fetch wishlist count
+  const fetchWishlistCount = async () => {
+    try {
+      const response = await wishlistService.getWishlist();
+      if (response.success) {
+        setWishlistCount(response.data?.total || 0);
+      }
+    } catch (error) {
+      console.log('Wishlist count fetch skipped');
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -32,8 +47,19 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
         phone: user.PhoneNumber || '',
         email: user.Email || '',
       });
+      // Fetch wishlist count when user is logged in
+      fetchWishlistCount();
     }
   }, [user]);
+
+  // Refresh wishlist count when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      if (user) {
+        fetchWishlistCount();
+      }
+    }, [user])
+  );
 
   // Handle go back
   const handleGoBack = () => {
@@ -98,6 +124,12 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
       icon: 'receipt-outline',
       label: 'Đơn hàng của tôi',
       onPress: () => navigation?.navigate?.('Orders'),
+      badge: null,
+    },
+    {
+      icon: 'star-outline',
+      label: 'Đánh giá của tôi',
+      onPress: () => navigation?.navigate?.('Reviews'),
       badge: null,
     },
     {
@@ -238,7 +270,7 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>12</Text>
+            <Text style={styles.statNumber}>{wishlistCount}</Text>
             <Text style={styles.statLabel}>Yêu thích</Text>
           </View>
           <View style={styles.statDivider} />

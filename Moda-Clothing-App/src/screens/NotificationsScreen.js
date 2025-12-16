@@ -1,31 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   FlatList,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { colors, shadows } from '../theme/colors';
+import reviewService from '../services/reviewService';
 
-// Mock notifications data
-const MOCK_NOTIFICATIONS = [
+// Static notifications
+const STATIC_NOTIFICATIONS = [
   {
-    id: 1,
-    type: 'order',
-    title: 'Đơn hàng đã được giao',
-    message: 'Đơn hàng #1234 của bạn đã được giao thành công. Cảm ơn bạn đã mua hàng!',
-    time: '2 giờ trước',
-    read: false,
-    icon: 'checkmark-circle',
-    color: '#10b981',
-  },
-  {
-    id: 2,
+    id: 'promo-1',
     type: 'promo',
     title: 'Flash Sale - Giảm 50%! 🔥',
     message: 'Chỉ hôm nay! Giảm 50% cho tất cả áo thun. Đừng bỏ lỡ!',
@@ -35,17 +27,7 @@ const MOCK_NOTIFICATIONS = [
     color: '#f59e0b',
   },
   {
-    id: 3,
-    type: 'order',
-    title: 'Đơn hàng đang giao',
-    message: 'Đơn hàng #1233 của bạn đang trên đường giao. Dự kiến giao trong hôm nay.',
-    time: '1 ngày trước',
-    read: true,
-    icon: 'bicycle',
-    color: '#8b5cf6',
-  },
-  {
-    id: 4,
+    id: 'system-1',
     type: 'system',
     title: 'Chào mừng đến MODA!',
     message: 'Chào mừng bạn đến với MODA Clothing. Khám phá hàng ngàn sản phẩm thời trang!',
@@ -54,20 +36,75 @@ const MOCK_NOTIFICATIONS = [
     icon: 'gift',
     color: '#3b82f6',
   },
-  {
-    id: 5,
-    type: 'promo',
-    title: 'Ưu đãi sinh nhật 🎂',
-    message: 'Nhân dịp sinh nhật, tặng bạn mã giảm giá 20% cho đơn hàng tiếp theo!',
-    time: '1 tuần trước',
-    read: true,
-    icon: 'gift',
-    color: '#ec4899',
-  },
 ];
 
 const NotificationsScreen = ({ navigation }) => {
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState(STATIC_NOTIFICATIONS);
+  const [pendingReviewsCount, setPendingReviewsCount] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Fetch pending reviews count
+  const fetchPendingReviews = async () => {
+    try {
+      const response = await reviewService.getPendingReviews();
+      if (response.success) {
+        const orders = response.data?.orders || [];
+        const totalItems = orders.reduce((sum, order) => sum + order.items.length, 0);
+        setPendingReviewsCount(totalItems);
+
+        // Create review notifications for each order
+        const reviewNotifications = orders.map(order => ({
+          id: `review-${order.orderId}`,
+          type: 'review',
+          title: 'Đánh giá sản phẩm ⭐',
+          message: `Đơn hàng #${order.orderCode} đã được giao. Hãy đánh giá ${order.items.length} sản phẩm trong ${order.daysLeft} ngày!`,
+          time: formatTimeAgo(order.completedAt),
+          read: false,
+          icon: 'star',
+          color: '#fbbf24',
+          orderId: order.orderId,
+          daysLeft: order.daysLeft,
+        }));
+
+        // Combine with static notifications
+        setNotifications([...reviewNotifications, ...STATIC_NOTIFICATIONS]);
+      }
+    } catch (error) {
+      console.log('Fetch pending reviews skipped:', error.message);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // Format time ago
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+    if (diffDays > 0) return `${diffDays} ngày trước`;
+    if (diffHours > 0) return `${diffHours} giờ trước`;
+    if (diffMinutes > 0) return `${diffMinutes} phút trước`;
+    return 'Vừa xong';
+  };
+
+  useEffect(() => {
+    fetchPendingReviews();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPendingReviews();
+    }, [])
+  );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchPendingReviews();
+  }, []);
 
   // Handle go back
   const handleGoBack = () => {
@@ -101,6 +138,18 @@ const NotificationsScreen = ({ navigation }) => {
     );
   };
 
+  // Handle notification press
+  const handleNotificationPress = (item) => {
+    markAsRead(item.id);
+    
+    if (item.type === 'review') {
+      // Navigate to Reviews screen
+      navigation?.navigate?.('Reviews');
+    } else if (item.type === 'order') {
+      navigation?.navigate?.('Orders');
+    }
+  };
+
   // Count unread
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -111,14 +160,7 @@ const NotificationsScreen = ({ navigation }) => {
         styles.notificationItem,
         !item.read && styles.notificationItemUnread,
       ]}
-      onPress={() => {
-        markAsRead(item.id);
-        // Navigate based on type
-        if (item.type === 'order') {
-          // navigation?.navigate?.('Orders');
-          console.log('Go to orders');
-        }
-      }}
+      onPress={() => handleNotificationPress(item)}
       activeOpacity={0.7}
     >
       <View style={[styles.iconContainer, { backgroundColor: item.color + '20' }]}>
@@ -135,7 +177,15 @@ const NotificationsScreen = ({ navigation }) => {
         <Text style={styles.notificationMessage} numberOfLines={2}>
           {item.message}
         </Text>
-        <Text style={styles.notificationTime}>{item.time}</Text>
+        <View style={styles.notificationFooter}>
+          <Text style={styles.notificationTime}>{item.time}</Text>
+          {item.type === 'review' && item.daysLeft && (
+            <View style={styles.daysLeftBadge}>
+              <Ionicons name="time-outline" size={10} color="#D97706" />
+              <Text style={styles.daysLeftText}>Còn {item.daysLeft} ngày</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       <TouchableOpacity
@@ -192,6 +242,27 @@ const NotificationsScreen = ({ navigation }) => {
         </View>
       )}
 
+      {/* Pending Reviews Banner */}
+      {pendingReviewsCount > 0 && (
+        <TouchableOpacity 
+          style={styles.reviewBanner}
+          onPress={() => navigation?.navigate?.('Reviews')}
+        >
+          <View style={styles.reviewBannerIcon}>
+            <Ionicons name="star" size={20} color="#fbbf24" />
+          </View>
+          <View style={styles.reviewBannerContent}>
+            <Text style={styles.reviewBannerTitle}>
+              Bạn có {pendingReviewsCount} sản phẩm chờ đánh giá
+            </Text>
+            <Text style={styles.reviewBannerSubtitle}>
+              Đánh giá ngay để nhận điểm thưởng!
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+        </TouchableOpacity>
+      )}
+
       {/* Notifications List */}
       <FlatList
         data={notifications}
@@ -200,6 +271,9 @@ const NotificationsScreen = ({ navigation }) => {
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmptyState}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
@@ -258,6 +332,40 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
+  // Review Banner
+  reviewBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    marginHorizontal: 16,
+    marginTop: 12,
+    padding: 14,
+    borderRadius: 12,
+    ...shadows.small,
+  },
+  reviewBannerIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FDE68A',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  reviewBannerContent: {
+    flex: 1,
+  },
+  reviewBannerTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#92400E',
+    marginBottom: 2,
+  },
+  reviewBannerSubtitle: {
+    fontSize: 12,
+    color: '#B45309',
+  },
+
   // List
   listContainer: {
     padding: 16,
@@ -312,9 +420,28 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginBottom: 6,
   },
+  notificationFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   notificationTime: {
     fontSize: 11,
     color: colors.textLight,
+  },
+  daysLeftBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  daysLeftText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#D97706',
   },
   deleteButton: {
     padding: 4,

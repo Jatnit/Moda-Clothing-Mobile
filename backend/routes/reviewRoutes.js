@@ -5,7 +5,9 @@ const { authenticate } = require('../middleware/auth');
 const {
   getProductReviews,
   createReview,
-  getMyReviews
+  getMyReviews,
+  getPendingReviews,
+  getPendingReviewsCount
 } = require('../controllers/reviewController');
 
 // Middleware validate
@@ -49,7 +51,14 @@ router.get('/product/:productId', getProductReviews);
 // GET /api/reviews/my - Lấy reviews của user (authenticated)
 router.get('/my', authenticate, getMyReviews);
 
+// GET /api/reviews/pending - Lấy sản phẩm chờ đánh giá (authenticated)
+router.get('/pending', authenticate, getPendingReviews);
+
+// GET /api/reviews/pending/count - Lấy số lượng sản phẩm chờ đánh giá
+router.get('/pending/count', authenticate, getPendingReviewsCount);
+
 // POST /api/reviews - Tạo review (authenticated)
 router.post('/', authenticate, createReviewValidation, validate, createReview);
 
 module.exports = router;
+

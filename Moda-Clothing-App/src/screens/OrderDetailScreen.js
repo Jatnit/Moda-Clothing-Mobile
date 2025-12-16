@@ -35,17 +35,21 @@ const TIMELINE_STEPS = [
 const OrderDetailScreen = ({ navigation, route }) => {
   const { orderId, order: initialOrder } = route?.params || {};
   const [order, setOrder] = useState(initialOrder || null);
-  const [loading, setLoading] = useState(!initialOrder);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!initialOrder && orderId) {
-      fetchOrderDetail();
+    const id = orderId || initialOrder?.Id;
+    if (id) {
+      fetchOrderDetail(id);
+    } else {
+      setLoading(false);
     }
-  }, [orderId]);
+  }, [orderId, initialOrder?.Id]);
 
-  const fetchOrderDetail = async () => {
+  const fetchOrderDetail = async (id) => {
     try {
-      const response = await orderService.getOrderDetail(orderId);
+      const response = await orderService.getOrderDetail(id);
+      console.log('📦 Order detail response:', JSON.stringify(response, null, 2).slice(0, 500));
       if (response.success) {
         setOrder(response.data);
       }
@@ -278,9 +282,17 @@ const OrderDetailScreen = ({ navigation, route }) => {
                   index < order.OrderDetails.length - 1 && styles.orderItemBorder
                 ]}
               >
-                <View style={styles.itemImagePlaceholder}>
-                  <Ionicons name="shirt-outline" size={28} color={colors.textLight} />
-                </View>
+                {item.ThumbnailUrl ? (
+                  <Image 
+                    source={{ uri: item.ThumbnailUrl }} 
+                    style={styles.itemImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={styles.itemImagePlaceholder}>
+                    <Ionicons name="shirt-outline" size={28} color={colors.textLight} />
+                  </View>
+                )}
                 <View style={styles.itemInfo}>
                   <Text style={styles.itemName} numberOfLines={2}>
                     {item.ProductName || 'Sản phẩm'}
@@ -564,6 +576,12 @@ const styles = StyleSheet.create({
   orderItemBorder: {
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+  },
+  itemImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    backgroundColor: colors.gray100,
   },
   itemImagePlaceholder: {
     width: 70,

@@ -167,8 +167,7 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
 
   // Navigate to category
   const handleCategoryPress = (category) => {
-    // navigation.navigate('Category', { categorySlug: category.Slug });
-    console.log('Category pressed:', category.Name);
+    navigation?.navigate?.('CategoryProducts', { category });
   };
 
   // Handle account button press
@@ -400,7 +399,10 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
       </View>
 
       {/* Search bar */}
-      <TouchableOpacity style={styles.searchBar}>
+      <TouchableOpacity 
+        style={styles.searchBar}
+        onPress={() => navigation?.navigate?.('Search')}
+      >
         <Ionicons name="search-outline" size={20} color={colors.textLight} />
         <Text style={styles.searchPlaceholder}>Tìm kiếm sản phẩm...</Text>
         <View style={styles.searchFilter}>

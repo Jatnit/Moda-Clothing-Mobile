@@ -109,15 +109,13 @@ const LoginScreen = ({ navigation, onLoginSuccess }) => {
             </View>
             <Text style={styles.logoText}>MODA</Text>
             <Text style={styles.logoSubtext}>CLOTHING</Text>
-            <Text style={styles.welcomeText}>Chào mừng trở lại! 👋</Text>
-            <Text style={styles.subtitleText}>Đăng nhập để tiếp tục mua sắm</Text>
           </View>
 
           {/* Form */}
           <View style={styles.form}>
             {/* Email Input */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email / Username</Text>
+              <Text style={styles.label}>Email</Text>
               <View style={[styles.inputContainer, errors.email && styles.inputError]}>
                 <Ionicons name="mail-outline" size={20} color={colors.textLight} />
                 <TextInput

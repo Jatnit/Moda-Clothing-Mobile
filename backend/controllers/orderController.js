@@ -95,7 +95,7 @@ const getOrderDetail = async (req, res) => {
       LEFT JOIN Products p ON ps.ProductId = p.Id
       WHERE od.OrderId = ?
     `, [order.Id]);
-    order.items = items;
+    order.OrderDetails = items;
 
     res.json({
       success: true,
