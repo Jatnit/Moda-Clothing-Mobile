@@ -43,6 +43,15 @@ const LoginScreen = ({ navigation, onLoginSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle go back to Home
+  const handleGoBack = () => {
+    if (navigation?.canGoBack?.()) {
+      navigation.goBack();
+    } else {
+      navigation?.navigate?.('Home');
+    }
+  };
+
   // Handle login
   const handleLogin = async () => {
     if (!validateForm()) return;
@@ -52,9 +61,10 @@ const LoginScreen = ({ navigation, onLoginSuccess }) => {
       const response = await authService.login(email.trim(), password);
       
       if (response.success) {
-        Alert.alert('🎉 Thành công', 'Đăng nhập thành công!', [
-          { text: 'OK', onPress: () => onLoginSuccess?.(response.data.user) }
-        ]);
+        // Cập nhật user state và quay về trang chính
+        onLoginSuccess?.(response.data.user);
+        // Navigate back to Home
+        handleGoBack();
       } else {
         Alert.alert('❌ Lỗi', response.message || 'Đăng nhập thất bại');
       }
@@ -82,6 +92,14 @@ const LoginScreen = ({ navigation, onLoginSuccess }) => {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
+          {/* Back Button */}
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={handleGoBack}
+          >
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          </TouchableOpacity>
+
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
@@ -216,10 +234,22 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   
+  // Back Button
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: colors.gray100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    alignSelf: 'flex-start',
+  },
+
   // Header
   header: {
     alignItems: 'center',
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 30,
   },
   logoContainer: {

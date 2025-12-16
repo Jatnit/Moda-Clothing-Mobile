@@ -6,12 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  TextInput,
-  FlatList,
   Dimensions,
   RefreshControl,
   ActivityIndicator,
   StatusBar,
+  Modal,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -49,13 +49,14 @@ const BANNERS = [
   },
 ];
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, user, onLogout }) => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
   const bannerRef = useRef(null);
 
   // Fetch data
@@ -104,8 +105,7 @@ const HomeScreen = ({ navigation }) => {
 
   // Navigate to product detail
   const handleProductPress = (product) => {
-    // navigation.navigate('ProductDetail', { productId: product.Id });
-    console.log('Product pressed:', product.Name);
+    navigation?.navigate?.('ProductDetail', { productId: product.Id, product });
   };
 
   // Navigate to category
@@ -113,6 +113,122 @@ const HomeScreen = ({ navigation }) => {
     // navigation.navigate('Category', { categorySlug: category.Slug });
     console.log('Category pressed:', category.Name);
   };
+
+  // Handle account button press
+  const handleAccountPress = () => {
+    if (user) {
+      // Đã đăng nhập - hiển thị menu
+      setShowAccountMenu(true);
+    } else {
+      // Chưa đăng nhập - chuyển đến trang login
+      navigation?.navigate?.('Login');
+    }
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setShowAccountMenu(false);
+    onLogout?.();
+  };
+
+  // Handle view profile
+  const handleViewProfile = () => {
+    setShowAccountMenu(false);
+    navigation?.navigate?.('Profile');
+  };
+
+  // Render Account Menu Modal
+  const renderAccountMenu = () => (
+    <Modal
+      visible={showAccountMenu}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={() => setShowAccountMenu(false)}
+    >
+      <Pressable 
+        style={styles.modalOverlay} 
+        onPress={() => setShowAccountMenu(false)}
+      >
+        <View style={styles.accountMenuContainer}>
+          <View style={styles.accountMenu}>
+            {/* User Info */}
+            <View style={styles.menuUserInfo}>
+              {user?.AvatarUrl ? (
+                <Image 
+                  source={{ uri: user.AvatarUrl }} 
+                  style={styles.menuAvatar}
+                />
+              ) : (
+                <View style={styles.menuAvatarPlaceholder}>
+                  <Ionicons name="person" size={24} color={colors.white} />
+                </View>
+              )}
+              <View style={styles.menuUserDetails}>
+                <Text style={styles.menuUserName} numberOfLines={1}>
+                  {user?.FullName || user?.Username || 'Người dùng'}
+                </Text>
+                <Text style={styles.menuUserEmail} numberOfLines={1}>
+                  {user?.Email}
+                </Text>
+              </View>
+            </View>
+
+            {/* Divider */}
+            <View style={styles.menuDivider} />
+
+            {/* Menu Items */}
+            <TouchableOpacity 
+              style={styles.menuItem}
+              onPress={handleViewProfile}
+            >
+              <Ionicons name="person-outline" size={20} color={colors.textPrimary} />
+              <Text style={styles.menuItemText}>Thông tin tài khoản</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textLight} />
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.menuItem}
+              onPress={() => {
+                setShowAccountMenu(false);
+                navigation?.navigate?.('Orders');
+              }}
+            >
+              <Ionicons name="receipt-outline" size={20} color={colors.textPrimary} />
+              <Text style={styles.menuItemText}>Đơn hàng của tôi</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textLight} />
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.menuItem}
+              onPress={() => {
+                setShowAccountMenu(false);
+                // navigation?.navigate?.('Addresses');
+                console.log('View addresses');
+              }}
+            >
+              <Ionicons name="location-outline" size={20} color={colors.textPrimary} />
+              <Text style={styles.menuItemText}>Địa chỉ giao hàng</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textLight} />
+            </TouchableOpacity>
+
+            {/* Divider */}
+            <View style={styles.menuDivider} />
+
+            {/* Logout */}
+            <TouchableOpacity 
+              style={[styles.menuItem, styles.menuItemLogout]}
+              onPress={handleLogout}
+            >
+              <Ionicons name="log-out-outline" size={20} color={colors.error} />
+              <Text style={[styles.menuItemText, styles.menuItemTextLogout]}>
+                Đăng xuất
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Pressable>
+    </Modal>
+  );
 
   // Render banner
   const renderBanner = () => (
@@ -177,17 +293,51 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Actions */}
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.headerButton}>
+          {/* Notifications */}
+          <TouchableOpacity 
+            style={styles.headerButton}
+            onPress={() => navigation?.navigate?.('Notifications')}
+          >
             <Ionicons name="notifications-outline" size={24} color={colors.textPrimary} />
             <View style={styles.badge}>
               <Text style={styles.badgeText}>2</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton}>
+
+          {/* Cart */}
+          <TouchableOpacity 
+            style={styles.headerButton}
+            onPress={() => navigation?.navigate?.('Cart')}
+          >
             <Ionicons name="cart-outline" size={24} color={colors.textPrimary} />
             <View style={styles.badge}>
               <Text style={styles.badgeText}>3</Text>
             </View>
+          </TouchableOpacity>
+
+          {/* Account Button */}
+          <TouchableOpacity 
+            style={[styles.headerButton, user && styles.headerButtonAccount]}
+            onPress={handleAccountPress}
+          >
+            {user ? (
+              // Đã đăng nhập - hiển thị avatar
+              user.AvatarUrl ? (
+                <Image 
+                  source={{ uri: user.AvatarUrl }} 
+                  style={styles.headerAvatar}
+                />
+              ) : (
+                <View style={styles.headerAvatarPlaceholder}>
+                  <Text style={styles.headerAvatarText}>
+                    {(user.FullName || user.Username || 'U').charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              )
+            ) : (
+              // Chưa đăng nhập - hiển thị icon
+              <Ionicons name="person-outline" size={24} color={colors.textPrimary} />
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -262,6 +412,9 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      
+      {/* Account Menu Modal */}
+      {renderAccountMenu()}
       
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -381,6 +534,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
+  headerButtonAccount: {
+    backgroundColor: colors.primary,
+    overflow: 'hidden',
+  },
+  headerAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+  },
+  headerAvatarPlaceholder: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerAvatarText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.white,
+  },
   badge: {
     position: 'absolute',
     top: 6,
@@ -419,6 +594,81 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     ...shadows.small,
+  },
+
+  // Account Menu Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+  },
+  accountMenuContainer: {
+    marginTop: 100,
+    marginRight: 16,
+  },
+  accountMenu: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    width: 280,
+    paddingVertical: 8,
+    ...shadows.large,
+  },
+  menuUserInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 12,
+  },
+  menuAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  menuAvatarPlaceholder: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuUserDetails: {
+    flex: 1,
+  },
+  menuUserName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    marginBottom: 2,
+  },
+  menuUserEmail: {
+    fontSize: 13,
+    color: colors.textSecondary,
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  menuItemText: {
+    flex: 1,
+    fontSize: 15,
+    color: colors.textPrimary,
+  },
+  menuItemLogout: {
+    marginTop: 4,
+  },
+  menuItemTextLogout: {
+    color: colors.error,
   },
 
   // Banner

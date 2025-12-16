@@ -78,6 +78,15 @@ const RegisterScreen = ({ navigation, onRegisterSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle go back to Home
+  const handleGoBack = () => {
+    if (navigation?.canGoBack?.()) {
+      navigation.goBack();
+    } else {
+      navigation?.navigate?.('Home');
+    }
+  };
+
   // Handle register
   const handleRegister = async () => {
     if (!validateForm()) return;
@@ -93,11 +102,10 @@ const RegisterScreen = ({ navigation, onRegisterSuccess }) => {
       });
       
       if (response.success) {
-        Alert.alert(
-          '🎉 Thành công', 
-          'Đăng ký tài khoản thành công!',
-          [{ text: 'OK', onPress: () => onRegisterSuccess?.(response.data.user) }]
-        );
+        // Cập nhật user state và quay về trang chính
+        onRegisterSuccess?.(response.data.user);
+        // Navigate back to Home
+        navigation?.navigate?.('Home');
       } else {
         Alert.alert('❌ Lỗi', response.message || 'Đăng ký thất bại');
       }
@@ -164,7 +172,7 @@ const RegisterScreen = ({ navigation, onRegisterSuccess }) => {
           <View style={styles.header}>
             <TouchableOpacity 
               style={styles.backButton}
-              onPress={() => navigation?.goBack?.()}
+              onPress={handleGoBack}
             >
               <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>

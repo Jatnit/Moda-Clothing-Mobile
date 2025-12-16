@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ⚠️ QUAN TRỌNG: Thay đổi IP này thành IP máy tính của bạn
 // Tìm IP bằng lệnh: ipconfig getifaddr en0
-const LOCAL_IP = '192.168.1.19';
+const LOCAL_IP = '192.168.1.27';
 
 // Base URL cho API
 const getBaseUrl = () => {

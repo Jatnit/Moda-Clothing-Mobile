@@ -53,3 +53,5 @@ export const categoryService = {
     return response;
   },
 };
+
+export default productService;

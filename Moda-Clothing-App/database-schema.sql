@@ -1,0 +1,12005 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: localhost
+-- Thời gian đã tạo: Th12 16, 2025 lúc 07:19 AM
+-- Phiên bản máy phục vụ: 10.4.28-MariaDB
+-- Phiên bản PHP: 8.2.4
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+
+START TRANSACTION;
+
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */
+;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */
+;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */
+;
+/*!40101 SET NAMES utf8mb4 */
+;
+
+--
+-- Cơ sở dữ liệu: `jwt`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Attributes`
+--
+
+CREATE TABLE `Attributes` (
+    `Id` int(11) NOT NULL,
+    `Name` varchar(50) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `Attributes`
+--
+
+INSERT INTO
+    `Attributes` (`Id`, `Name`)
+VALUES (1, 'Màu sắc'),
+    (2, 'Size');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `AttributeValues`
+--
+
+CREATE TABLE `AttributeValues` (
+    `Id` int(11) NOT NULL,
+    `AttributeId` int(11) NOT NULL,
+    `Value` varchar(50) NOT NULL,
+    `Code` varchar(50) DEFAULT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `AttributeValues`
+--
+
+INSERT INTO
+    `AttributeValues` (
+        `Id`,
+        `AttributeId`,
+        `Value`,
+        `Code`
+    )
+VALUES (1, 1, 'Trắng', '#FFFFFF'),
+    (2, 1, 'Đen', '#000000'),
+    (3, 1, 'Xanh Navy', '#000080'),
+    (4, 1, 'Xám', '#808080'),
+    (5, 1, 'Đỏ', '#FF0000'),
+    (6, 2, 'S', NULL),
+    (7, 2, 'M', NULL),
+    (8, 2, 'L', NULL),
+    (9, 2, 'XL', NULL),
+    (10, 2, 'XXL', NULL),
+    (11, 1, 'Vàng', '#FFD700'),
+    (12, 1, 'Nâu', '#8B4513'),
+    (13, 1, 'Tím', '#800080'),
+    (14, 1, 'Hồng', '#FFC0CB'),
+    (15, 1, 'Xanh Lá', '#228B22');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `AuditLogs`
+--
+
+CREATE TABLE `AuditLogs` (
+    `Id` int(11) NOT NULL,
+    `UserId` int(11) DEFAULT NULL,
+    `ActionType` enum(
+        'LOGIN',
+        'LOGOUT',
+        'CREATE',
+        'UPDATE',
+        'DELETE',
+        'VIEW',
+        'EXPORT'
+    ) NOT NULL,
+    `EntityTable` varchar(100) DEFAULT NULL,
+    `EntityId` int(11) DEFAULT NULL,
+    `OldValues` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`OldValues`)),
+    `NewValues` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`NewValues`)),
+    `ChangedFields` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`ChangedFields`)),
+    `IpAddress` varchar(45) DEFAULT NULL,
+    `UserAgent` text DEFAULT NULL,
+    `RequestMethod` varchar(10) DEFAULT NULL,
+    `RequestUrl` text DEFAULT NULL,
+    `Description` text DEFAULT NULL,
+    `Metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`Metadata`)),
+    `CreatedAt` datetime(3) DEFAULT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `AuditLogs`
+--
+
+INSERT INTO
+    `AuditLogs` (
+        `Id`,
+        `UserId`,
+        `ActionType`,
+        `EntityTable`,
+        `EntityId`,
+        `OldValues`,
+        `NewValues`,
+        `ChangedFields`,
+        `IpAddress`,
+        `UserAgent`,
+        `RequestMethod`,
+        `RequestUrl`,
+        `Description`,
+        `Metadata`,
+        `CreatedAt`
+    )
+VALUES (
+        1,
+        1,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 07:31:41.174'
+    ),
+    (
+        2,
+        1,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 07:32:19.927'
+    ),
+    (
+        3,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 07:32:37.571'
+    ),
+    (
+        4,
+        1,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:25:29.172'
+    ),
+    (
+        5,
+        1,
+        'CREATE',
+        'users',
+        103,
+        NULL,
+        '\"{\\\"email\\\":\\\"test@moda.com\\\",\\\"username\\\":\\\"Test\\\",\\\"roleId\\\":\\\"3\\\"}\"',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/create-user',
+        'Tạo mới users',
+        NULL,
+        '2025-12-06 08:25:47.771'
+    ),
+    (
+        6,
+        1,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 08:25:53.427'
+    ),
+    (
+        7,
+        103,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:26:03.109'
+    ),
+    (
+        8,
+        103,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 08:26:07.273'
+    ),
+    (
+        9,
+        1,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:26:13.696'
+    ),
+    (
+        10,
+        1,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 08:26:16.603'
+    ),
+    (
+        11,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:26:22.671'
+    ),
+    (
+        12,
+        100,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 08:26:32.700'
+    ),
+    (
+        13,
+        1,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:26:37.833'
+    ),
+    (
+        14,
+        1,
+        'UPDATE',
+        'users',
+        103,
+        '\"{\\\"email\\\":\\\"test@moda.com\\\",\\\"username\\\":\\\"Test\\\",\\\"roleId\\\":3}\"',
+        '\"{\\\"email\\\":\\\"test@gmail.com\\\",\\\"username\\\":\\\"Test 2\\\",\\\"roleId\\\":\\\"3\\\"}\"',
+        '\"[\\\"email\\\",\\\"username\\\",\\\"roleId\\\"]\"',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/edit-user',
+        'Cập nhật users: email: \"test@moda.com\" → \"test@gmail.com\", username: \"Test\" → \"Test 2\", roleId: \"3\" → \"3\"',
+        NULL,
+        '2025-12-06 08:26:55.113'
+    ),
+    (
+        15,
+        1,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 08:27:01.537'
+    ),
+    (
+        16,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:27:09.590'
+    ),
+    (
+        17,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:38:36.910'
+    ),
+    (
+        18,
+        100,
+        'UPDATE',
+        'users',
+        103,
+        '\"{\\\"username\\\":\\\"Test 2\\\",\\\"roleId\\\":3}\"',
+        '\"{\\\"username\\\":\\\"Test 3\\\",\\\"roleId\\\":\\\"3\\\"}\"',
+        '\"[\\\"username\\\",\\\"roleId\\\"]\"',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/edit-user',
+        'Cập nhật users: username: \"Test 2\" → \"Test 3\", roleId: \"3\" → \"3\"',
+        NULL,
+        '2025-12-06 08:39:20.425'
+    ),
+    (
+        19,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:41:14.876'
+    ),
+    (
+        20,
+        100,
+        'UPDATE',
+        'users',
+        103,
+        '{\"username\":\"Test 3\",\"roleId\":3}',
+        '{\"username\":\"Test 4\",\"roleId\":\"2\"}',
+        '[\"username\",\"roleId\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/edit-user',
+        'Cập nhật users: username: \"Test 3\" → \"Test 4\", roleId: \"3\" → \"2\"',
+        NULL,
+        '2025-12-06 08:42:24.636'
+    ),
+    (
+        21,
+        100,
+        'DELETE',
+        'users',
+        103,
+        '{\"email\":\"test@gmail.com\",\"username\":\"Test 4\"}',
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/delete-user/103',
+        'Xóa users',
+        NULL,
+        '2025-12-06 08:42:46.700'
+    ),
+    (
+        22,
+        100,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 08:51:40.116'
+    ),
+    (
+        23,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:51:49.655'
+    ),
+    (
+        24,
+        100,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-06 08:58:34.040'
+    ),
+    (
+        25,
+        2,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 08:58:41.760'
+    ),
+    (
+        26,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 13:37:09.868'
+    ),
+    (
+        27,
+        100,
+        'CREATE',
+        'categories',
+        7,
+        NULL,
+        '{\"name\":\"Áo Tay Dài\",\"slug\":\"ao-tay-dai\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/categories',
+        'Tạo mới categories',
+        NULL,
+        '2025-12-06 13:41:11.479'
+    ),
+    (
+        28,
+        100,
+        'CREATE',
+        'categories',
+        8,
+        NULL,
+        '{\"name\":\"Cotton\",\"slug\":\"cotton\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/categories',
+        'Tạo mới categories',
+        NULL,
+        '2025-12-06 13:42:03.769'
+    ),
+    (
+        29,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 14:07:09.989'
+    ),
+    (
+        30,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 CrKey/1.54.250320',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 14:42:11.777'
+    ),
+    (
+        31,
+        1,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 CrKey/1.54.250320',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 14:49:17.293'
+    ),
+    (
+        32,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 14:54:08.773'
+    ),
+    (
+        33,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 15:06:23.703'
+    ),
+    (
+        34,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-06 15:21:14.247'
+    ),
+    (
+        35,
+        100,
+        'UPDATE',
+        'products',
+        33,
+        '{\"basePrice\":390000}',
+        '{\"basePrice\":\"390000.00\"}',
+        '[\"basePrice\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/33',
+        'Cập nhật products: basePrice: \"390000\" → \"390000.00\"',
+        NULL,
+        '2025-12-06 15:21:43.585'
+    ),
+    (
+        36,
+        100,
+        'CREATE',
+        'products',
+        34,
+        NULL,
+        '{\"name\":\"AIRism Cotton Áo Thun 3\",\"slug\":\"airism-cotton-ao-thun-3\",\"basePrice\":\"390000\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products',
+        'Tạo mới products',
+        NULL,
+        '2025-12-06 15:23:01.631'
+    ),
+    (
+        37,
+        100,
+        'UPDATE',
+        'products',
+        34,
+        '{\"basePrice\":390000}',
+        '{\"basePrice\":\"390000.00\"}',
+        '[\"basePrice\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/34',
+        'Cập nhật products: basePrice: \"390000\" → \"390000.00\"',
+        NULL,
+        '2025-12-06 15:23:32.801'
+    ),
+    (
+        38,
+        100,
+        'UPDATE',
+        'products',
+        34,
+        '{\"basePrice\":390000}',
+        '{\"basePrice\":\"390000.00\"}',
+        '[\"basePrice\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/34',
+        'Cập nhật products: basePrice: \"390000\" → \"390000.00\"',
+        NULL,
+        '2025-12-06 15:23:44.514'
+    ),
+    (
+        39,
+        100,
+        'DELETE',
+        'products',
+        34,
+        '{\"name\":\"AIRism Cotton Áo Thun 3\",\"slug\":\"airism-cotton-ao-thun-3\"}',
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/34/delete',
+        'Xóa products',
+        NULL,
+        '2025-12-06 15:24:53.871'
+    ),
+    (
+        40,
+        100,
+        'DELETE',
+        'products',
+        33,
+        '{\"name\":\"AIRism Cotton Áo Thun 2\",\"slug\":\"airism-cotton-ao-thun-2\"}',
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/33/delete',
+        'Xóa products',
+        NULL,
+        '2025-12-06 15:24:59.321'
+    ),
+    (
+        41,
+        100,
+        'UPDATE',
+        'products',
+        31,
+        '{\"basePrice\":390000}',
+        '{\"basePrice\":\"390000.00\"}',
+        '[\"basePrice\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/31',
+        'Cập nhật products: basePrice: \"390000\" → \"390000.00\"',
+        NULL,
+        '2025-12-06 15:25:44.095'
+    ),
+    (
+        42,
+        100,
+        'CREATE',
+        'products',
+        35,
+        NULL,
+        '{\"name\":\"AIRism Cotton Áo Thun Dáng Rộng | Tay Lỡ\",\"slug\":\"airismcotton-ao-thundang-rong-tay-lo\",\"basePrice\":\"350000\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products',
+        'Tạo mới products',
+        NULL,
+        '2025-12-06 15:30:33.216'
+    ),
+    (
+        43,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 06:24:23.060'
+    ),
+    (
+        44,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 06:26:03.341'
+    ),
+    (
+        45,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 06:27:27.128'
+    ),
+    (
+        46,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 08:46:31.101'
+    ),
+    (
+        47,
+        100,
+        'UPDATE',
+        'products',
+        31,
+        '{\"basePrice\":390000}',
+        '{\"basePrice\":\"390000.00\"}',
+        '[\"basePrice\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/31',
+        'Cập nhật products: basePrice: \"390000\" → \"390000.00\"',
+        NULL,
+        '2025-12-07 08:47:50.779'
+    ),
+    (
+        48,
+        100,
+        'UPDATE',
+        'products',
+        35,
+        '{\"basePrice\":350000}',
+        '{\"basePrice\":\"350000.00\"}',
+        '[\"basePrice\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products/35',
+        'Cập nhật products: basePrice: \"350000\" → \"350000.00\"',
+        NULL,
+        '2025-12-07 08:48:13.116'
+    ),
+    (
+        49,
+        100,
+        'CREATE',
+        'products',
+        36,
+        NULL,
+        '{\"name\":\"AIRism Cotton Áo Thun ngắn tay\",\"slug\":\"airism-cotton-ao-thun-ngan-tay\",\"basePrice\":\"245000\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products',
+        'Tạo mới products',
+        NULL,
+        '2025-12-07 08:54:31.804'
+    ),
+    (
+        50,
+        100,
+        'CREATE',
+        'products',
+        37,
+        NULL,
+        '{\"name\":\"Áo Giả Lông Cừu Đan Len Mềm Cổ Tròn\",\"slug\":\"ao-gia-long-cuu-dan-len-mem-co-tron\",\"basePrice\":\"394998\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products',
+        'Tạo mới products',
+        NULL,
+        '2025-12-07 09:00:08.965'
+    ),
+    (
+        51,
+        100,
+        'CREATE',
+        'products',
+        38,
+        NULL,
+        '{\"name\":\"DRY-EX Áo Thun Hoạ Tiết 1\",\"slug\":\"dry-ex-ao-thun-hoa-tiet-1\",\"basePrice\":\"290000\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products',
+        'Tạo mới products',
+        NULL,
+        '2025-12-07 09:07:36.206'
+    ),
+    (
+        52,
+        100,
+        'CREATE',
+        'products',
+        39,
+        NULL,
+        '{\"name\":\"DRY-EX Áo Thun Hoạ Tiết 2\",\"slug\":\"dry-ex-ao-thun-hoa-tiet-2\",\"basePrice\":\"290000\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/products',
+        'Tạo mới products',
+        NULL,
+        '2025-12-07 09:11:37.736'
+    ),
+    (
+        53,
+        100,
+        'CREATE',
+        'categories',
+        9,
+        NULL,
+        '{\"name\":\"Quần\",\"slug\":\"quan\"}',
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/admin/categories',
+        'Tạo mới categories',
+        NULL,
+        '2025-12-07 09:24:13.952'
+    ),
+    (
+        54,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:32:25.962'
+    ),
+    (
+        55,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:35:22.796'
+    ),
+    (
+        56,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:38:17.268'
+    ),
+    (
+        57,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:41:24.986'
+    ),
+    (
+        58,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:46:23.930'
+    ),
+    (
+        59,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:47:10.658'
+    ),
+    (
+        60,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:50:28.017'
+    ),
+    (
+        61,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 09:51:12.517'
+    ),
+    (
+        62,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-07 12:06:40.453'
+    ),
+    (
+        63,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-09 11:20:26.523'
+    ),
+    (
+        64,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-10 14:33:37.518'
+    ),
+    (
+        65,
+        1,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-10 14:38:52.745'
+    ),
+    (
+        66,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-10 14:40:43.809'
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Categories`
+--
+
+CREATE TABLE `Categories` (
+    `Id` int(11) NOT NULL,
+    `Name` varchar(100) NOT NULL,
+    `Slug` varchar(100) DEFAULT NULL,
+    `ParentId` int(11) DEFAULT NULL,
+    `ImageUrl` varchar(255) DEFAULT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `Categories`
+--
+
+INSERT INTO
+    `Categories` (
+        `Id`,
+        `Name`,
+        `Slug`,
+        `ParentId`,
+        `ImageUrl`
+    )
+VALUES (1, 'Nam', 'nam', NULL, NULL),
+    (2, 'Nữ', 'nu', NULL, NULL),
+    (
+        3,
+        'Áo Thun',
+        'ao-thun',
+        NULL,
+        NULL
+    ),
+    (
+        4,
+        'Polo',
+        'ao-polo',
+        NULL,
+        NULL
+    ),
+    (
+        5,
+        'Sơ Mi',
+        'so-mi',
+        NULL,
+        NULL
+    ),
+    (
+        6,
+        'Áo Khoác',
+        'ao-khoac',
+        NULL,
+        NULL
+    ),
+    (
+        7,
+        'Áo Tay Dài',
+        'ao-tay-dai',
+        NULL,
+        NULL
+    ),
+    (
+        8,
+        'Cotton',
+        'cotton',
+        NULL,
+        NULL
+    ),
+    (9, 'Quần', 'quan', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `OrderDetails`
+--
+
+CREATE TABLE `OrderDetails` (
+    `Id` int(11) NOT NULL,
+    `OrderId` int(11) NOT NULL,
+    `ProductSkuId` int(11) DEFAULT NULL,
+    `ProductName` varchar(255) DEFAULT NULL,
+    `Color` varchar(50) DEFAULT NULL,
+    `Size` varchar(50) DEFAULT NULL,
+    `Quantity` int(11) NOT NULL,
+    `UnitPrice` decimal(18, 2) NOT NULL,
+    `TotalPrice` decimal(18, 2) GENERATED ALWAYS AS (`Quantity` * `UnitPrice`) STORED
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `OrderDetails`
+--
+
+INSERT INTO
+    `OrderDetails` (
+        `Id`,
+        `OrderId`,
+        `ProductSkuId`,
+        `ProductName`,
+        `Color`,
+        `Size`,
+        `Quantity`,
+        `UnitPrice`
+    )
+VALUES (
+        1,
+        1,
+        10,
+        'Áo Thun Basic',
+        'Trắng',
+        'XL',
+        3,
+        150000.00
+    ),
+    (
+        2,
+        2,
+        55,
+        'Áo Thun Oversize',
+        'Đen',
+        'L',
+        1,
+        300000.00
+    ),
+    (
+        3,
+        3,
+        100,
+        'Áo Thun Cổ Tim',
+        'Xám',
+        'S',
+        1,
+        150000.00
+    ),
+    (
+        4,
+        4,
+        300,
+        'Polo Pique',
+        'Xanh Navy',
+        'XL',
+        2,
+        250000.00
+    ),
+    (
+        5,
+        5,
+        450,
+        'Sơ Mi Oxford',
+        'Trắng',
+        'M',
+        1,
+        350000.00
+    ),
+    (
+        6,
+        6,
+        650,
+        'Áo Khoác Gió',
+        'Đen',
+        'L',
+        1,
+        250000.00
+    ),
+    (
+        7,
+        7,
+        45,
+        'Áo Thun Graphic',
+        'Trắng',
+        'XXL',
+        1,
+        180000.00
+    ),
+    (
+        8,
+        8,
+        700,
+        'Áo Khoác Jeans',
+        'Xanh',
+        'M',
+        1,
+        600000.00
+    ),
+    (
+        9,
+        9,
+        350,
+        'Polo Zip',
+        'Đen',
+        'L',
+        4,
+        300000.00
+    ),
+    (
+        10,
+        10,
+        5,
+        'Áo Thun Basic',
+        'Trắng',
+        'S',
+        1,
+        150000.00
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Orders`
+--
+
+CREATE TABLE `Orders` (
+    `Id` int(11) NOT NULL,
+    `UserId` int(11) DEFAULT NULL,
+    `OrderDate` timestamp NOT NULL DEFAULT current_timestamp(),
+    `TotalAmount` decimal(18, 2) NOT NULL,
+    `Status` enum(
+        'Mới',
+        'Đang xử lý',
+        'Đang giao',
+        'Hoàn thành',
+        'Đã hủy'
+    ) DEFAULT 'Mới',
+    `PaymentMethod` enum(
+        'COD',
+        'Banking',
+        'VNPAY',
+        'MOMO'
+    ) DEFAULT 'COD',
+    `IsPaid` tinyint(1) DEFAULT 0,
+    `ShippingName` varchar(100) DEFAULT NULL,
+    `ShippingPhone` varchar(20) DEFAULT NULL,
+    `ShippingAddress` text DEFAULT NULL,
+    `Note` text DEFAULT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `Orders`
+--
+
+INSERT INTO
+    `Orders` (
+        `Id`,
+        `UserId`,
+        `OrderDate`,
+        `TotalAmount`,
+        `Status`,
+        `PaymentMethod`,
+        `IsPaid`,
+        `ShippingName`,
+        `ShippingPhone`,
+        `ShippingAddress`,
+        `Note`
+    )
+VALUES (
+        1,
+        2,
+        '2025-12-03 05:43:01',
+        450000.00,
+        'Hoàn thành',
+        'Banking',
+        1,
+        'Kim Phụng',
+        '0909123456',
+        NULL,
+        NULL
+    ),
+    (
+        2,
+        3,
+        '2025-12-03 05:43:01',
+        300000.00,
+        'Đang xử lý',
+        'COD',
+        0,
+        'Tú Lâm',
+        '0988777666',
+        NULL,
+        NULL
+    ),
+    (
+        3,
+        2,
+        '2025-12-03 05:43:01',
+        150000.00,
+        'Đang xử lý',
+        'COD',
+        0,
+        'Kim Phụng',
+        '0909123456',
+        NULL,
+        NULL
+    ),
+    (
+        4,
+        3,
+        '2025-12-03 05:43:01',
+        1000000.00,
+        'Đã hủy',
+        'Banking',
+        0,
+        'Tú Lâm',
+        '0988777666',
+        NULL,
+        NULL
+    ),
+    (
+        5,
+        2,
+        '2025-12-03 05:43:01',
+        500000.00,
+        'Đang giao',
+        'VNPAY',
+        1,
+        'Kim Phụng',
+        '0909123456',
+        NULL,
+        NULL
+    ),
+    (
+        6,
+        1,
+        '2025-12-03 05:43:01',
+        250000.00,
+        'Hoàn thành',
+        'COD',
+        1,
+        'Jatnit Admin',
+        '0123456789',
+        NULL,
+        NULL
+    ),
+    (
+        7,
+        NULL,
+        '2025-12-03 05:43:01',
+        180000.00,
+        'Mới',
+        'COD',
+        0,
+        'Khách Vãng Lai',
+        '0999888777',
+        NULL,
+        NULL
+    ),
+    (
+        8,
+        2,
+        '2025-12-03 05:43:01',
+        600000.00,
+        'Đang xử lý',
+        'MOMO',
+        1,
+        'Kim Phụng',
+        '0909123456',
+        NULL,
+        NULL
+    ),
+    (
+        9,
+        3,
+        '2025-12-03 05:43:01',
+        1200000.00,
+        'Hoàn thành',
+        'Banking',
+        1,
+        'Tú Lâm',
+        '0988777666',
+        NULL,
+        NULL
+    ),
+    (
+        10,
+        2,
+        '2025-12-03 05:43:01',
+        150000.00,
+        'Đã hủy',
+        'COD',
+        0,
+        'Kim Phụng',
+        '0909123456',
+        NULL,
+        NULL
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `ProductCategories`
+--
+
+CREATE TABLE `ProductCategories` (
+    `ProductId` int(11) NOT NULL,
+    `CategoryId` int(11) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `ProductCategories`
+--
+
+INSERT INTO
+    `ProductCategories` (`ProductId`, `CategoryId`)
+VALUES (1, 1),
+    (1, 3),
+    (2, 1),
+    (2, 3),
+    (3, 1),
+    (3, 3),
+    (4, 1),
+    (4, 3),
+    (5, 1),
+    (5, 3),
+    (6, 1),
+    (6, 3),
+    (7, 1),
+    (7, 3),
+    (8, 1),
+    (8, 3),
+    (9, 1),
+    (9, 3),
+    (10, 1),
+    (10, 3),
+    (11, 1),
+    (11, 4),
+    (12, 1),
+    (12, 4),
+    (13, 1),
+    (13, 4),
+    (14, 1),
+    (14, 4),
+    (15, 1),
+    (15, 4),
+    (16, 1),
+    (16, 4),
+    (17, 1),
+    (17, 4),
+    (18, 1),
+    (18, 4),
+    (19, 1),
+    (19, 4),
+    (20, 1),
+    (20, 4),
+    (21, 1),
+    (21, 5),
+    (22, 1),
+    (22, 5),
+    (23, 1),
+    (23, 5),
+    (24, 1),
+    (24, 5),
+    (25, 1),
+    (25, 5),
+    (26, 1),
+    (26, 6),
+    (27, 1),
+    (27, 6),
+    (28, 1),
+    (28, 6),
+    (29, 1),
+    (29, 6),
+    (30, 1),
+    (30, 6),
+    (31, 3),
+    (31, 7),
+    (31, 8),
+    (35, 3),
+    (35, 8),
+    (36, 3),
+    (36, 8),
+    (37, 7),
+    (38, 3),
+    (39, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `ProductColorImages`
+--
+
+CREATE TABLE `ProductColorImages` (
+    `Id` int(11) NOT NULL,
+    `ProductId` int(11) NOT NULL,
+    `ColorValueId` int(11) NOT NULL,
+    `ImageUrl` varchar(255) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `ProductColorImages`
+--
+
+INSERT INTO
+    `ProductColorImages` (
+        `Id`,
+        `ProductId`,
+        `ColorValueId`,
+        `ImageUrl`
+    )
+VALUES (
+        1,
+        30,
+        1,
+        'https://placehold.co/600x800/eee/333?text=ak-blazer-Trắng'
+    ),
+    (
+        2,
+        30,
+        2,
+        'https://placehold.co/600x800/eee/333?text=ak-blazer-Đen'
+    ),
+    (
+        3,
+        30,
+        3,
+        'https://placehold.co/600x800/eee/333?text=ak-blazer-Xanh Navy'
+    ),
+    (
+        4,
+        30,
+        4,
+        'https://placehold.co/600x800/eee/333?text=ak-blazer-Xám'
+    ),
+    (
+        5,
+        30,
+        5,
+        'https://placehold.co/600x800/eee/333?text=ak-blazer-Đỏ'
+    ),
+    (
+        6,
+        28,
+        1,
+        'https://placehold.co/600x800/eee/333?text=ak-bomber-Trắng'
+    ),
+    (
+        7,
+        28,
+        2,
+        'https://placehold.co/600x800/eee/333?text=ak-bomber-Đen'
+    ),
+    (
+        8,
+        28,
+        3,
+        'https://placehold.co/600x800/eee/333?text=ak-bomber-Xanh Navy'
+    ),
+    (
+        9,
+        28,
+        4,
+        'https://placehold.co/600x800/eee/333?text=ak-bomber-Xám'
+    ),
+    (
+        10,
+        28,
+        5,
+        'https://placehold.co/600x800/eee/333?text=ak-bomber-Đỏ'
+    ),
+    (
+        11,
+        29,
+        1,
+        'https://placehold.co/600x800/eee/333?text=ak-hoodie-Trắng'
+    ),
+    (
+        12,
+        29,
+        2,
+        'https://placehold.co/600x800/eee/333?text=ak-hoodie-Đen'
+    ),
+    (
+        13,
+        29,
+        3,
+        'https://placehold.co/600x800/eee/333?text=ak-hoodie-Xanh Navy'
+    ),
+    (
+        14,
+        29,
+        4,
+        'https://placehold.co/600x800/eee/333?text=ak-hoodie-Xám'
+    ),
+    (
+        15,
+        29,
+        5,
+        'https://placehold.co/600x800/eee/333?text=ak-hoodie-Đỏ'
+    ),
+    (
+        16,
+        27,
+        1,
+        'https://placehold.co/600x800/eee/333?text=ak-jean-Trắng'
+    ),
+    (
+        17,
+        27,
+        2,
+        'https://placehold.co/600x800/eee/333?text=ak-jean-Đen'
+    ),
+    (
+        18,
+        27,
+        3,
+        'https://placehold.co/600x800/eee/333?text=ak-jean-Xanh Navy'
+    ),
+    (
+        19,
+        27,
+        4,
+        'https://placehold.co/600x800/eee/333?text=ak-jean-Xám'
+    ),
+    (
+        20,
+        27,
+        5,
+        'https://placehold.co/600x800/eee/333?text=ak-jean-Đỏ'
+    ),
+    (
+        21,
+        26,
+        1,
+        'https://placehold.co/600x800/eee/333?text=ak-wind-Trắng'
+    ),
+    (
+        22,
+        26,
+        2,
+        'https://placehold.co/600x800/eee/333?text=ak-wind-Đen'
+    ),
+    (
+        23,
+        26,
+        3,
+        'https://placehold.co/600x800/eee/333?text=ak-wind-Xanh Navy'
+    ),
+    (
+        24,
+        26,
+        4,
+        'https://placehold.co/600x800/eee/333?text=ak-wind-Xám'
+    ),
+    (
+        25,
+        26,
+        5,
+        'https://placehold.co/600x800/eee/333?text=ak-wind-Đỏ'
+    ),
+    (
+        26,
+        1,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-basic-Trắng'
+    ),
+    (
+        27,
+        1,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-basic-Đen'
+    ),
+    (
+        28,
+        1,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-basic-Xanh Navy'
+    ),
+    (
+        29,
+        1,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-basic-Xám'
+    ),
+    (
+        30,
+        1,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-basic-Đỏ'
+    ),
+    (
+        31,
+        2,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-graphic-Trắng'
+    ),
+    (
+        32,
+        2,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-graphic-Đen'
+    ),
+    (
+        33,
+        2,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-graphic-Xanh Navy'
+    ),
+    (
+        34,
+        2,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-graphic-Xám'
+    ),
+    (
+        35,
+        2,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-graphic-Đỏ'
+    ),
+    (
+        36,
+        5,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-long-Trắng'
+    ),
+    (
+        37,
+        5,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-long-Đen'
+    ),
+    (
+        38,
+        5,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-long-Xanh Navy'
+    ),
+    (
+        39,
+        5,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-long-Xám'
+    ),
+    (
+        40,
+        5,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-long-Đỏ'
+    ),
+    (
+        41,
+        3,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-oversize-Trắng'
+    ),
+    (
+        42,
+        3,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-oversize-Đen'
+    ),
+    (
+        43,
+        3,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-oversize-Xanh Navy'
+    ),
+    (
+        44,
+        3,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-oversize-Xám'
+    ),
+    (
+        45,
+        3,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-oversize-Đỏ'
+    ),
+    (
+        46,
+        9,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-pocket-Trắng'
+    ),
+    (
+        47,
+        9,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-pocket-Đen'
+    ),
+    (
+        48,
+        9,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-pocket-Xanh Navy'
+    ),
+    (
+        49,
+        9,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-pocket-Xám'
+    ),
+    (
+        50,
+        9,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-pocket-Đỏ'
+    ),
+    (
+        51,
+        6,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-raglan-Trắng'
+    ),
+    (
+        52,
+        6,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-raglan-Đen'
+    ),
+    (
+        53,
+        6,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-raglan-Xanh Navy'
+    ),
+    (
+        54,
+        6,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-raglan-Xám'
+    ),
+    (
+        55,
+        6,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-raglan-Đỏ'
+    ),
+    (
+        56,
+        8,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-stripe-Trắng'
+    ),
+    (
+        57,
+        8,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-stripe-Đen'
+    ),
+    (
+        58,
+        8,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-stripe-Xanh Navy'
+    ),
+    (
+        59,
+        8,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-stripe-Xám'
+    ),
+    (
+        60,
+        8,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-stripe-Đỏ'
+    ),
+    (
+        61,
+        7,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-tank-Trắng'
+    ),
+    (
+        62,
+        7,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-tank-Đen'
+    ),
+    (
+        63,
+        7,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-tank-Xanh Navy'
+    ),
+    (
+        64,
+        7,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-tank-Xám'
+    ),
+    (
+        65,
+        7,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-tank-Đỏ'
+    ),
+    (
+        66,
+        4,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-vneck-Trắng'
+    ),
+    (
+        67,
+        4,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-vneck-Đen'
+    ),
+    (
+        68,
+        4,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-vneck-Xanh Navy'
+    ),
+    (
+        69,
+        4,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-vneck-Xám'
+    ),
+    (
+        70,
+        4,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-vneck-Đỏ'
+    ),
+    (
+        71,
+        10,
+        1,
+        'https://placehold.co/600x800/eee/333?text=at-wash-Trắng'
+    ),
+    (
+        72,
+        10,
+        2,
+        'https://placehold.co/600x800/eee/333?text=at-wash-Đen'
+    ),
+    (
+        73,
+        10,
+        3,
+        'https://placehold.co/600x800/eee/333?text=at-wash-Xanh Navy'
+    ),
+    (
+        74,
+        10,
+        4,
+        'https://placehold.co/600x800/eee/333?text=at-wash-Xám'
+    ),
+    (
+        75,
+        10,
+        5,
+        'https://placehold.co/600x800/eee/333?text=at-wash-Đỏ'
+    ),
+    (
+        76,
+        14,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-border-Trắng'
+    ),
+    (
+        77,
+        14,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-border-Đen'
+    ),
+    (
+        78,
+        14,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-border-Xanh Navy'
+    ),
+    (
+        79,
+        14,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-border-Xám'
+    ),
+    (
+        80,
+        14,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-border-Đỏ'
+    ),
+    (
+        81,
+        12,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-knit-Trắng'
+    ),
+    (
+        82,
+        12,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-knit-Đen'
+    ),
+    (
+        83,
+        12,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-knit-Xanh Navy'
+    ),
+    (
+        84,
+        12,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-knit-Xám'
+    ),
+    (
+        85,
+        12,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-knit-Đỏ'
+    ),
+    (
+        86,
+        20,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-logo-Trắng'
+    ),
+    (
+        87,
+        20,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-logo-Đen'
+    ),
+    (
+        88,
+        20,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-logo-Xanh Navy'
+    ),
+    (
+        89,
+        20,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-logo-Xám'
+    ),
+    (
+        90,
+        20,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-logo-Đỏ'
+    ),
+    (
+        91,
+        16,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-long-Trắng'
+    ),
+    (
+        92,
+        16,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-long-Đen'
+    ),
+    (
+        93,
+        16,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-long-Xanh Navy'
+    ),
+    (
+        94,
+        16,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-long-Xám'
+    ),
+    (
+        95,
+        16,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-long-Đỏ'
+    ),
+    (
+        96,
+        18,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-loose-Trắng'
+    ),
+    (
+        97,
+        18,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-loose-Đen'
+    ),
+    (
+        98,
+        18,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-loose-Xanh Navy'
+    ),
+    (
+        99,
+        18,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-loose-Xám'
+    ),
+    (
+        100,
+        18,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-loose-Đỏ'
+    ),
+    (
+        101,
+        19,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-mandarin-Trắng'
+    ),
+    (
+        102,
+        19,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-mandarin-Đen'
+    ),
+    (
+        103,
+        19,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-mandarin-Xanh Navy'
+    ),
+    (
+        104,
+        19,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-mandarin-Xám'
+    ),
+    (
+        105,
+        19,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-mandarin-Đỏ'
+    ),
+    (
+        106,
+        17,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-pattern-Trắng'
+    ),
+    (
+        107,
+        17,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-pattern-Đen'
+    ),
+    (
+        108,
+        17,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-pattern-Xanh Navy'
+    ),
+    (
+        109,
+        17,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-pattern-Xám'
+    ),
+    (
+        110,
+        17,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-pattern-Đỏ'
+    ),
+    (
+        111,
+        11,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-pique-Trắng'
+    ),
+    (
+        112,
+        11,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-pique-Đen'
+    ),
+    (
+        113,
+        11,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-pique-Xanh Navy'
+    ),
+    (
+        114,
+        11,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-pique-Xám'
+    ),
+    (
+        115,
+        11,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-pique-Đỏ'
+    ),
+    (
+        116,
+        13,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-sport-Trắng'
+    ),
+    (
+        117,
+        13,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-sport-Đen'
+    ),
+    (
+        118,
+        13,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-sport-Xanh Navy'
+    ),
+    (
+        119,
+        13,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-sport-Xám'
+    ),
+    (
+        120,
+        13,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-sport-Đỏ'
+    ),
+    (
+        121,
+        15,
+        1,
+        'https://placehold.co/600x800/eee/333?text=pl-zip-Trắng'
+    ),
+    (
+        122,
+        15,
+        2,
+        'https://placehold.co/600x800/eee/333?text=pl-zip-Đen'
+    ),
+    (
+        123,
+        15,
+        3,
+        'https://placehold.co/600x800/eee/333?text=pl-zip-Xanh Navy'
+    ),
+    (
+        124,
+        15,
+        4,
+        'https://placehold.co/600x800/eee/333?text=pl-zip-Xám'
+    ),
+    (
+        125,
+        15,
+        5,
+        'https://placehold.co/600x800/eee/333?text=pl-zip-Đỏ'
+    ),
+    (
+        126,
+        22,
+        1,
+        'https://placehold.co/600x800/eee/333?text=sm-bamboo-Trắng'
+    ),
+    (
+        127,
+        22,
+        2,
+        'https://placehold.co/600x800/eee/333?text=sm-bamboo-Đen'
+    ),
+    (
+        128,
+        22,
+        3,
+        'https://placehold.co/600x800/eee/333?text=sm-bamboo-Xanh Navy'
+    ),
+    (
+        129,
+        22,
+        4,
+        'https://placehold.co/600x800/eee/333?text=sm-bamboo-Xám'
+    ),
+    (
+        130,
+        22,
+        5,
+        'https://placehold.co/600x800/eee/333?text=sm-bamboo-Đỏ'
+    ),
+    (
+        131,
+        23,
+        1,
+        'https://placehold.co/600x800/eee/333?text=sm-flannel-Trắng'
+    ),
+    (
+        132,
+        23,
+        2,
+        'https://placehold.co/600x800/eee/333?text=sm-flannel-Đen'
+    ),
+    (
+        133,
+        23,
+        3,
+        'https://placehold.co/600x800/eee/333?text=sm-flannel-Xanh Navy'
+    ),
+    (
+        134,
+        23,
+        4,
+        'https://placehold.co/600x800/eee/333?text=sm-flannel-Xám'
+    ),
+    (
+        135,
+        23,
+        5,
+        'https://placehold.co/600x800/eee/333?text=sm-flannel-Đỏ'
+    ),
+    (
+        136,
+        24,
+        1,
+        'https://placehold.co/600x800/eee/333?text=sm-grandad-Trắng'
+    ),
+    (
+        137,
+        24,
+        2,
+        'https://placehold.co/600x800/eee/333?text=sm-grandad-Đen'
+    ),
+    (
+        138,
+        24,
+        3,
+        'https://placehold.co/600x800/eee/333?text=sm-grandad-Xanh Navy'
+    ),
+    (
+        139,
+        24,
+        4,
+        'https://placehold.co/600x800/eee/333?text=sm-grandad-Xám'
+    ),
+    (
+        140,
+        24,
+        5,
+        'https://placehold.co/600x800/eee/333?text=sm-grandad-Đỏ'
+    ),
+    (
+        141,
+        21,
+        1,
+        'https://placehold.co/600x800/eee/333?text=sm-oxford-Trắng'
+    ),
+    (
+        142,
+        21,
+        2,
+        'https://placehold.co/600x800/eee/333?text=sm-oxford-Đen'
+    ),
+    (
+        143,
+        21,
+        3,
+        'https://placehold.co/600x800/eee/333?text=sm-oxford-Xanh Navy'
+    ),
+    (
+        144,
+        21,
+        4,
+        'https://placehold.co/600x800/eee/333?text=sm-oxford-Xám'
+    ),
+    (
+        145,
+        21,
+        5,
+        'https://placehold.co/600x800/eee/333?text=sm-oxford-Đỏ'
+    ),
+    (
+        146,
+        25,
+        1,
+        'https://placehold.co/600x800/eee/333?text=sm-short-Trắng'
+    ),
+    (
+        147,
+        25,
+        2,
+        'https://placehold.co/600x800/eee/333?text=sm-short-Đen'
+    ),
+    (
+        148,
+        25,
+        3,
+        'https://placehold.co/600x800/eee/333?text=sm-short-Xanh Navy'
+    ),
+    (
+        149,
+        25,
+        4,
+        'https://placehold.co/600x800/eee/333?text=sm-short-Xám'
+    ),
+    (
+        150,
+        25,
+        5,
+        'https://placehold.co/600x800/eee/333?text=sm-short-Đỏ'
+    ),
+    (
+        151,
+        31,
+        1,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765032656/moda-studio/products/xjw4ffbjue93safglfxl.avif'
+    ),
+    (
+        152,
+        31,
+        2,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765032657/moda-studio/products/ms1jnas5f7qysubslnyb.avif'
+    ),
+    (
+        153,
+        31,
+        3,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765032658/moda-studio/products/xcvzmtmpaatwqafecktw.avif'
+    ),
+    (
+        159,
+        35,
+        1,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765035030/moda-studio/products/ih4qkhivhswzuitkuhng.avif'
+    ),
+    (
+        160,
+        35,
+        2,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765035031/moda-studio/products/fbksadrymfer509iqkha.avif'
+    ),
+    (
+        161,
+        35,
+        4,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765035032/moda-studio/products/x18jsyhxiz0gxxtb0mrw.avif'
+    ),
+    (
+        162,
+        36,
+        1,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765097669/moda-studio/products/w6t5rcfg6n8dt1zk5sfr.avif'
+    ),
+    (
+        163,
+        36,
+        4,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765097669/moda-studio/products/zjrdwmsb7awr0caip4nq.avif'
+    ),
+    (
+        164,
+        36,
+        2,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765097670/moda-studio/products/c8qelkybony50lv0tbgx.avif'
+    ),
+    (
+        165,
+        37,
+        1,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098006/moda-studio/products/h0spqden68eiyssusrzg.avif'
+    ),
+    (
+        166,
+        37,
+        4,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098007/moda-studio/products/i1lxuiyuclzadcfmjttp.avif'
+    ),
+    (
+        167,
+        37,
+        2,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098008/moda-studio/products/vp2kfwj0bwchycw21dc6.avif'
+    ),
+    (
+        168,
+        38,
+        1,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098454/moda-studio/products/xaitmhcq115y1ezlkecp.avif'
+    ),
+    (
+        169,
+        38,
+        2,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098455/moda-studio/products/jewiidem5dxv7yykfybn.avif'
+    ),
+    (
+        170,
+        39,
+        1,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098695/moda-studio/products/cvixtndhwsq3vcjekwu0.avif'
+    ),
+    (
+        171,
+        39,
+        2,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098696/moda-studio/products/alrolneen1jeedbh5hi7.avif'
+    ),
+    (
+        172,
+        39,
+        3,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098697/moda-studio/products/p41w9h9avrajwdblfddc.avif'
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `ProductGalleries`
+--
+
+CREATE TABLE `ProductGalleries` (
+    `Id` int(11) NOT NULL,
+    `ProductId` int(11) NOT NULL,
+    `ImageUrl` varchar(255) NOT NULL,
+    `DisplayOrder` int(11) DEFAULT 0
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `ProductGalleries`
+--
+
+INSERT INTO
+    `ProductGalleries` (
+        `Id`,
+        `ProductId`,
+        `ImageUrl`,
+        `DisplayOrder`
+    )
+VALUES (
+        1,
+        30,
+        'https://placehold.co/600x800/ccc/000?text=View1-ak-blazer',
+        1
+    ),
+    (
+        2,
+        28,
+        'https://placehold.co/600x800/ccc/000?text=View1-ak-bomber',
+        1
+    ),
+    (
+        3,
+        29,
+        'https://placehold.co/600x800/ccc/000?text=View1-ak-hoodie',
+        1
+    ),
+    (
+        4,
+        27,
+        'https://placehold.co/600x800/ccc/000?text=View1-ak-jean',
+        1
+    ),
+    (
+        5,
+        26,
+        'https://placehold.co/600x800/ccc/000?text=View1-ak-wind',
+        1
+    ),
+    (
+        6,
+        1,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-basic',
+        1
+    ),
+    (
+        7,
+        2,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-graphic',
+        1
+    ),
+    (
+        8,
+        5,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-long',
+        1
+    ),
+    (
+        9,
+        3,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-oversize',
+        1
+    ),
+    (
+        10,
+        9,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-pocket',
+        1
+    ),
+    (
+        11,
+        6,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-raglan',
+        1
+    ),
+    (
+        12,
+        8,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-stripe',
+        1
+    ),
+    (
+        13,
+        7,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-tank',
+        1
+    ),
+    (
+        14,
+        4,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-vneck',
+        1
+    ),
+    (
+        15,
+        10,
+        'https://placehold.co/600x800/ccc/000?text=View1-at-wash',
+        1
+    ),
+    (
+        16,
+        14,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-border',
+        1
+    ),
+    (
+        17,
+        12,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-knit',
+        1
+    ),
+    (
+        18,
+        20,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-logo',
+        1
+    ),
+    (
+        19,
+        16,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-long',
+        1
+    ),
+    (
+        20,
+        18,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-loose',
+        1
+    ),
+    (
+        21,
+        19,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-mandarin',
+        1
+    ),
+    (
+        22,
+        17,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-pattern',
+        1
+    ),
+    (
+        23,
+        11,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-pique',
+        1
+    ),
+    (
+        24,
+        13,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-sport',
+        1
+    ),
+    (
+        25,
+        15,
+        'https://placehold.co/600x800/ccc/000?text=View1-pl-zip',
+        1
+    ),
+    (
+        26,
+        22,
+        'https://placehold.co/600x800/ccc/000?text=View1-sm-bamboo',
+        1
+    ),
+    (
+        27,
+        23,
+        'https://placehold.co/600x800/ccc/000?text=View1-sm-flannel',
+        1
+    ),
+    (
+        28,
+        24,
+        'https://placehold.co/600x800/ccc/000?text=View1-sm-grandad',
+        1
+    ),
+    (
+        29,
+        21,
+        'https://placehold.co/600x800/ccc/000?text=View1-sm-oxford',
+        1
+    ),
+    (
+        30,
+        25,
+        'https://placehold.co/600x800/ccc/000?text=View1-sm-short',
+        1
+    ),
+    (
+        32,
+        30,
+        'https://placehold.co/600x800/ccc/000?text=View2-ak-blazer',
+        2
+    ),
+    (
+        33,
+        28,
+        'https://placehold.co/600x800/ccc/000?text=View2-ak-bomber',
+        2
+    ),
+    (
+        34,
+        29,
+        'https://placehold.co/600x800/ccc/000?text=View2-ak-hoodie',
+        2
+    ),
+    (
+        35,
+        27,
+        'https://placehold.co/600x800/ccc/000?text=View2-ak-jean',
+        2
+    ),
+    (
+        36,
+        26,
+        'https://placehold.co/600x800/ccc/000?text=View2-ak-wind',
+        2
+    ),
+    (
+        37,
+        1,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-basic',
+        2
+    ),
+    (
+        38,
+        2,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-graphic',
+        2
+    ),
+    (
+        39,
+        5,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-long',
+        2
+    ),
+    (
+        40,
+        3,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-oversize',
+        2
+    ),
+    (
+        41,
+        9,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-pocket',
+        2
+    ),
+    (
+        42,
+        6,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-raglan',
+        2
+    ),
+    (
+        43,
+        8,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-stripe',
+        2
+    ),
+    (
+        44,
+        7,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-tank',
+        2
+    ),
+    (
+        45,
+        4,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-vneck',
+        2
+    ),
+    (
+        46,
+        10,
+        'https://placehold.co/600x800/ccc/000?text=View2-at-wash',
+        2
+    ),
+    (
+        47,
+        14,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-border',
+        2
+    ),
+    (
+        48,
+        12,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-knit',
+        2
+    ),
+    (
+        49,
+        20,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-logo',
+        2
+    ),
+    (
+        50,
+        16,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-long',
+        2
+    ),
+    (
+        51,
+        18,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-loose',
+        2
+    ),
+    (
+        52,
+        19,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-mandarin',
+        2
+    ),
+    (
+        53,
+        17,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-pattern',
+        2
+    ),
+    (
+        54,
+        11,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-pique',
+        2
+    ),
+    (
+        55,
+        13,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-sport',
+        2
+    ),
+    (
+        56,
+        15,
+        'https://placehold.co/600x800/ccc/000?text=View2-pl-zip',
+        2
+    ),
+    (
+        57,
+        22,
+        'https://placehold.co/600x800/ccc/000?text=View2-sm-bamboo',
+        2
+    ),
+    (
+        58,
+        23,
+        'https://placehold.co/600x800/ccc/000?text=View2-sm-flannel',
+        2
+    ),
+    (
+        59,
+        24,
+        'https://placehold.co/600x800/ccc/000?text=View2-sm-grandad',
+        2
+    ),
+    (
+        60,
+        21,
+        'https://placehold.co/600x800/ccc/000?text=View2-sm-oxford',
+        2
+    ),
+    (
+        61,
+        25,
+        'https://placehold.co/600x800/ccc/000?text=View2-sm-short',
+        2
+    ),
+    (
+        63,
+        30,
+        'https://placehold.co/600x800/ccc/000?text=View3-ak-blazer',
+        3
+    ),
+    (
+        64,
+        28,
+        'https://placehold.co/600x800/ccc/000?text=View3-ak-bomber',
+        3
+    ),
+    (
+        65,
+        29,
+        'https://placehold.co/600x800/ccc/000?text=View3-ak-hoodie',
+        3
+    ),
+    (
+        66,
+        27,
+        'https://placehold.co/600x800/ccc/000?text=View3-ak-jean',
+        3
+    ),
+    (
+        67,
+        26,
+        'https://placehold.co/600x800/ccc/000?text=View3-ak-wind',
+        3
+    ),
+    (
+        68,
+        1,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-basic',
+        3
+    ),
+    (
+        69,
+        2,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-graphic',
+        3
+    ),
+    (
+        70,
+        5,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-long',
+        3
+    ),
+    (
+        71,
+        3,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-oversize',
+        3
+    ),
+    (
+        72,
+        9,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-pocket',
+        3
+    ),
+    (
+        73,
+        6,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-raglan',
+        3
+    ),
+    (
+        74,
+        8,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-stripe',
+        3
+    ),
+    (
+        75,
+        7,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-tank',
+        3
+    ),
+    (
+        76,
+        4,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-vneck',
+        3
+    ),
+    (
+        77,
+        10,
+        'https://placehold.co/600x800/ccc/000?text=View3-at-wash',
+        3
+    ),
+    (
+        78,
+        14,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-border',
+        3
+    ),
+    (
+        79,
+        12,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-knit',
+        3
+    ),
+    (
+        80,
+        20,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-logo',
+        3
+    ),
+    (
+        81,
+        16,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-long',
+        3
+    ),
+    (
+        82,
+        18,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-loose',
+        3
+    ),
+    (
+        83,
+        19,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-mandarin',
+        3
+    ),
+    (
+        84,
+        17,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-pattern',
+        3
+    ),
+    (
+        85,
+        11,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-pique',
+        3
+    ),
+    (
+        86,
+        13,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-sport',
+        3
+    ),
+    (
+        87,
+        15,
+        'https://placehold.co/600x800/ccc/000?text=View3-pl-zip',
+        3
+    ),
+    (
+        88,
+        22,
+        'https://placehold.co/600x800/ccc/000?text=View3-sm-bamboo',
+        3
+    ),
+    (
+        89,
+        23,
+        'https://placehold.co/600x800/ccc/000?text=View3-sm-flannel',
+        3
+    ),
+    (
+        90,
+        24,
+        'https://placehold.co/600x800/ccc/000?text=View3-sm-grandad',
+        3
+    ),
+    (
+        91,
+        21,
+        'https://placehold.co/600x800/ccc/000?text=View3-sm-oxford',
+        3
+    ),
+    (
+        92,
+        25,
+        'https://placehold.co/600x800/ccc/000?text=View3-sm-short',
+        3
+    ),
+    (
+        93,
+        31,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765032652/moda-studio/products/eypuyklczodmecqhfgtk.avif',
+        1
+    ),
+    (
+        94,
+        31,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765032654/moda-studio/products/z5zbrsdqyrzpyoiew2na.avif',
+        2
+    ),
+    (
+        95,
+        31,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765032655/moda-studio/products/opbniyvu5rk958jcgunz.avif',
+        3
+    ),
+    (
+        102,
+        35,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765035028/moda-studio/products/wngwwzsz1sajgbzjewmy.avif',
+        1
+    ),
+    (
+        103,
+        35,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765035028/moda-studio/products/bpspxgu189g6bs9a4xln.avif',
+        2
+    ),
+    (
+        104,
+        35,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765035029/moda-studio/products/vo0mbwfllydnpuhe5spc.avif',
+        3
+    ),
+    (
+        105,
+        36,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765097666/moda-studio/products/jhkjtqpshircvxksp8d9.avif',
+        1
+    ),
+    (
+        106,
+        36,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765097667/moda-studio/products/y39nlimouswoezhswzaa.avif',
+        2
+    ),
+    (
+        107,
+        36,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765097668/moda-studio/products/nxnfjylwbftjomxjpmur.avif',
+        3
+    ),
+    (
+        108,
+        37,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098003/moda-studio/products/lyiygdfr2qbijuw9lnew.avif',
+        1
+    ),
+    (
+        109,
+        37,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098004/moda-studio/products/nwgnouomz2pmpfhkckgk.avif',
+        2
+    ),
+    (
+        110,
+        37,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098005/moda-studio/products/hmpgupspljfho3ggzooe.avif',
+        3
+    ),
+    (
+        111,
+        38,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098452/moda-studio/products/zspsyd3l3mabwvx1twlf.avif',
+        1
+    ),
+    (
+        112,
+        38,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098452/moda-studio/products/hb4qhgfv6vdryjek0wg8.avif',
+        2
+    ),
+    (
+        113,
+        38,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098453/moda-studio/products/wkknzjwrl1cqxyitriay.avif',
+        3
+    ),
+    (
+        114,
+        39,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098692/moda-studio/products/rxjoxuvhfuuox0oq5mu8.avif',
+        1
+    ),
+    (
+        115,
+        39,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098693/moda-studio/products/gmxlkqcz6qzbtr17zxhv.avif',
+        2
+    ),
+    (
+        116,
+        39,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098694/moda-studio/products/xzjg9qtsqunem0afgz2l.avif',
+        3
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Products`
+--
+
+CREATE TABLE `Products` (
+    `Id` int(11) NOT NULL,
+    `Name` varchar(255) NOT NULL,
+    `Slug` varchar(255) DEFAULT NULL,
+    `Description` text DEFAULT NULL,
+    `BasePrice` decimal(18, 2) NOT NULL,
+    `ThumbnailUrl` varchar(255) DEFAULT NULL,
+    `IsActive` tinyint(1) DEFAULT 1,
+    `TotalSold` int(11) DEFAULT 0,
+    `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `Products`
+--
+
+INSERT INTO
+    `Products` (
+        `Id`,
+        `Name`,
+        `Slug`,
+        `Description`,
+        `BasePrice`,
+        `ThumbnailUrl`,
+        `IsActive`,
+        `TotalSold`,
+        `CreatedAt`
+    )
+VALUES (
+        1,
+        'Áo Thun Basic Cotton',
+        'at-basic',
+        'Vải cotton 100%',
+        150000.00,
+        'https://placehold.co/600x800?text=Basic+Tee',
+        1,
+        120,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        2,
+        'Áo Thun Graphic In Hình',
+        'at-graphic',
+        'Hình in sắc nét',
+        180000.00,
+        'https://placehold.co/600x800?text=Graphic+Tee',
+        1,
+        50,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        3,
+        'Áo Thun Oversize',
+        'at-oversize',
+        'Form rộng',
+        200000.00,
+        'https://placehold.co/600x800?text=Oversize',
+        1,
+        80,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        4,
+        'Áo Thun Cổ Tim',
+        'at-vneck',
+        'Cổ tim body',
+        160000.00,
+        'https://placehold.co/600x800?text=V-Neck',
+        1,
+        30,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        5,
+        'Áo Thun Dài Tay',
+        'at-long',
+        'Giữ ấm tốt',
+        220000.00,
+        'https://placehold.co/600x800?text=Long+Sleeve',
+        1,
+        45,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        6,
+        'Áo Thun Raglan',
+        'at-raglan',
+        'Tay phối màu',
+        190000.00,
+        'https://placehold.co/600x800?text=Raglan',
+        1,
+        60,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        7,
+        'Áo Thun Tanktop',
+        'at-tank',
+        'Thoáng mát',
+        120000.00,
+        'https://placehold.co/600x800?text=Tanktop',
+        1,
+        90,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        8,
+        'Áo Thun Kẻ Sọc',
+        'at-stripe',
+        'Kẻ ngang',
+        170000.00,
+        'https://placehold.co/600x800?text=Stripe',
+        1,
+        40,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        9,
+        'Áo Thun Có Túi',
+        'at-pocket',
+        'Túi ngực',
+        160000.00,
+        'https://placehold.co/600x800?text=Pocket',
+        1,
+        25,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        10,
+        'Áo Thun Wash',
+        'at-wash',
+        'Màu bụi bặm',
+        250000.00,
+        'https://placehold.co/600x800?text=Washed',
+        1,
+        15,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        11,
+        'Polo Pique Classic',
+        'pl-pique',
+        'Vải cá sấu',
+        250000.00,
+        'https://placehold.co/600x800?text=Polo+Pique',
+        1,
+        200,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        12,
+        'Polo Bo Dệt',
+        'pl-knit',
+        'Bo cổ dệt',
+        280000.00,
+        'https://placehold.co/600x800?text=Polo+Knit',
+        1,
+        110,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        13,
+        'Polo Thể Thao',
+        'pl-sport',
+        'Thoáng khí',
+        300000.00,
+        'https://placehold.co/600x800?text=Polo+Sport',
+        1,
+        75,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        14,
+        'Polo Phối Viền',
+        'pl-border',
+        'Viền tay',
+        260000.00,
+        'https://placehold.co/600x800?text=Polo+Border',
+        1,
+        90,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        15,
+        'Polo Khóa Kéo',
+        'pl-zip',
+        'Cổ zip',
+        320000.00,
+        'https://placehold.co/600x800?text=Polo+Zip',
+        1,
+        40,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        16,
+        'Polo Dài Tay',
+        'pl-long',
+        'Công sở',
+        350000.00,
+        'https://placehold.co/600x800?text=Polo+Long',
+        1,
+        30,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        17,
+        'Polo Họa Tiết',
+        'pl-pattern',
+        'In toàn thân',
+        290000.00,
+        'https://placehold.co/600x800?text=Polo+Print',
+        1,
+        20,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        18,
+        'Polo Form Rộng',
+        'pl-loose',
+        'Trẻ trung',
+        270000.00,
+        'https://placehold.co/600x800?text=Polo+Loose',
+        1,
+        55,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        19,
+        'Polo Cổ Tàu',
+        'pl-mandarin',
+        'Cổ trụ',
+        310000.00,
+        'https://placehold.co/600x800?text=Polo+Mandarin',
+        1,
+        10,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        20,
+        'Polo Logo Thêu',
+        'pl-logo',
+        'Logo ngực',
+        350000.00,
+        'https://placehold.co/600x800?text=Polo+Logo',
+        1,
+        150,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        21,
+        'Sơ Mi Oxford',
+        'sm-oxford',
+        'Dày dặn',
+        350000.00,
+        'https://placehold.co/600x800?text=Oxford',
+        1,
+        60,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        22,
+        'Sơ Mi Bamboo',
+        'sm-bamboo',
+        'Vải tre',
+        400000.00,
+        'https://placehold.co/600x800?text=Bamboo',
+        1,
+        80,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        23,
+        'Sơ Mi Flannel',
+        'sm-flannel',
+        'Caro',
+        320000.00,
+        'https://placehold.co/600x800?text=Flannel',
+        1,
+        45,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        24,
+        'Sơ Mi Cổ Trụ',
+        'sm-grandad',
+        'Hiện đại',
+        360000.00,
+        'https://placehold.co/600x800?text=Grandad',
+        1,
+        30,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        25,
+        'Sơ Mi Ngắn Tay',
+        'sm-short',
+        'Mùa hè',
+        300000.00,
+        'https://placehold.co/600x800?text=Short+Shirt',
+        1,
+        70,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        26,
+        'Áo Khoác Gió',
+        'ak-wind',
+        'Chống nước',
+        450000.00,
+        'https://placehold.co/600x800?text=Windbreaker',
+        1,
+        90,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        27,
+        'Áo Khoác Jeans',
+        'ak-jean',
+        'Bụi bặm',
+        550000.00,
+        'https://placehold.co/600x800?text=Denim',
+        1,
+        40,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        28,
+        'Áo Khoác Bomber',
+        'ak-bomber',
+        'Cá tính',
+        500000.00,
+        'https://placehold.co/600x800?text=Bomber',
+        1,
+        65,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        29,
+        'Hoodie Nỉ',
+        'ak-hoodie',
+        'Ấm áp',
+        380000.00,
+        'https://placehold.co/600x800?text=Hoodie',
+        1,
+        120,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        30,
+        'Blazer Casual',
+        'ak-blazer',
+        'Lịch lãm',
+        750000.00,
+        'https://placehold.co/600x800?text=Blazer',
+        1,
+        25,
+        '2025-12-03 05:43:01'
+    ),
+    (
+        31,
+        'AIRism Cotton Áo Thun Tay Dài',
+        'airism-cotton-ao-thun-tay-dai',
+        'Phom dáng rộng hiện đại, dễ phối đồ.\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng rộng thoải mái\r\n- Túi: Không túi\r\n- Những hình ảnh sản phẩm có thể bao gồm Những màu không có sẵn.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ C4giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.',
+        390000.00,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765032651/moda-studio/products/altx4ilxfvel1xctdahm.avif',
+        1,
+        0,
+        '2025-12-06 14:50:52'
+    ),
+    (
+        35,
+        'AIRism Cotton Áo Thun Tay Lỡ',
+        'airismcotton-ao-thun-tay-lo',
+        '- The fabric makes for a clean silhouette.\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.',
+        350000.00,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765035027/moda-studio/products/nyrworq5gbpmln7d8urn.avif',
+        1,
+        0,
+        '2025-12-06 15:30:27'
+    ),
+    (
+        36,
+        'AIRism Cotton Áo Thun ngắn tay',
+        'airism-cotton-ao-thun-ngan-tay',
+        'Vải\r\n61% Bông, 33% Polyeste, 6% Elastan\r\nHướng dẫn giặt\r\nGiặt máy nước lạnh, giặt nhẹ, Không giặt khô, Không sấy khô',
+        245000.00,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765097665/moda-studio/products/hahjqgjsltmobackhi5o.avif',
+        1,
+        0,
+        '2025-12-07 08:54:25'
+    ),
+    (
+        37,
+        'Áo Giả Lông Cừu Đan Len Mềm Cổ Tròn',
+        'ao-gia-long-cuu-dan-len-mem-co-tron',
+        '- Kiểu dáng thông thường, đa năng, tinh tế.\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng suông\r\n- Túi: Không túi\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.\r\n',
+        394998.00,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098003/moda-studio/products/oovycjyrwepkidmuf6xs.avif',
+        1,
+        0,
+        '2025-12-07 09:00:03'
+    ),
+    (
+        38,
+        'DRY-EX Áo Thun Hoạ Tiết 1',
+        'dry-ex-ao-thun-hoa-tiet-1',
+        'Vải\r\nThân Trước: Tay Áo: 100% Polyeste ( 53% Sử Dụng Sợi Polyeste Tái Chế )/ Thân Sau: Cổ Áo: 100% Polyeste ( 50% Sử Dụng Sợi Polyeste Tái Chế )\r\nHướng dẫn giặt\r\nGiặt máy nước lạnh, giặt nhẹ, Không giặt khô, Không sấy khô',
+        290000.00,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098451/moda-studio/products/j5oabtbsxclg6xqvgqhh.avif',
+        1,
+        0,
+        '2025-12-07 09:07:31'
+    ),
+    (
+        39,
+        'DRY-EX Áo Thun Hoạ Tiết 2',
+        'dry-ex-ao-thun-hoa-tiet-2',
+        '- Áo thun dày dặn, phù hợp cho phong cách năng động hay ngày thường.\r\n- Công nghệ “DRY-EX”.\r\n- Tính năng kiểm soát mùi.\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng suông\r\n- Túi: Không túi\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.',
+        290000.00,
+        'https://res.cloudinary.com/dsryvdt5h/image/upload/v1765098691/moda-studio/products/fdnvkldvmpttivxd6squ.avif',
+        1,
+        0,
+        '2025-12-07 09:11:31'
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `ProductSKUs`
+--
+
+CREATE TABLE `ProductSKUs` (
+    `Id` int(11) NOT NULL,
+    `ProductId` int(11) NOT NULL,
+    `SkuCode` varchar(50) DEFAULT NULL,
+    `ColorValueId` int(11) NOT NULL,
+    `SizeValueId` int(11) NOT NULL,
+    `Price` decimal(18, 2) NOT NULL,
+    `StockQuantity` int(11) DEFAULT 0
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `ProductSKUs`
+--
+
+INSERT INTO
+    `ProductSKUs` (
+        `Id`,
+        `ProductId`,
+        `SkuCode`,
+        `ColorValueId`,
+        `SizeValueId`,
+        `Price`,
+        `StockQuantity`
+    )
+VALUES (
+        1,
+        1,
+        'SP1-1-6',
+        1,
+        6,
+        150000.00,
+        54
+    ),
+    (
+        2,
+        1,
+        'SP1-1-7',
+        1,
+        7,
+        160000.00,
+        94
+    ),
+    (
+        3,
+        1,
+        'SP1-1-8',
+        1,
+        8,
+        170000.00,
+        28
+    ),
+    (
+        4,
+        1,
+        'SP1-1-9',
+        1,
+        9,
+        180000.00,
+        30
+    ),
+    (
+        5,
+        1,
+        'SP1-1-10',
+        1,
+        10,
+        190000.00,
+        56
+    ),
+    (
+        6,
+        1,
+        'SP1-2-6',
+        2,
+        6,
+        150000.00,
+        90
+    ),
+    (
+        7,
+        1,
+        'SP1-2-7',
+        2,
+        7,
+        160000.00,
+        92
+    ),
+    (
+        8,
+        1,
+        'SP1-2-8',
+        2,
+        8,
+        170000.00,
+        89
+    ),
+    (
+        9,
+        1,
+        'SP1-2-9',
+        2,
+        9,
+        180000.00,
+        71
+    ),
+    (
+        10,
+        1,
+        'SP1-2-10',
+        2,
+        10,
+        190000.00,
+        77
+    ),
+    (
+        11,
+        1,
+        'SP1-3-6',
+        3,
+        6,
+        150000.00,
+        71
+    ),
+    (
+        12,
+        1,
+        'SP1-3-7',
+        3,
+        7,
+        160000.00,
+        28
+    ),
+    (
+        13,
+        1,
+        'SP1-3-8',
+        3,
+        8,
+        170000.00,
+        95
+    ),
+    (
+        14,
+        1,
+        'SP1-3-9',
+        3,
+        9,
+        180000.00,
+        21
+    ),
+    (
+        15,
+        1,
+        'SP1-3-10',
+        3,
+        10,
+        190000.00,
+        82
+    ),
+    (
+        16,
+        1,
+        'SP1-4-6',
+        4,
+        6,
+        150000.00,
+        67
+    ),
+    (
+        17,
+        1,
+        'SP1-4-7',
+        4,
+        7,
+        160000.00,
+        79
+    ),
+    (
+        18,
+        1,
+        'SP1-4-8',
+        4,
+        8,
+        170000.00,
+        94
+    ),
+    (
+        19,
+        1,
+        'SP1-4-9',
+        4,
+        9,
+        180000.00,
+        46
+    ),
+    (
+        20,
+        1,
+        'SP1-4-10',
+        4,
+        10,
+        190000.00,
+        28
+    ),
+    (
+        21,
+        1,
+        'SP1-5-6',
+        5,
+        6,
+        150000.00,
+        80
+    ),
+    (
+        22,
+        1,
+        'SP1-5-7',
+        5,
+        7,
+        160000.00,
+        38
+    ),
+    (
+        23,
+        1,
+        'SP1-5-8',
+        5,
+        8,
+        170000.00,
+        33
+    ),
+    (
+        24,
+        1,
+        'SP1-5-9',
+        5,
+        9,
+        180000.00,
+        38
+    ),
+    (
+        25,
+        1,
+        'SP1-5-10',
+        5,
+        10,
+        190000.00,
+        81
+    ),
+    (
+        26,
+        2,
+        'SP2-1-6',
+        1,
+        6,
+        180000.00,
+        15
+    ),
+    (
+        27,
+        2,
+        'SP2-1-7',
+        1,
+        7,
+        190000.00,
+        89
+    ),
+    (
+        28,
+        2,
+        'SP2-1-8',
+        1,
+        8,
+        200000.00,
+        31
+    ),
+    (
+        29,
+        2,
+        'SP2-1-9',
+        1,
+        9,
+        210000.00,
+        60
+    ),
+    (
+        30,
+        2,
+        'SP2-1-10',
+        1,
+        10,
+        220000.00,
+        19
+    ),
+    (
+        31,
+        2,
+        'SP2-2-6',
+        2,
+        6,
+        180000.00,
+        84
+    ),
+    (
+        32,
+        2,
+        'SP2-2-7',
+        2,
+        7,
+        190000.00,
+        83
+    ),
+    (
+        33,
+        2,
+        'SP2-2-8',
+        2,
+        8,
+        200000.00,
+        65
+    ),
+    (
+        34,
+        2,
+        'SP2-2-9',
+        2,
+        9,
+        210000.00,
+        65
+    ),
+    (
+        35,
+        2,
+        'SP2-2-10',
+        2,
+        10,
+        220000.00,
+        31
+    ),
+    (
+        36,
+        2,
+        'SP2-3-6',
+        3,
+        6,
+        180000.00,
+        39
+    ),
+    (
+        37,
+        2,
+        'SP2-3-7',
+        3,
+        7,
+        190000.00,
+        91
+    ),
+    (
+        38,
+        2,
+        'SP2-3-8',
+        3,
+        8,
+        200000.00,
+        62
+    ),
+    (
+        39,
+        2,
+        'SP2-3-9',
+        3,
+        9,
+        210000.00,
+        27
+    ),
+    (
+        40,
+        2,
+        'SP2-3-10',
+        3,
+        10,
+        220000.00,
+        28
+    ),
+    (
+        41,
+        2,
+        'SP2-4-6',
+        4,
+        6,
+        180000.00,
+        49
+    ),
+    (
+        42,
+        2,
+        'SP2-4-7',
+        4,
+        7,
+        190000.00,
+        61
+    ),
+    (
+        43,
+        2,
+        'SP2-4-8',
+        4,
+        8,
+        200000.00,
+        58
+    ),
+    (
+        44,
+        2,
+        'SP2-4-9',
+        4,
+        9,
+        210000.00,
+        99
+    ),
+    (
+        45,
+        2,
+        'SP2-4-10',
+        4,
+        10,
+        220000.00,
+        43
+    ),
+    (
+        46,
+        2,
+        'SP2-5-6',
+        5,
+        6,
+        180000.00,
+        87
+    ),
+    (
+        47,
+        2,
+        'SP2-5-7',
+        5,
+        7,
+        190000.00,
+        27
+    ),
+    (
+        48,
+        2,
+        'SP2-5-8',
+        5,
+        8,
+        200000.00,
+        45
+    ),
+    (
+        49,
+        2,
+        'SP2-5-9',
+        5,
+        9,
+        210000.00,
+        46
+    ),
+    (
+        50,
+        2,
+        'SP2-5-10',
+        5,
+        10,
+        220000.00,
+        84
+    ),
+    (
+        51,
+        3,
+        'SP3-1-6',
+        1,
+        6,
+        200000.00,
+        92
+    ),
+    (
+        52,
+        3,
+        'SP3-1-7',
+        1,
+        7,
+        210000.00,
+        19
+    ),
+    (
+        53,
+        3,
+        'SP3-1-8',
+        1,
+        8,
+        220000.00,
+        80
+    ),
+    (
+        54,
+        3,
+        'SP3-1-9',
+        1,
+        9,
+        230000.00,
+        65
+    ),
+    (
+        55,
+        3,
+        'SP3-1-10',
+        1,
+        10,
+        240000.00,
+        75
+    ),
+    (
+        56,
+        3,
+        'SP3-2-6',
+        2,
+        6,
+        200000.00,
+        80
+    ),
+    (
+        57,
+        3,
+        'SP3-2-7',
+        2,
+        7,
+        210000.00,
+        77
+    ),
+    (
+        58,
+        3,
+        'SP3-2-8',
+        2,
+        8,
+        220000.00,
+        44
+    ),
+    (
+        59,
+        3,
+        'SP3-2-9',
+        2,
+        9,
+        230000.00,
+        70
+    ),
+    (
+        60,
+        3,
+        'SP3-2-10',
+        2,
+        10,
+        240000.00,
+        29
+    ),
+    (
+        61,
+        3,
+        'SP3-3-6',
+        3,
+        6,
+        200000.00,
+        15
+    ),
+    (
+        62,
+        3,
+        'SP3-3-7',
+        3,
+        7,
+        210000.00,
+        67
+    ),
+    (
+        63,
+        3,
+        'SP3-3-8',
+        3,
+        8,
+        220000.00,
+        13
+    ),
+    (
+        64,
+        3,
+        'SP3-3-9',
+        3,
+        9,
+        230000.00,
+        33
+    ),
+    (
+        65,
+        3,
+        'SP3-3-10',
+        3,
+        10,
+        240000.00,
+        26
+    ),
+    (
+        66,
+        3,
+        'SP3-4-6',
+        4,
+        6,
+        200000.00,
+        23
+    ),
+    (
+        67,
+        3,
+        'SP3-4-7',
+        4,
+        7,
+        210000.00,
+        29
+    ),
+    (
+        68,
+        3,
+        'SP3-4-8',
+        4,
+        8,
+        220000.00,
+        63
+    ),
+    (
+        69,
+        3,
+        'SP3-4-9',
+        4,
+        9,
+        230000.00,
+        42
+    ),
+    (
+        70,
+        3,
+        'SP3-4-10',
+        4,
+        10,
+        240000.00,
+        98
+    ),
+    (
+        71,
+        3,
+        'SP3-5-6',
+        5,
+        6,
+        200000.00,
+        86
+    ),
+    (
+        72,
+        3,
+        'SP3-5-7',
+        5,
+        7,
+        210000.00,
+        37
+    ),
+    (
+        73,
+        3,
+        'SP3-5-8',
+        5,
+        8,
+        220000.00,
+        99
+    ),
+    (
+        74,
+        3,
+        'SP3-5-9',
+        5,
+        9,
+        230000.00,
+        13
+    ),
+    (
+        75,
+        3,
+        'SP3-5-10',
+        5,
+        10,
+        240000.00,
+        27
+    ),
+    (
+        76,
+        4,
+        'SP4-1-6',
+        1,
+        6,
+        160000.00,
+        89
+    ),
+    (
+        77,
+        4,
+        'SP4-1-7',
+        1,
+        7,
+        170000.00,
+        84
+    ),
+    (
+        78,
+        4,
+        'SP4-1-8',
+        1,
+        8,
+        180000.00,
+        53
+    ),
+    (
+        79,
+        4,
+        'SP4-1-9',
+        1,
+        9,
+        190000.00,
+        92
+    ),
+    (
+        80,
+        4,
+        'SP4-1-10',
+        1,
+        10,
+        200000.00,
+        21
+    ),
+    (
+        81,
+        4,
+        'SP4-2-6',
+        2,
+        6,
+        160000.00,
+        90
+    ),
+    (
+        82,
+        4,
+        'SP4-2-7',
+        2,
+        7,
+        170000.00,
+        18
+    ),
+    (
+        83,
+        4,
+        'SP4-2-8',
+        2,
+        8,
+        180000.00,
+        78
+    ),
+    (
+        84,
+        4,
+        'SP4-2-9',
+        2,
+        9,
+        190000.00,
+        60
+    ),
+    (
+        85,
+        4,
+        'SP4-2-10',
+        2,
+        10,
+        200000.00,
+        54
+    ),
+    (
+        86,
+        4,
+        'SP4-3-6',
+        3,
+        6,
+        160000.00,
+        82
+    ),
+    (
+        87,
+        4,
+        'SP4-3-7',
+        3,
+        7,
+        170000.00,
+        58
+    ),
+    (
+        88,
+        4,
+        'SP4-3-8',
+        3,
+        8,
+        180000.00,
+        34
+    ),
+    (
+        89,
+        4,
+        'SP4-3-9',
+        3,
+        9,
+        190000.00,
+        77
+    ),
+    (
+        90,
+        4,
+        'SP4-3-10',
+        3,
+        10,
+        200000.00,
+        95
+    ),
+    (
+        91,
+        4,
+        'SP4-4-6',
+        4,
+        6,
+        160000.00,
+        55
+    ),
+    (
+        92,
+        4,
+        'SP4-4-7',
+        4,
+        7,
+        170000.00,
+        71
+    ),
+    (
+        93,
+        4,
+        'SP4-4-8',
+        4,
+        8,
+        180000.00,
+        88
+    ),
+    (
+        94,
+        4,
+        'SP4-4-9',
+        4,
+        9,
+        190000.00,
+        38
+    ),
+    (
+        95,
+        4,
+        'SP4-4-10',
+        4,
+        10,
+        200000.00,
+        96
+    ),
+    (
+        96,
+        4,
+        'SP4-5-6',
+        5,
+        6,
+        160000.00,
+        87
+    ),
+    (
+        97,
+        4,
+        'SP4-5-7',
+        5,
+        7,
+        170000.00,
+        49
+    ),
+    (
+        98,
+        4,
+        'SP4-5-8',
+        5,
+        8,
+        180000.00,
+        61
+    ),
+    (
+        99,
+        4,
+        'SP4-5-9',
+        5,
+        9,
+        190000.00,
+        62
+    ),
+    (
+        100,
+        4,
+        'SP4-5-10',
+        5,
+        10,
+        200000.00,
+        26
+    ),
+    (
+        101,
+        5,
+        'SP5-1-6',
+        1,
+        6,
+        220000.00,
+        23
+    ),
+    (
+        102,
+        5,
+        'SP5-1-7',
+        1,
+        7,
+        230000.00,
+        30
+    ),
+    (
+        103,
+        5,
+        'SP5-1-8',
+        1,
+        8,
+        240000.00,
+        70
+    ),
+    (
+        104,
+        5,
+        'SP5-1-9',
+        1,
+        9,
+        250000.00,
+        72
+    ),
+    (
+        105,
+        5,
+        'SP5-1-10',
+        1,
+        10,
+        260000.00,
+        51
+    ),
+    (
+        106,
+        5,
+        'SP5-2-6',
+        2,
+        6,
+        220000.00,
+        28
+    ),
+    (
+        107,
+        5,
+        'SP5-2-7',
+        2,
+        7,
+        230000.00,
+        70
+    ),
+    (
+        108,
+        5,
+        'SP5-2-8',
+        2,
+        8,
+        240000.00,
+        75
+    ),
+    (
+        109,
+        5,
+        'SP5-2-9',
+        2,
+        9,
+        250000.00,
+        64
+    ),
+    (
+        110,
+        5,
+        'SP5-2-10',
+        2,
+        10,
+        260000.00,
+        87
+    ),
+    (
+        111,
+        5,
+        'SP5-3-6',
+        3,
+        6,
+        220000.00,
+        54
+    ),
+    (
+        112,
+        5,
+        'SP5-3-7',
+        3,
+        7,
+        230000.00,
+        89
+    ),
+    (
+        113,
+        5,
+        'SP5-3-8',
+        3,
+        8,
+        240000.00,
+        93
+    ),
+    (
+        114,
+        5,
+        'SP5-3-9',
+        3,
+        9,
+        250000.00,
+        99
+    ),
+    (
+        115,
+        5,
+        'SP5-3-10',
+        3,
+        10,
+        260000.00,
+        26
+    ),
+    (
+        116,
+        5,
+        'SP5-4-6',
+        4,
+        6,
+        220000.00,
+        96
+    ),
+    (
+        117,
+        5,
+        'SP5-4-7',
+        4,
+        7,
+        230000.00,
+        30
+    ),
+    (
+        118,
+        5,
+        'SP5-4-8',
+        4,
+        8,
+        240000.00,
+        34
+    ),
+    (
+        119,
+        5,
+        'SP5-4-9',
+        4,
+        9,
+        250000.00,
+        69
+    ),
+    (
+        120,
+        5,
+        'SP5-4-10',
+        4,
+        10,
+        260000.00,
+        53
+    ),
+    (
+        121,
+        5,
+        'SP5-5-6',
+        5,
+        6,
+        220000.00,
+        51
+    ),
+    (
+        122,
+        5,
+        'SP5-5-7',
+        5,
+        7,
+        230000.00,
+        86
+    ),
+    (
+        123,
+        5,
+        'SP5-5-8',
+        5,
+        8,
+        240000.00,
+        88
+    ),
+    (
+        124,
+        5,
+        'SP5-5-9',
+        5,
+        9,
+        250000.00,
+        83
+    ),
+    (
+        125,
+        5,
+        'SP5-5-10',
+        5,
+        10,
+        260000.00,
+        49
+    ),
+    (
+        126,
+        6,
+        'SP6-1-6',
+        1,
+        6,
+        190000.00,
+        80
+    ),
+    (
+        127,
+        6,
+        'SP6-1-7',
+        1,
+        7,
+        200000.00,
+        61
+    ),
+    (
+        128,
+        6,
+        'SP6-1-8',
+        1,
+        8,
+        210000.00,
+        56
+    ),
+    (
+        129,
+        6,
+        'SP6-1-9',
+        1,
+        9,
+        220000.00,
+        88
+    ),
+    (
+        130,
+        6,
+        'SP6-1-10',
+        1,
+        10,
+        230000.00,
+        84
+    ),
+    (
+        131,
+        6,
+        'SP6-2-6',
+        2,
+        6,
+        190000.00,
+        54
+    ),
+    (
+        132,
+        6,
+        'SP6-2-7',
+        2,
+        7,
+        200000.00,
+        10
+    ),
+    (
+        133,
+        6,
+        'SP6-2-8',
+        2,
+        8,
+        210000.00,
+        60
+    ),
+    (
+        134,
+        6,
+        'SP6-2-9',
+        2,
+        9,
+        220000.00,
+        79
+    ),
+    (
+        135,
+        6,
+        'SP6-2-10',
+        2,
+        10,
+        230000.00,
+        24
+    ),
+    (
+        136,
+        6,
+        'SP6-3-6',
+        3,
+        6,
+        190000.00,
+        56
+    ),
+    (
+        137,
+        6,
+        'SP6-3-7',
+        3,
+        7,
+        200000.00,
+        17
+    ),
+    (
+        138,
+        6,
+        'SP6-3-8',
+        3,
+        8,
+        210000.00,
+        88
+    ),
+    (
+        139,
+        6,
+        'SP6-3-9',
+        3,
+        9,
+        220000.00,
+        18
+    ),
+    (
+        140,
+        6,
+        'SP6-3-10',
+        3,
+        10,
+        230000.00,
+        87
+    ),
+    (
+        141,
+        6,
+        'SP6-4-6',
+        4,
+        6,
+        190000.00,
+        12
+    ),
+    (
+        142,
+        6,
+        'SP6-4-7',
+        4,
+        7,
+        200000.00,
+        58
+    ),
+    (
+        143,
+        6,
+        'SP6-4-8',
+        4,
+        8,
+        210000.00,
+        65
+    ),
+    (
+        144,
+        6,
+        'SP6-4-9',
+        4,
+        9,
+        220000.00,
+        53
+    ),
+    (
+        145,
+        6,
+        'SP6-4-10',
+        4,
+        10,
+        230000.00,
+        58
+    ),
+    (
+        146,
+        6,
+        'SP6-5-6',
+        5,
+        6,
+        190000.00,
+        32
+    ),
+    (
+        147,
+        6,
+        'SP6-5-7',
+        5,
+        7,
+        200000.00,
+        65
+    ),
+    (
+        148,
+        6,
+        'SP6-5-8',
+        5,
+        8,
+        210000.00,
+        42
+    ),
+    (
+        149,
+        6,
+        'SP6-5-9',
+        5,
+        9,
+        220000.00,
+        97
+    ),
+    (
+        150,
+        6,
+        'SP6-5-10',
+        5,
+        10,
+        230000.00,
+        77
+    ),
+    (
+        151,
+        7,
+        'SP7-1-6',
+        1,
+        6,
+        120000.00,
+        83
+    ),
+    (
+        152,
+        7,
+        'SP7-1-7',
+        1,
+        7,
+        130000.00,
+        86
+    ),
+    (
+        153,
+        7,
+        'SP7-1-8',
+        1,
+        8,
+        140000.00,
+        83
+    ),
+    (
+        154,
+        7,
+        'SP7-1-9',
+        1,
+        9,
+        150000.00,
+        56
+    ),
+    (
+        155,
+        7,
+        'SP7-1-10',
+        1,
+        10,
+        160000.00,
+        23
+    ),
+    (
+        156,
+        7,
+        'SP7-2-6',
+        2,
+        6,
+        120000.00,
+        27
+    ),
+    (
+        157,
+        7,
+        'SP7-2-7',
+        2,
+        7,
+        130000.00,
+        55
+    ),
+    (
+        158,
+        7,
+        'SP7-2-8',
+        2,
+        8,
+        140000.00,
+        97
+    ),
+    (
+        159,
+        7,
+        'SP7-2-9',
+        2,
+        9,
+        150000.00,
+        40
+    ),
+    (
+        160,
+        7,
+        'SP7-2-10',
+        2,
+        10,
+        160000.00,
+        81
+    ),
+    (
+        161,
+        7,
+        'SP7-3-6',
+        3,
+        6,
+        120000.00,
+        93
+    ),
+    (
+        162,
+        7,
+        'SP7-3-7',
+        3,
+        7,
+        130000.00,
+        35
+    ),
+    (
+        163,
+        7,
+        'SP7-3-8',
+        3,
+        8,
+        140000.00,
+        65
+    ),
+    (
+        164,
+        7,
+        'SP7-3-9',
+        3,
+        9,
+        150000.00,
+        29
+    ),
+    (
+        165,
+        7,
+        'SP7-3-10',
+        3,
+        10,
+        160000.00,
+        32
+    ),
+    (
+        166,
+        7,
+        'SP7-4-6',
+        4,
+        6,
+        120000.00,
+        62
+    ),
+    (
+        167,
+        7,
+        'SP7-4-7',
+        4,
+        7,
+        130000.00,
+        27
+    ),
+    (
+        168,
+        7,
+        'SP7-4-8',
+        4,
+        8,
+        140000.00,
+        28
+    ),
+    (
+        169,
+        7,
+        'SP7-4-9',
+        4,
+        9,
+        150000.00,
+        49
+    ),
+    (
+        170,
+        7,
+        'SP7-4-10',
+        4,
+        10,
+        160000.00,
+        63
+    ),
+    (
+        171,
+        7,
+        'SP7-5-6',
+        5,
+        6,
+        120000.00,
+        70
+    ),
+    (
+        172,
+        7,
+        'SP7-5-7',
+        5,
+        7,
+        130000.00,
+        59
+    ),
+    (
+        173,
+        7,
+        'SP7-5-8',
+        5,
+        8,
+        140000.00,
+        76
+    ),
+    (
+        174,
+        7,
+        'SP7-5-9',
+        5,
+        9,
+        150000.00,
+        13
+    ),
+    (
+        175,
+        7,
+        'SP7-5-10',
+        5,
+        10,
+        160000.00,
+        99
+    ),
+    (
+        176,
+        8,
+        'SP8-1-6',
+        1,
+        6,
+        170000.00,
+        87
+    ),
+    (
+        177,
+        8,
+        'SP8-1-7',
+        1,
+        7,
+        180000.00,
+        39
+    ),
+    (
+        178,
+        8,
+        'SP8-1-8',
+        1,
+        8,
+        190000.00,
+        12
+    ),
+    (
+        179,
+        8,
+        'SP8-1-9',
+        1,
+        9,
+        200000.00,
+        25
+    ),
+    (
+        180,
+        8,
+        'SP8-1-10',
+        1,
+        10,
+        210000.00,
+        80
+    ),
+    (
+        181,
+        8,
+        'SP8-2-6',
+        2,
+        6,
+        170000.00,
+        44
+    ),
+    (
+        182,
+        8,
+        'SP8-2-7',
+        2,
+        7,
+        180000.00,
+        60
+    ),
+    (
+        183,
+        8,
+        'SP8-2-8',
+        2,
+        8,
+        190000.00,
+        69
+    ),
+    (
+        184,
+        8,
+        'SP8-2-9',
+        2,
+        9,
+        200000.00,
+        65
+    ),
+    (
+        185,
+        8,
+        'SP8-2-10',
+        2,
+        10,
+        210000.00,
+        19
+    ),
+    (
+        186,
+        8,
+        'SP8-3-6',
+        3,
+        6,
+        170000.00,
+        69
+    ),
+    (
+        187,
+        8,
+        'SP8-3-7',
+        3,
+        7,
+        180000.00,
+        99
+    ),
+    (
+        188,
+        8,
+        'SP8-3-8',
+        3,
+        8,
+        190000.00,
+        10
+    ),
+    (
+        189,
+        8,
+        'SP8-3-9',
+        3,
+        9,
+        200000.00,
+        11
+    ),
+    (
+        190,
+        8,
+        'SP8-3-10',
+        3,
+        10,
+        210000.00,
+        16
+    ),
+    (
+        191,
+        8,
+        'SP8-4-6',
+        4,
+        6,
+        170000.00,
+        37
+    ),
+    (
+        192,
+        8,
+        'SP8-4-7',
+        4,
+        7,
+        180000.00,
+        38
+    ),
+    (
+        193,
+        8,
+        'SP8-4-8',
+        4,
+        8,
+        190000.00,
+        71
+    ),
+    (
+        194,
+        8,
+        'SP8-4-9',
+        4,
+        9,
+        200000.00,
+        49
+    ),
+    (
+        195,
+        8,
+        'SP8-4-10',
+        4,
+        10,
+        210000.00,
+        23
+    ),
+    (
+        196,
+        8,
+        'SP8-5-6',
+        5,
+        6,
+        170000.00,
+        50
+    ),
+    (
+        197,
+        8,
+        'SP8-5-7',
+        5,
+        7,
+        180000.00,
+        80
+    ),
+    (
+        198,
+        8,
+        'SP8-5-8',
+        5,
+        8,
+        190000.00,
+        63
+    ),
+    (
+        199,
+        8,
+        'SP8-5-9',
+        5,
+        9,
+        200000.00,
+        63
+    ),
+    (
+        200,
+        8,
+        'SP8-5-10',
+        5,
+        10,
+        210000.00,
+        28
+    ),
+    (
+        201,
+        9,
+        'SP9-1-6',
+        1,
+        6,
+        160000.00,
+        32
+    ),
+    (
+        202,
+        9,
+        'SP9-1-7',
+        1,
+        7,
+        170000.00,
+        66
+    ),
+    (
+        203,
+        9,
+        'SP9-1-8',
+        1,
+        8,
+        180000.00,
+        46
+    ),
+    (
+        204,
+        9,
+        'SP9-1-9',
+        1,
+        9,
+        190000.00,
+        21
+    ),
+    (
+        205,
+        9,
+        'SP9-1-10',
+        1,
+        10,
+        200000.00,
+        48
+    ),
+    (
+        206,
+        9,
+        'SP9-2-6',
+        2,
+        6,
+        160000.00,
+        76
+    ),
+    (
+        207,
+        9,
+        'SP9-2-7',
+        2,
+        7,
+        170000.00,
+        46
+    ),
+    (
+        208,
+        9,
+        'SP9-2-8',
+        2,
+        8,
+        180000.00,
+        82
+    ),
+    (
+        209,
+        9,
+        'SP9-2-9',
+        2,
+        9,
+        190000.00,
+        82
+    ),
+    (
+        210,
+        9,
+        'SP9-2-10',
+        2,
+        10,
+        200000.00,
+        64
+    ),
+    (
+        211,
+        9,
+        'SP9-3-6',
+        3,
+        6,
+        160000.00,
+        65
+    ),
+    (
+        212,
+        9,
+        'SP9-3-7',
+        3,
+        7,
+        170000.00,
+        34
+    ),
+    (
+        213,
+        9,
+        'SP9-3-8',
+        3,
+        8,
+        180000.00,
+        53
+    ),
+    (
+        214,
+        9,
+        'SP9-3-9',
+        3,
+        9,
+        190000.00,
+        67
+    ),
+    (
+        215,
+        9,
+        'SP9-3-10',
+        3,
+        10,
+        200000.00,
+        74
+    ),
+    (
+        216,
+        9,
+        'SP9-4-6',
+        4,
+        6,
+        160000.00,
+        71
+    ),
+    (
+        217,
+        9,
+        'SP9-4-7',
+        4,
+        7,
+        170000.00,
+        31
+    ),
+    (
+        218,
+        9,
+        'SP9-4-8',
+        4,
+        8,
+        180000.00,
+        24
+    ),
+    (
+        219,
+        9,
+        'SP9-4-9',
+        4,
+        9,
+        190000.00,
+        17
+    ),
+    (
+        220,
+        9,
+        'SP9-4-10',
+        4,
+        10,
+        200000.00,
+        96
+    ),
+    (
+        221,
+        9,
+        'SP9-5-6',
+        5,
+        6,
+        160000.00,
+        56
+    ),
+    (
+        222,
+        9,
+        'SP9-5-7',
+        5,
+        7,
+        170000.00,
+        74
+    ),
+    (
+        223,
+        9,
+        'SP9-5-8',
+        5,
+        8,
+        180000.00,
+        13
+    ),
+    (
+        224,
+        9,
+        'SP9-5-9',
+        5,
+        9,
+        190000.00,
+        12
+    ),
+    (
+        225,
+        9,
+        'SP9-5-10',
+        5,
+        10,
+        200000.00,
+        12
+    ),
+    (
+        226,
+        10,
+        'SP10-1-6',
+        1,
+        6,
+        250000.00,
+        16
+    ),
+    (
+        227,
+        10,
+        'SP10-1-7',
+        1,
+        7,
+        260000.00,
+        34
+    ),
+    (
+        228,
+        10,
+        'SP10-1-8',
+        1,
+        8,
+        270000.00,
+        24
+    ),
+    (
+        229,
+        10,
+        'SP10-1-9',
+        1,
+        9,
+        280000.00,
+        98
+    ),
+    (
+        230,
+        10,
+        'SP10-1-10',
+        1,
+        10,
+        290000.00,
+        48
+    ),
+    (
+        231,
+        10,
+        'SP10-2-6',
+        2,
+        6,
+        250000.00,
+        27
+    ),
+    (
+        232,
+        10,
+        'SP10-2-7',
+        2,
+        7,
+        260000.00,
+        70
+    ),
+    (
+        233,
+        10,
+        'SP10-2-8',
+        2,
+        8,
+        270000.00,
+        81
+    ),
+    (
+        234,
+        10,
+        'SP10-2-9',
+        2,
+        9,
+        280000.00,
+        94
+    ),
+    (
+        235,
+        10,
+        'SP10-2-10',
+        2,
+        10,
+        290000.00,
+        39
+    ),
+    (
+        236,
+        10,
+        'SP10-3-6',
+        3,
+        6,
+        250000.00,
+        82
+    ),
+    (
+        237,
+        10,
+        'SP10-3-7',
+        3,
+        7,
+        260000.00,
+        12
+    ),
+    (
+        238,
+        10,
+        'SP10-3-8',
+        3,
+        8,
+        270000.00,
+        77
+    ),
+    (
+        239,
+        10,
+        'SP10-3-9',
+        3,
+        9,
+        280000.00,
+        69
+    ),
+    (
+        240,
+        10,
+        'SP10-3-10',
+        3,
+        10,
+        290000.00,
+        16
+    ),
+    (
+        241,
+        10,
+        'SP10-4-6',
+        4,
+        6,
+        250000.00,
+        41
+    ),
+    (
+        242,
+        10,
+        'SP10-4-7',
+        4,
+        7,
+        260000.00,
+        60
+    ),
+    (
+        243,
+        10,
+        'SP10-4-8',
+        4,
+        8,
+        270000.00,
+        76
+    ),
+    (
+        244,
+        10,
+        'SP10-4-9',
+        4,
+        9,
+        280000.00,
+        10
+    ),
+    (
+        245,
+        10,
+        'SP10-4-10',
+        4,
+        10,
+        290000.00,
+        84
+    ),
+    (
+        246,
+        10,
+        'SP10-5-6',
+        5,
+        6,
+        250000.00,
+        19
+    ),
+    (
+        247,
+        10,
+        'SP10-5-7',
+        5,
+        7,
+        260000.00,
+        15
+    ),
+    (
+        248,
+        10,
+        'SP10-5-8',
+        5,
+        8,
+        270000.00,
+        10
+    ),
+    (
+        249,
+        10,
+        'SP10-5-9',
+        5,
+        9,
+        280000.00,
+        82
+    ),
+    (
+        250,
+        10,
+        'SP10-5-10',
+        5,
+        10,
+        290000.00,
+        12
+    ),
+    (
+        251,
+        11,
+        'SP11-1-6',
+        1,
+        6,
+        250000.00,
+        75
+    ),
+    (
+        252,
+        11,
+        'SP11-1-7',
+        1,
+        7,
+        260000.00,
+        58
+    ),
+    (
+        253,
+        11,
+        'SP11-1-8',
+        1,
+        8,
+        270000.00,
+        57
+    ),
+    (
+        254,
+        11,
+        'SP11-1-9',
+        1,
+        9,
+        280000.00,
+        12
+    ),
+    (
+        255,
+        11,
+        'SP11-1-10',
+        1,
+        10,
+        290000.00,
+        60
+    ),
+    (
+        256,
+        11,
+        'SP11-2-6',
+        2,
+        6,
+        250000.00,
+        72
+    ),
+    (
+        257,
+        11,
+        'SP11-2-7',
+        2,
+        7,
+        260000.00,
+        81
+    ),
+    (
+        258,
+        11,
+        'SP11-2-8',
+        2,
+        8,
+        270000.00,
+        90
+    ),
+    (
+        259,
+        11,
+        'SP11-2-9',
+        2,
+        9,
+        280000.00,
+        18
+    ),
+    (
+        260,
+        11,
+        'SP11-2-10',
+        2,
+        10,
+        290000.00,
+        82
+    ),
+    (
+        261,
+        11,
+        'SP11-3-6',
+        3,
+        6,
+        250000.00,
+        75
+    ),
+    (
+        262,
+        11,
+        'SP11-3-7',
+        3,
+        7,
+        260000.00,
+        30
+    ),
+    (
+        263,
+        11,
+        'SP11-3-8',
+        3,
+        8,
+        270000.00,
+        96
+    ),
+    (
+        264,
+        11,
+        'SP11-3-9',
+        3,
+        9,
+        280000.00,
+        18
+    ),
+    (
+        265,
+        11,
+        'SP11-3-10',
+        3,
+        10,
+        290000.00,
+        64
+    ),
+    (
+        266,
+        11,
+        'SP11-4-6',
+        4,
+        6,
+        250000.00,
+        78
+    ),
+    (
+        267,
+        11,
+        'SP11-4-7',
+        4,
+        7,
+        260000.00,
+        96
+    ),
+    (
+        268,
+        11,
+        'SP11-4-8',
+        4,
+        8,
+        270000.00,
+        59
+    ),
+    (
+        269,
+        11,
+        'SP11-4-9',
+        4,
+        9,
+        280000.00,
+        86
+    ),
+    (
+        270,
+        11,
+        'SP11-4-10',
+        4,
+        10,
+        290000.00,
+        65
+    ),
+    (
+        271,
+        11,
+        'SP11-5-6',
+        5,
+        6,
+        250000.00,
+        56
+    ),
+    (
+        272,
+        11,
+        'SP11-5-7',
+        5,
+        7,
+        260000.00,
+        75
+    ),
+    (
+        273,
+        11,
+        'SP11-5-8',
+        5,
+        8,
+        270000.00,
+        17
+    ),
+    (
+        274,
+        11,
+        'SP11-5-9',
+        5,
+        9,
+        280000.00,
+        30
+    ),
+    (
+        275,
+        11,
+        'SP11-5-10',
+        5,
+        10,
+        290000.00,
+        89
+    ),
+    (
+        276,
+        12,
+        'SP12-1-6',
+        1,
+        6,
+        280000.00,
+        76
+    ),
+    (
+        277,
+        12,
+        'SP12-1-7',
+        1,
+        7,
+        290000.00,
+        12
+    ),
+    (
+        278,
+        12,
+        'SP12-1-8',
+        1,
+        8,
+        300000.00,
+        94
+    ),
+    (
+        279,
+        12,
+        'SP12-1-9',
+        1,
+        9,
+        310000.00,
+        64
+    ),
+    (
+        280,
+        12,
+        'SP12-1-10',
+        1,
+        10,
+        320000.00,
+        29
+    ),
+    (
+        281,
+        12,
+        'SP12-2-6',
+        2,
+        6,
+        280000.00,
+        32
+    ),
+    (
+        282,
+        12,
+        'SP12-2-7',
+        2,
+        7,
+        290000.00,
+        64
+    ),
+    (
+        283,
+        12,
+        'SP12-2-8',
+        2,
+        8,
+        300000.00,
+        35
+    ),
+    (
+        284,
+        12,
+        'SP12-2-9',
+        2,
+        9,
+        310000.00,
+        63
+    ),
+    (
+        285,
+        12,
+        'SP12-2-10',
+        2,
+        10,
+        320000.00,
+        21
+    ),
+    (
+        286,
+        12,
+        'SP12-3-6',
+        3,
+        6,
+        280000.00,
+        86
+    ),
+    (
+        287,
+        12,
+        'SP12-3-7',
+        3,
+        7,
+        290000.00,
+        90
+    ),
+    (
+        288,
+        12,
+        'SP12-3-8',
+        3,
+        8,
+        300000.00,
+        90
+    ),
+    (
+        289,
+        12,
+        'SP12-3-9',
+        3,
+        9,
+        310000.00,
+        82
+    ),
+    (
+        290,
+        12,
+        'SP12-3-10',
+        3,
+        10,
+        320000.00,
+        41
+    ),
+    (
+        291,
+        12,
+        'SP12-4-6',
+        4,
+        6,
+        280000.00,
+        38
+    ),
+    (
+        292,
+        12,
+        'SP12-4-7',
+        4,
+        7,
+        290000.00,
+        59
+    ),
+    (
+        293,
+        12,
+        'SP12-4-8',
+        4,
+        8,
+        300000.00,
+        82
+    ),
+    (
+        294,
+        12,
+        'SP12-4-9',
+        4,
+        9,
+        310000.00,
+        43
+    ),
+    (
+        295,
+        12,
+        'SP12-4-10',
+        4,
+        10,
+        320000.00,
+        50
+    ),
+    (
+        296,
+        12,
+        'SP12-5-6',
+        5,
+        6,
+        280000.00,
+        21
+    ),
+    (
+        297,
+        12,
+        'SP12-5-7',
+        5,
+        7,
+        290000.00,
+        33
+    ),
+    (
+        298,
+        12,
+        'SP12-5-8',
+        5,
+        8,
+        300000.00,
+        96
+    ),
+    (
+        299,
+        12,
+        'SP12-5-9',
+        5,
+        9,
+        310000.00,
+        11
+    ),
+    (
+        300,
+        12,
+        'SP12-5-10',
+        5,
+        10,
+        320000.00,
+        25
+    ),
+    (
+        301,
+        13,
+        'SP13-1-6',
+        1,
+        6,
+        300000.00,
+        86
+    ),
+    (
+        302,
+        13,
+        'SP13-1-7',
+        1,
+        7,
+        310000.00,
+        72
+    ),
+    (
+        303,
+        13,
+        'SP13-1-8',
+        1,
+        8,
+        320000.00,
+        94
+    ),
+    (
+        304,
+        13,
+        'SP13-1-9',
+        1,
+        9,
+        330000.00,
+        63
+    ),
+    (
+        305,
+        13,
+        'SP13-1-10',
+        1,
+        10,
+        340000.00,
+        25
+    ),
+    (
+        306,
+        13,
+        'SP13-2-6',
+        2,
+        6,
+        300000.00,
+        18
+    ),
+    (
+        307,
+        13,
+        'SP13-2-7',
+        2,
+        7,
+        310000.00,
+        94
+    ),
+    (
+        308,
+        13,
+        'SP13-2-8',
+        2,
+        8,
+        320000.00,
+        48
+    ),
+    (
+        309,
+        13,
+        'SP13-2-9',
+        2,
+        9,
+        330000.00,
+        36
+    ),
+    (
+        310,
+        13,
+        'SP13-2-10',
+        2,
+        10,
+        340000.00,
+        27
+    ),
+    (
+        311,
+        13,
+        'SP13-3-6',
+        3,
+        6,
+        300000.00,
+        19
+    ),
+    (
+        312,
+        13,
+        'SP13-3-7',
+        3,
+        7,
+        310000.00,
+        93
+    ),
+    (
+        313,
+        13,
+        'SP13-3-8',
+        3,
+        8,
+        320000.00,
+        38
+    ),
+    (
+        314,
+        13,
+        'SP13-3-9',
+        3,
+        9,
+        330000.00,
+        81
+    ),
+    (
+        315,
+        13,
+        'SP13-3-10',
+        3,
+        10,
+        340000.00,
+        12
+    ),
+    (
+        316,
+        13,
+        'SP13-4-6',
+        4,
+        6,
+        300000.00,
+        77
+    ),
+    (
+        317,
+        13,
+        'SP13-4-7',
+        4,
+        7,
+        310000.00,
+        69
+    ),
+    (
+        318,
+        13,
+        'SP13-4-8',
+        4,
+        8,
+        320000.00,
+        15
+    ),
+    (
+        319,
+        13,
+        'SP13-4-9',
+        4,
+        9,
+        330000.00,
+        40
+    ),
+    (
+        320,
+        13,
+        'SP13-4-10',
+        4,
+        10,
+        340000.00,
+        57
+    ),
+    (
+        321,
+        13,
+        'SP13-5-6',
+        5,
+        6,
+        300000.00,
+        63
+    ),
+    (
+        322,
+        13,
+        'SP13-5-7',
+        5,
+        7,
+        310000.00,
+        43
+    ),
+    (
+        323,
+        13,
+        'SP13-5-8',
+        5,
+        8,
+        320000.00,
+        18
+    ),
+    (
+        324,
+        13,
+        'SP13-5-9',
+        5,
+        9,
+        330000.00,
+        42
+    ),
+    (
+        325,
+        13,
+        'SP13-5-10',
+        5,
+        10,
+        340000.00,
+        54
+    ),
+    (
+        326,
+        14,
+        'SP14-1-6',
+        1,
+        6,
+        260000.00,
+        46
+    ),
+    (
+        327,
+        14,
+        'SP14-1-7',
+        1,
+        7,
+        270000.00,
+        60
+    ),
+    (
+        328,
+        14,
+        'SP14-1-8',
+        1,
+        8,
+        280000.00,
+        60
+    ),
+    (
+        329,
+        14,
+        'SP14-1-9',
+        1,
+        9,
+        290000.00,
+        21
+    ),
+    (
+        330,
+        14,
+        'SP14-1-10',
+        1,
+        10,
+        300000.00,
+        98
+    ),
+    (
+        331,
+        14,
+        'SP14-2-6',
+        2,
+        6,
+        260000.00,
+        55
+    ),
+    (
+        332,
+        14,
+        'SP14-2-7',
+        2,
+        7,
+        270000.00,
+        64
+    ),
+    (
+        333,
+        14,
+        'SP14-2-8',
+        2,
+        8,
+        280000.00,
+        54
+    ),
+    (
+        334,
+        14,
+        'SP14-2-9',
+        2,
+        9,
+        290000.00,
+        68
+    ),
+    (
+        335,
+        14,
+        'SP14-2-10',
+        2,
+        10,
+        300000.00,
+        78
+    ),
+    (
+        336,
+        14,
+        'SP14-3-6',
+        3,
+        6,
+        260000.00,
+        87
+    ),
+    (
+        337,
+        14,
+        'SP14-3-7',
+        3,
+        7,
+        270000.00,
+        12
+    ),
+    (
+        338,
+        14,
+        'SP14-3-8',
+        3,
+        8,
+        280000.00,
+        58
+    ),
+    (
+        339,
+        14,
+        'SP14-3-9',
+        3,
+        9,
+        290000.00,
+        63
+    ),
+    (
+        340,
+        14,
+        'SP14-3-10',
+        3,
+        10,
+        300000.00,
+        45
+    ),
+    (
+        341,
+        14,
+        'SP14-4-6',
+        4,
+        6,
+        260000.00,
+        26
+    ),
+    (
+        342,
+        14,
+        'SP14-4-7',
+        4,
+        7,
+        270000.00,
+        73
+    ),
+    (
+        343,
+        14,
+        'SP14-4-8',
+        4,
+        8,
+        280000.00,
+        11
+    ),
+    (
+        344,
+        14,
+        'SP14-4-9',
+        4,
+        9,
+        290000.00,
+        93
+    ),
+    (
+        345,
+        14,
+        'SP14-4-10',
+        4,
+        10,
+        300000.00,
+        66
+    ),
+    (
+        346,
+        14,
+        'SP14-5-6',
+        5,
+        6,
+        260000.00,
+        40
+    ),
+    (
+        347,
+        14,
+        'SP14-5-7',
+        5,
+        7,
+        270000.00,
+        82
+    ),
+    (
+        348,
+        14,
+        'SP14-5-8',
+        5,
+        8,
+        280000.00,
+        10
+    ),
+    (
+        349,
+        14,
+        'SP14-5-9',
+        5,
+        9,
+        290000.00,
+        64
+    ),
+    (
+        350,
+        14,
+        'SP14-5-10',
+        5,
+        10,
+        300000.00,
+        11
+    ),
+    (
+        351,
+        15,
+        'SP15-1-6',
+        1,
+        6,
+        320000.00,
+        34
+    ),
+    (
+        352,
+        15,
+        'SP15-1-7',
+        1,
+        7,
+        330000.00,
+        36
+    ),
+    (
+        353,
+        15,
+        'SP15-1-8',
+        1,
+        8,
+        340000.00,
+        69
+    ),
+    (
+        354,
+        15,
+        'SP15-1-9',
+        1,
+        9,
+        350000.00,
+        47
+    ),
+    (
+        355,
+        15,
+        'SP15-1-10',
+        1,
+        10,
+        360000.00,
+        21
+    ),
+    (
+        356,
+        15,
+        'SP15-2-6',
+        2,
+        6,
+        320000.00,
+        41
+    ),
+    (
+        357,
+        15,
+        'SP15-2-7',
+        2,
+        7,
+        330000.00,
+        44
+    ),
+    (
+        358,
+        15,
+        'SP15-2-8',
+        2,
+        8,
+        340000.00,
+        89
+    ),
+    (
+        359,
+        15,
+        'SP15-2-9',
+        2,
+        9,
+        350000.00,
+        34
+    ),
+    (
+        360,
+        15,
+        'SP15-2-10',
+        2,
+        10,
+        360000.00,
+        71
+    ),
+    (
+        361,
+        15,
+        'SP15-3-6',
+        3,
+        6,
+        320000.00,
+        64
+    ),
+    (
+        362,
+        15,
+        'SP15-3-7',
+        3,
+        7,
+        330000.00,
+        99
+    ),
+    (
+        363,
+        15,
+        'SP15-3-8',
+        3,
+        8,
+        340000.00,
+        22
+    ),
+    (
+        364,
+        15,
+        'SP15-3-9',
+        3,
+        9,
+        350000.00,
+        74
+    ),
+    (
+        365,
+        15,
+        'SP15-3-10',
+        3,
+        10,
+        360000.00,
+        25
+    ),
+    (
+        366,
+        15,
+        'SP15-4-6',
+        4,
+        6,
+        320000.00,
+        74
+    ),
+    (
+        367,
+        15,
+        'SP15-4-7',
+        4,
+        7,
+        330000.00,
+        17
+    ),
+    (
+        368,
+        15,
+        'SP15-4-8',
+        4,
+        8,
+        340000.00,
+        31
+    ),
+    (
+        369,
+        15,
+        'SP15-4-9',
+        4,
+        9,
+        350000.00,
+        96
+    ),
+    (
+        370,
+        15,
+        'SP15-4-10',
+        4,
+        10,
+        360000.00,
+        19
+    ),
+    (
+        371,
+        15,
+        'SP15-5-6',
+        5,
+        6,
+        320000.00,
+        65
+    ),
+    (
+        372,
+        15,
+        'SP15-5-7',
+        5,
+        7,
+        330000.00,
+        80
+    ),
+    (
+        373,
+        15,
+        'SP15-5-8',
+        5,
+        8,
+        340000.00,
+        16
+    ),
+    (
+        374,
+        15,
+        'SP15-5-9',
+        5,
+        9,
+        350000.00,
+        11
+    ),
+    (
+        375,
+        15,
+        'SP15-5-10',
+        5,
+        10,
+        360000.00,
+        86
+    ),
+    (
+        376,
+        16,
+        'SP16-1-6',
+        1,
+        6,
+        350000.00,
+        26
+    ),
+    (
+        377,
+        16,
+        'SP16-1-7',
+        1,
+        7,
+        360000.00,
+        44
+    ),
+    (
+        378,
+        16,
+        'SP16-1-8',
+        1,
+        8,
+        370000.00,
+        44
+    ),
+    (
+        379,
+        16,
+        'SP16-1-9',
+        1,
+        9,
+        380000.00,
+        77
+    ),
+    (
+        380,
+        16,
+        'SP16-1-10',
+        1,
+        10,
+        390000.00,
+        62
+    ),
+    (
+        381,
+        16,
+        'SP16-2-6',
+        2,
+        6,
+        350000.00,
+        71
+    ),
+    (
+        382,
+        16,
+        'SP16-2-7',
+        2,
+        7,
+        360000.00,
+        71
+    ),
+    (
+        383,
+        16,
+        'SP16-2-8',
+        2,
+        8,
+        370000.00,
+        41
+    ),
+    (
+        384,
+        16,
+        'SP16-2-9',
+        2,
+        9,
+        380000.00,
+        74
+    ),
+    (
+        385,
+        16,
+        'SP16-2-10',
+        2,
+        10,
+        390000.00,
+        56
+    ),
+    (
+        386,
+        16,
+        'SP16-3-6',
+        3,
+        6,
+        350000.00,
+        48
+    ),
+    (
+        387,
+        16,
+        'SP16-3-7',
+        3,
+        7,
+        360000.00,
+        64
+    ),
+    (
+        388,
+        16,
+        'SP16-3-8',
+        3,
+        8,
+        370000.00,
+        74
+    ),
+    (
+        389,
+        16,
+        'SP16-3-9',
+        3,
+        9,
+        380000.00,
+        79
+    ),
+    (
+        390,
+        16,
+        'SP16-3-10',
+        3,
+        10,
+        390000.00,
+        75
+    ),
+    (
+        391,
+        16,
+        'SP16-4-6',
+        4,
+        6,
+        350000.00,
+        38
+    ),
+    (
+        392,
+        16,
+        'SP16-4-7',
+        4,
+        7,
+        360000.00,
+        44
+    ),
+    (
+        393,
+        16,
+        'SP16-4-8',
+        4,
+        8,
+        370000.00,
+        98
+    ),
+    (
+        394,
+        16,
+        'SP16-4-9',
+        4,
+        9,
+        380000.00,
+        78
+    ),
+    (
+        395,
+        16,
+        'SP16-4-10',
+        4,
+        10,
+        390000.00,
+        85
+    ),
+    (
+        396,
+        16,
+        'SP16-5-6',
+        5,
+        6,
+        350000.00,
+        93
+    ),
+    (
+        397,
+        16,
+        'SP16-5-7',
+        5,
+        7,
+        360000.00,
+        22
+    ),
+    (
+        398,
+        16,
+        'SP16-5-8',
+        5,
+        8,
+        370000.00,
+        92
+    ),
+    (
+        399,
+        16,
+        'SP16-5-9',
+        5,
+        9,
+        380000.00,
+        23
+    ),
+    (
+        400,
+        16,
+        'SP16-5-10',
+        5,
+        10,
+        390000.00,
+        98
+    ),
+    (
+        401,
+        17,
+        'SP17-1-6',
+        1,
+        6,
+        290000.00,
+        52
+    ),
+    (
+        402,
+        17,
+        'SP17-1-7',
+        1,
+        7,
+        300000.00,
+        45
+    ),
+    (
+        403,
+        17,
+        'SP17-1-8',
+        1,
+        8,
+        310000.00,
+        61
+    ),
+    (
+        404,
+        17,
+        'SP17-1-9',
+        1,
+        9,
+        320000.00,
+        69
+    ),
+    (
+        405,
+        17,
+        'SP17-1-10',
+        1,
+        10,
+        330000.00,
+        65
+    ),
+    (
+        406,
+        17,
+        'SP17-2-6',
+        2,
+        6,
+        290000.00,
+        17
+    ),
+    (
+        407,
+        17,
+        'SP17-2-7',
+        2,
+        7,
+        300000.00,
+        60
+    ),
+    (
+        408,
+        17,
+        'SP17-2-8',
+        2,
+        8,
+        310000.00,
+        58
+    ),
+    (
+        409,
+        17,
+        'SP17-2-9',
+        2,
+        9,
+        320000.00,
+        13
+    ),
+    (
+        410,
+        17,
+        'SP17-2-10',
+        2,
+        10,
+        330000.00,
+        62
+    ),
+    (
+        411,
+        17,
+        'SP17-3-6',
+        3,
+        6,
+        290000.00,
+        79
+    ),
+    (
+        412,
+        17,
+        'SP17-3-7',
+        3,
+        7,
+        300000.00,
+        21
+    ),
+    (
+        413,
+        17,
+        'SP17-3-8',
+        3,
+        8,
+        310000.00,
+        37
+    ),
+    (
+        414,
+        17,
+        'SP17-3-9',
+        3,
+        9,
+        320000.00,
+        22
+    ),
+    (
+        415,
+        17,
+        'SP17-3-10',
+        3,
+        10,
+        330000.00,
+        79
+    ),
+    (
+        416,
+        17,
+        'SP17-4-6',
+        4,
+        6,
+        290000.00,
+        50
+    ),
+    (
+        417,
+        17,
+        'SP17-4-7',
+        4,
+        7,
+        300000.00,
+        93
+    ),
+    (
+        418,
+        17,
+        'SP17-4-8',
+        4,
+        8,
+        310000.00,
+        35
+    ),
+    (
+        419,
+        17,
+        'SP17-4-9',
+        4,
+        9,
+        320000.00,
+        67
+    ),
+    (
+        420,
+        17,
+        'SP17-4-10',
+        4,
+        10,
+        330000.00,
+        41
+    ),
+    (
+        421,
+        17,
+        'SP17-5-6',
+        5,
+        6,
+        290000.00,
+        85
+    ),
+    (
+        422,
+        17,
+        'SP17-5-7',
+        5,
+        7,
+        300000.00,
+        23
+    ),
+    (
+        423,
+        17,
+        'SP17-5-8',
+        5,
+        8,
+        310000.00,
+        30
+    ),
+    (
+        424,
+        17,
+        'SP17-5-9',
+        5,
+        9,
+        320000.00,
+        72
+    ),
+    (
+        425,
+        17,
+        'SP17-5-10',
+        5,
+        10,
+        330000.00,
+        80
+    ),
+    (
+        426,
+        18,
+        'SP18-1-6',
+        1,
+        6,
+        270000.00,
+        85
+    ),
+    (
+        427,
+        18,
+        'SP18-1-7',
+        1,
+        7,
+        280000.00,
+        86
+    ),
+    (
+        428,
+        18,
+        'SP18-1-8',
+        1,
+        8,
+        290000.00,
+        75
+    ),
+    (
+        429,
+        18,
+        'SP18-1-9',
+        1,
+        9,
+        300000.00,
+        17
+    ),
+    (
+        430,
+        18,
+        'SP18-1-10',
+        1,
+        10,
+        310000.00,
+        33
+    ),
+    (
+        431,
+        18,
+        'SP18-2-6',
+        2,
+        6,
+        270000.00,
+        12
+    ),
+    (
+        432,
+        18,
+        'SP18-2-7',
+        2,
+        7,
+        280000.00,
+        43
+    ),
+    (
+        433,
+        18,
+        'SP18-2-8',
+        2,
+        8,
+        290000.00,
+        80
+    ),
+    (
+        434,
+        18,
+        'SP18-2-9',
+        2,
+        9,
+        300000.00,
+        82
+    ),
+    (
+        435,
+        18,
+        'SP18-2-10',
+        2,
+        10,
+        310000.00,
+        70
+    ),
+    (
+        436,
+        18,
+        'SP18-3-6',
+        3,
+        6,
+        270000.00,
+        94
+    ),
+    (
+        437,
+        18,
+        'SP18-3-7',
+        3,
+        7,
+        280000.00,
+        72
+    ),
+    (
+        438,
+        18,
+        'SP18-3-8',
+        3,
+        8,
+        290000.00,
+        66
+    ),
+    (
+        439,
+        18,
+        'SP18-3-9',
+        3,
+        9,
+        300000.00,
+        15
+    ),
+    (
+        440,
+        18,
+        'SP18-3-10',
+        3,
+        10,
+        310000.00,
+        46
+    ),
+    (
+        441,
+        18,
+        'SP18-4-6',
+        4,
+        6,
+        270000.00,
+        87
+    ),
+    (
+        442,
+        18,
+        'SP18-4-7',
+        4,
+        7,
+        280000.00,
+        18
+    ),
+    (
+        443,
+        18,
+        'SP18-4-8',
+        4,
+        8,
+        290000.00,
+        87
+    ),
+    (
+        444,
+        18,
+        'SP18-4-9',
+        4,
+        9,
+        300000.00,
+        14
+    ),
+    (
+        445,
+        18,
+        'SP18-4-10',
+        4,
+        10,
+        310000.00,
+        69
+    ),
+    (
+        446,
+        18,
+        'SP18-5-6',
+        5,
+        6,
+        270000.00,
+        24
+    ),
+    (
+        447,
+        18,
+        'SP18-5-7',
+        5,
+        7,
+        280000.00,
+        81
+    ),
+    (
+        448,
+        18,
+        'SP18-5-8',
+        5,
+        8,
+        290000.00,
+        56
+    ),
+    (
+        449,
+        18,
+        'SP18-5-9',
+        5,
+        9,
+        300000.00,
+        27
+    ),
+    (
+        450,
+        18,
+        'SP18-5-10',
+        5,
+        10,
+        310000.00,
+        48
+    ),
+    (
+        451,
+        19,
+        'SP19-1-6',
+        1,
+        6,
+        310000.00,
+        57
+    ),
+    (
+        452,
+        19,
+        'SP19-1-7',
+        1,
+        7,
+        320000.00,
+        44
+    ),
+    (
+        453,
+        19,
+        'SP19-1-8',
+        1,
+        8,
+        330000.00,
+        41
+    ),
+    (
+        454,
+        19,
+        'SP19-1-9',
+        1,
+        9,
+        340000.00,
+        60
+    ),
+    (
+        455,
+        19,
+        'SP19-1-10',
+        1,
+        10,
+        350000.00,
+        79
+    ),
+    (
+        456,
+        19,
+        'SP19-2-6',
+        2,
+        6,
+        310000.00,
+        27
+    ),
+    (
+        457,
+        19,
+        'SP19-2-7',
+        2,
+        7,
+        320000.00,
+        67
+    ),
+    (
+        458,
+        19,
+        'SP19-2-8',
+        2,
+        8,
+        330000.00,
+        64
+    ),
+    (
+        459,
+        19,
+        'SP19-2-9',
+        2,
+        9,
+        340000.00,
+        21
+    ),
+    (
+        460,
+        19,
+        'SP19-2-10',
+        2,
+        10,
+        350000.00,
+        81
+    ),
+    (
+        461,
+        19,
+        'SP19-3-6',
+        3,
+        6,
+        310000.00,
+        65
+    ),
+    (
+        462,
+        19,
+        'SP19-3-7',
+        3,
+        7,
+        320000.00,
+        70
+    ),
+    (
+        463,
+        19,
+        'SP19-3-8',
+        3,
+        8,
+        330000.00,
+        56
+    ),
+    (
+        464,
+        19,
+        'SP19-3-9',
+        3,
+        9,
+        340000.00,
+        63
+    ),
+    (
+        465,
+        19,
+        'SP19-3-10',
+        3,
+        10,
+        350000.00,
+        46
+    ),
+    (
+        466,
+        19,
+        'SP19-4-6',
+        4,
+        6,
+        310000.00,
+        33
+    ),
+    (
+        467,
+        19,
+        'SP19-4-7',
+        4,
+        7,
+        320000.00,
+        16
+    ),
+    (
+        468,
+        19,
+        'SP19-4-8',
+        4,
+        8,
+        330000.00,
+        62
+    ),
+    (
+        469,
+        19,
+        'SP19-4-9',
+        4,
+        9,
+        340000.00,
+        70
+    ),
+    (
+        470,
+        19,
+        'SP19-4-10',
+        4,
+        10,
+        350000.00,
+        68
+    ),
+    (
+        471,
+        19,
+        'SP19-5-6',
+        5,
+        6,
+        310000.00,
+        30
+    ),
+    (
+        472,
+        19,
+        'SP19-5-7',
+        5,
+        7,
+        320000.00,
+        27
+    ),
+    (
+        473,
+        19,
+        'SP19-5-8',
+        5,
+        8,
+        330000.00,
+        33
+    ),
+    (
+        474,
+        19,
+        'SP19-5-9',
+        5,
+        9,
+        340000.00,
+        78
+    ),
+    (
+        475,
+        19,
+        'SP19-5-10',
+        5,
+        10,
+        350000.00,
+        99
+    ),
+    (
+        476,
+        20,
+        'SP20-1-6',
+        1,
+        6,
+        350000.00,
+        73
+    ),
+    (
+        477,
+        20,
+        'SP20-1-7',
+        1,
+        7,
+        360000.00,
+        59
+    ),
+    (
+        478,
+        20,
+        'SP20-1-8',
+        1,
+        8,
+        370000.00,
+        64
+    ),
+    (
+        479,
+        20,
+        'SP20-1-9',
+        1,
+        9,
+        380000.00,
+        45
+    ),
+    (
+        480,
+        20,
+        'SP20-1-10',
+        1,
+        10,
+        390000.00,
+        25
+    ),
+    (
+        481,
+        20,
+        'SP20-2-6',
+        2,
+        6,
+        350000.00,
+        69
+    ),
+    (
+        482,
+        20,
+        'SP20-2-7',
+        2,
+        7,
+        360000.00,
+        79
+    ),
+    (
+        483,
+        20,
+        'SP20-2-8',
+        2,
+        8,
+        370000.00,
+        88
+    ),
+    (
+        484,
+        20,
+        'SP20-2-9',
+        2,
+        9,
+        380000.00,
+        17
+    ),
+    (
+        485,
+        20,
+        'SP20-2-10',
+        2,
+        10,
+        390000.00,
+        79
+    ),
+    (
+        486,
+        20,
+        'SP20-3-6',
+        3,
+        6,
+        350000.00,
+        65
+    ),
+    (
+        487,
+        20,
+        'SP20-3-7',
+        3,
+        7,
+        360000.00,
+        77
+    ),
+    (
+        488,
+        20,
+        'SP20-3-8',
+        3,
+        8,
+        370000.00,
+        90
+    ),
+    (
+        489,
+        20,
+        'SP20-3-9',
+        3,
+        9,
+        380000.00,
+        33
+    ),
+    (
+        490,
+        20,
+        'SP20-3-10',
+        3,
+        10,
+        390000.00,
+        62
+    ),
+    (
+        491,
+        20,
+        'SP20-4-6',
+        4,
+        6,
+        350000.00,
+        24
+    ),
+    (
+        492,
+        20,
+        'SP20-4-7',
+        4,
+        7,
+        360000.00,
+        14
+    ),
+    (
+        493,
+        20,
+        'SP20-4-8',
+        4,
+        8,
+        370000.00,
+        79
+    ),
+    (
+        494,
+        20,
+        'SP20-4-9',
+        4,
+        9,
+        380000.00,
+        72
+    ),
+    (
+        495,
+        20,
+        'SP20-4-10',
+        4,
+        10,
+        390000.00,
+        23
+    ),
+    (
+        496,
+        20,
+        'SP20-5-6',
+        5,
+        6,
+        350000.00,
+        71
+    ),
+    (
+        497,
+        20,
+        'SP20-5-7',
+        5,
+        7,
+        360000.00,
+        98
+    ),
+    (
+        498,
+        20,
+        'SP20-5-8',
+        5,
+        8,
+        370000.00,
+        84
+    ),
+    (
+        499,
+        20,
+        'SP20-5-9',
+        5,
+        9,
+        380000.00,
+        29
+    ),
+    (
+        500,
+        20,
+        'SP20-5-10',
+        5,
+        10,
+        390000.00,
+        62
+    ),
+    (
+        501,
+        21,
+        'SP21-1-6',
+        1,
+        6,
+        350000.00,
+        33
+    ),
+    (
+        502,
+        21,
+        'SP21-1-7',
+        1,
+        7,
+        360000.00,
+        61
+    ),
+    (
+        503,
+        21,
+        'SP21-1-8',
+        1,
+        8,
+        370000.00,
+        15
+    ),
+    (
+        504,
+        21,
+        'SP21-1-9',
+        1,
+        9,
+        380000.00,
+        61
+    ),
+    (
+        505,
+        21,
+        'SP21-1-10',
+        1,
+        10,
+        390000.00,
+        74
+    ),
+    (
+        506,
+        21,
+        'SP21-2-6',
+        2,
+        6,
+        350000.00,
+        86
+    ),
+    (
+        507,
+        21,
+        'SP21-2-7',
+        2,
+        7,
+        360000.00,
+        19
+    ),
+    (
+        508,
+        21,
+        'SP21-2-8',
+        2,
+        8,
+        370000.00,
+        99
+    ),
+    (
+        509,
+        21,
+        'SP21-2-9',
+        2,
+        9,
+        380000.00,
+        65
+    ),
+    (
+        510,
+        21,
+        'SP21-2-10',
+        2,
+        10,
+        390000.00,
+        22
+    ),
+    (
+        511,
+        21,
+        'SP21-3-6',
+        3,
+        6,
+        350000.00,
+        83
+    ),
+    (
+        512,
+        21,
+        'SP21-3-7',
+        3,
+        7,
+        360000.00,
+        71
+    ),
+    (
+        513,
+        21,
+        'SP21-3-8',
+        3,
+        8,
+        370000.00,
+        97
+    ),
+    (
+        514,
+        21,
+        'SP21-3-9',
+        3,
+        9,
+        380000.00,
+        80
+    ),
+    (
+        515,
+        21,
+        'SP21-3-10',
+        3,
+        10,
+        390000.00,
+        12
+    ),
+    (
+        516,
+        21,
+        'SP21-4-6',
+        4,
+        6,
+        350000.00,
+        81
+    ),
+    (
+        517,
+        21,
+        'SP21-4-7',
+        4,
+        7,
+        360000.00,
+        90
+    ),
+    (
+        518,
+        21,
+        'SP21-4-8',
+        4,
+        8,
+        370000.00,
+        15
+    ),
+    (
+        519,
+        21,
+        'SP21-4-9',
+        4,
+        9,
+        380000.00,
+        66
+    ),
+    (
+        520,
+        21,
+        'SP21-4-10',
+        4,
+        10,
+        390000.00,
+        95
+    ),
+    (
+        521,
+        21,
+        'SP21-5-6',
+        5,
+        6,
+        350000.00,
+        88
+    ),
+    (
+        522,
+        21,
+        'SP21-5-7',
+        5,
+        7,
+        360000.00,
+        54
+    ),
+    (
+        523,
+        21,
+        'SP21-5-8',
+        5,
+        8,
+        370000.00,
+        90
+    ),
+    (
+        524,
+        21,
+        'SP21-5-9',
+        5,
+        9,
+        380000.00,
+        95
+    ),
+    (
+        525,
+        21,
+        'SP21-5-10',
+        5,
+        10,
+        390000.00,
+        19
+    ),
+    (
+        526,
+        22,
+        'SP22-1-6',
+        1,
+        6,
+        400000.00,
+        67
+    ),
+    (
+        527,
+        22,
+        'SP22-1-7',
+        1,
+        7,
+        410000.00,
+        91
+    ),
+    (
+        528,
+        22,
+        'SP22-1-8',
+        1,
+        8,
+        420000.00,
+        62
+    ),
+    (
+        529,
+        22,
+        'SP22-1-9',
+        1,
+        9,
+        430000.00,
+        27
+    ),
+    (
+        530,
+        22,
+        'SP22-1-10',
+        1,
+        10,
+        440000.00,
+        31
+    ),
+    (
+        531,
+        22,
+        'SP22-2-6',
+        2,
+        6,
+        400000.00,
+        64
+    ),
+    (
+        532,
+        22,
+        'SP22-2-7',
+        2,
+        7,
+        410000.00,
+        36
+    ),
+    (
+        533,
+        22,
+        'SP22-2-8',
+        2,
+        8,
+        420000.00,
+        68
+    ),
+    (
+        534,
+        22,
+        'SP22-2-9',
+        2,
+        9,
+        430000.00,
+        45
+    ),
+    (
+        535,
+        22,
+        'SP22-2-10',
+        2,
+        10,
+        440000.00,
+        11
+    ),
+    (
+        536,
+        22,
+        'SP22-3-6',
+        3,
+        6,
+        400000.00,
+        92
+    ),
+    (
+        537,
+        22,
+        'SP22-3-7',
+        3,
+        7,
+        410000.00,
+        55
+    ),
+    (
+        538,
+        22,
+        'SP22-3-8',
+        3,
+        8,
+        420000.00,
+        81
+    ),
+    (
+        539,
+        22,
+        'SP22-3-9',
+        3,
+        9,
+        430000.00,
+        49
+    ),
+    (
+        540,
+        22,
+        'SP22-3-10',
+        3,
+        10,
+        440000.00,
+        85
+    ),
+    (
+        541,
+        22,
+        'SP22-4-6',
+        4,
+        6,
+        400000.00,
+        88
+    ),
+    (
+        542,
+        22,
+        'SP22-4-7',
+        4,
+        7,
+        410000.00,
+        83
+    ),
+    (
+        543,
+        22,
+        'SP22-4-8',
+        4,
+        8,
+        420000.00,
+        55
+    ),
+    (
+        544,
+        22,
+        'SP22-4-9',
+        4,
+        9,
+        430000.00,
+        15
+    ),
+    (
+        545,
+        22,
+        'SP22-4-10',
+        4,
+        10,
+        440000.00,
+        79
+    ),
+    (
+        546,
+        22,
+        'SP22-5-6',
+        5,
+        6,
+        400000.00,
+        72
+    ),
+    (
+        547,
+        22,
+        'SP22-5-7',
+        5,
+        7,
+        410000.00,
+        24
+    ),
+    (
+        548,
+        22,
+        'SP22-5-8',
+        5,
+        8,
+        420000.00,
+        72
+    ),
+    (
+        549,
+        22,
+        'SP22-5-9',
+        5,
+        9,
+        430000.00,
+        99
+    ),
+    (
+        550,
+        22,
+        'SP22-5-10',
+        5,
+        10,
+        440000.00,
+        90
+    ),
+    (
+        551,
+        23,
+        'SP23-1-6',
+        1,
+        6,
+        320000.00,
+        53
+    ),
+    (
+        552,
+        23,
+        'SP23-1-7',
+        1,
+        7,
+        330000.00,
+        78
+    ),
+    (
+        553,
+        23,
+        'SP23-1-8',
+        1,
+        8,
+        340000.00,
+        39
+    ),
+    (
+        554,
+        23,
+        'SP23-1-9',
+        1,
+        9,
+        350000.00,
+        41
+    ),
+    (
+        555,
+        23,
+        'SP23-1-10',
+        1,
+        10,
+        360000.00,
+        79
+    ),
+    (
+        556,
+        23,
+        'SP23-2-6',
+        2,
+        6,
+        320000.00,
+        81
+    ),
+    (
+        557,
+        23,
+        'SP23-2-7',
+        2,
+        7,
+        330000.00,
+        68
+    ),
+    (
+        558,
+        23,
+        'SP23-2-8',
+        2,
+        8,
+        340000.00,
+        89
+    ),
+    (
+        559,
+        23,
+        'SP23-2-9',
+        2,
+        9,
+        350000.00,
+        50
+    ),
+    (
+        560,
+        23,
+        'SP23-2-10',
+        2,
+        10,
+        360000.00,
+        63
+    ),
+    (
+        561,
+        23,
+        'SP23-3-6',
+        3,
+        6,
+        320000.00,
+        67
+    ),
+    (
+        562,
+        23,
+        'SP23-3-7',
+        3,
+        7,
+        330000.00,
+        44
+    ),
+    (
+        563,
+        23,
+        'SP23-3-8',
+        3,
+        8,
+        340000.00,
+        13
+    ),
+    (
+        564,
+        23,
+        'SP23-3-9',
+        3,
+        9,
+        350000.00,
+        11
+    ),
+    (
+        565,
+        23,
+        'SP23-3-10',
+        3,
+        10,
+        360000.00,
+        98
+    ),
+    (
+        566,
+        23,
+        'SP23-4-6',
+        4,
+        6,
+        320000.00,
+        89
+    ),
+    (
+        567,
+        23,
+        'SP23-4-7',
+        4,
+        7,
+        330000.00,
+        50
+    ),
+    (
+        568,
+        23,
+        'SP23-4-8',
+        4,
+        8,
+        340000.00,
+        63
+    ),
+    (
+        569,
+        23,
+        'SP23-4-9',
+        4,
+        9,
+        350000.00,
+        66
+    ),
+    (
+        570,
+        23,
+        'SP23-4-10',
+        4,
+        10,
+        360000.00,
+        42
+    ),
+    (
+        571,
+        23,
+        'SP23-5-6',
+        5,
+        6,
+        320000.00,
+        93
+    ),
+    (
+        572,
+        23,
+        'SP23-5-7',
+        5,
+        7,
+        330000.00,
+        58
+    ),
+    (
+        573,
+        23,
+        'SP23-5-8',
+        5,
+        8,
+        340000.00,
+        93
+    ),
+    (
+        574,
+        23,
+        'SP23-5-9',
+        5,
+        9,
+        350000.00,
+        10
+    ),
+    (
+        575,
+        23,
+        'SP23-5-10',
+        5,
+        10,
+        360000.00,
+        31
+    ),
+    (
+        576,
+        24,
+        'SP24-1-6',
+        1,
+        6,
+        360000.00,
+        27
+    ),
+    (
+        577,
+        24,
+        'SP24-1-7',
+        1,
+        7,
+        370000.00,
+        31
+    ),
+    (
+        578,
+        24,
+        'SP24-1-8',
+        1,
+        8,
+        380000.00,
+        64
+    ),
+    (
+        579,
+        24,
+        'SP24-1-9',
+        1,
+        9,
+        390000.00,
+        36
+    ),
+    (
+        580,
+        24,
+        'SP24-1-10',
+        1,
+        10,
+        400000.00,
+        72
+    ),
+    (
+        581,
+        24,
+        'SP24-2-6',
+        2,
+        6,
+        360000.00,
+        62
+    ),
+    (
+        582,
+        24,
+        'SP24-2-7',
+        2,
+        7,
+        370000.00,
+        83
+    ),
+    (
+        583,
+        24,
+        'SP24-2-8',
+        2,
+        8,
+        380000.00,
+        41
+    ),
+    (
+        584,
+        24,
+        'SP24-2-9',
+        2,
+        9,
+        390000.00,
+        36
+    ),
+    (
+        585,
+        24,
+        'SP24-2-10',
+        2,
+        10,
+        400000.00,
+        47
+    ),
+    (
+        586,
+        24,
+        'SP24-3-6',
+        3,
+        6,
+        360000.00,
+        30
+    ),
+    (
+        587,
+        24,
+        'SP24-3-7',
+        3,
+        7,
+        370000.00,
+        87
+    ),
+    (
+        588,
+        24,
+        'SP24-3-8',
+        3,
+        8,
+        380000.00,
+        68
+    ),
+    (
+        589,
+        24,
+        'SP24-3-9',
+        3,
+        9,
+        390000.00,
+        68
+    ),
+    (
+        590,
+        24,
+        'SP24-3-10',
+        3,
+        10,
+        400000.00,
+        36
+    ),
+    (
+        591,
+        24,
+        'SP24-4-6',
+        4,
+        6,
+        360000.00,
+        59
+    ),
+    (
+        592,
+        24,
+        'SP24-4-7',
+        4,
+        7,
+        370000.00,
+        86
+    ),
+    (
+        593,
+        24,
+        'SP24-4-8',
+        4,
+        8,
+        380000.00,
+        63
+    ),
+    (
+        594,
+        24,
+        'SP24-4-9',
+        4,
+        9,
+        390000.00,
+        48
+    ),
+    (
+        595,
+        24,
+        'SP24-4-10',
+        4,
+        10,
+        400000.00,
+        43
+    ),
+    (
+        596,
+        24,
+        'SP24-5-6',
+        5,
+        6,
+        360000.00,
+        61
+    ),
+    (
+        597,
+        24,
+        'SP24-5-7',
+        5,
+        7,
+        370000.00,
+        76
+    ),
+    (
+        598,
+        24,
+        'SP24-5-8',
+        5,
+        8,
+        380000.00,
+        96
+    ),
+    (
+        599,
+        24,
+        'SP24-5-9',
+        5,
+        9,
+        390000.00,
+        63
+    ),
+    (
+        600,
+        24,
+        'SP24-5-10',
+        5,
+        10,
+        400000.00,
+        16
+    ),
+    (
+        601,
+        25,
+        'SP25-1-6',
+        1,
+        6,
+        300000.00,
+        64
+    ),
+    (
+        602,
+        25,
+        'SP25-1-7',
+        1,
+        7,
+        310000.00,
+        83
+    ),
+    (
+        603,
+        25,
+        'SP25-1-8',
+        1,
+        8,
+        320000.00,
+        31
+    ),
+    (
+        604,
+        25,
+        'SP25-1-9',
+        1,
+        9,
+        330000.00,
+        78
+    ),
+    (
+        605,
+        25,
+        'SP25-1-10',
+        1,
+        10,
+        340000.00,
+        17
+    ),
+    (
+        606,
+        25,
+        'SP25-2-6',
+        2,
+        6,
+        300000.00,
+        22
+    ),
+    (
+        607,
+        25,
+        'SP25-2-7',
+        2,
+        7,
+        310000.00,
+        48
+    ),
+    (
+        608,
+        25,
+        'SP25-2-8',
+        2,
+        8,
+        320000.00,
+        77
+    ),
+    (
+        609,
+        25,
+        'SP25-2-9',
+        2,
+        9,
+        330000.00,
+        51
+    ),
+    (
+        610,
+        25,
+        'SP25-2-10',
+        2,
+        10,
+        340000.00,
+        14
+    ),
+    (
+        611,
+        25,
+        'SP25-3-6',
+        3,
+        6,
+        300000.00,
+        87
+    ),
+    (
+        612,
+        25,
+        'SP25-3-7',
+        3,
+        7,
+        310000.00,
+        26
+    ),
+    (
+        613,
+        25,
+        'SP25-3-8',
+        3,
+        8,
+        320000.00,
+        37
+    ),
+    (
+        614,
+        25,
+        'SP25-3-9',
+        3,
+        9,
+        330000.00,
+        98
+    ),
+    (
+        615,
+        25,
+        'SP25-3-10',
+        3,
+        10,
+        340000.00,
+        11
+    ),
+    (
+        616,
+        25,
+        'SP25-4-6',
+        4,
+        6,
+        300000.00,
+        19
+    ),
+    (
+        617,
+        25,
+        'SP25-4-7',
+        4,
+        7,
+        310000.00,
+        56
+    ),
+    (
+        618,
+        25,
+        'SP25-4-8',
+        4,
+        8,
+        320000.00,
+        30
+    ),
+    (
+        619,
+        25,
+        'SP25-4-9',
+        4,
+        9,
+        330000.00,
+        63
+    ),
+    (
+        620,
+        25,
+        'SP25-4-10',
+        4,
+        10,
+        340000.00,
+        36
+    ),
+    (
+        621,
+        25,
+        'SP25-5-6',
+        5,
+        6,
+        300000.00,
+        70
+    ),
+    (
+        622,
+        25,
+        'SP25-5-7',
+        5,
+        7,
+        310000.00,
+        55
+    ),
+    (
+        623,
+        25,
+        'SP25-5-8',
+        5,
+        8,
+        320000.00,
+        53
+    ),
+    (
+        624,
+        25,
+        'SP25-5-9',
+        5,
+        9,
+        330000.00,
+        93
+    ),
+    (
+        625,
+        25,
+        'SP25-5-10',
+        5,
+        10,
+        340000.00,
+        25
+    ),
+    (
+        626,
+        26,
+        'SP26-1-6',
+        1,
+        6,
+        450000.00,
+        17
+    ),
+    (
+        627,
+        26,
+        'SP26-1-7',
+        1,
+        7,
+        460000.00,
+        89
+    ),
+    (
+        628,
+        26,
+        'SP26-1-8',
+        1,
+        8,
+        470000.00,
+        27
+    ),
+    (
+        629,
+        26,
+        'SP26-1-9',
+        1,
+        9,
+        480000.00,
+        35
+    ),
+    (
+        630,
+        26,
+        'SP26-1-10',
+        1,
+        10,
+        490000.00,
+        88
+    ),
+    (
+        631,
+        26,
+        'SP26-2-6',
+        2,
+        6,
+        450000.00,
+        54
+    ),
+    (
+        632,
+        26,
+        'SP26-2-7',
+        2,
+        7,
+        460000.00,
+        88
+    ),
+    (
+        633,
+        26,
+        'SP26-2-8',
+        2,
+        8,
+        470000.00,
+        86
+    ),
+    (
+        634,
+        26,
+        'SP26-2-9',
+        2,
+        9,
+        480000.00,
+        70
+    ),
+    (
+        635,
+        26,
+        'SP26-2-10',
+        2,
+        10,
+        490000.00,
+        79
+    ),
+    (
+        636,
+        26,
+        'SP26-3-6',
+        3,
+        6,
+        450000.00,
+        88
+    ),
+    (
+        637,
+        26,
+        'SP26-3-7',
+        3,
+        7,
+        460000.00,
+        12
+    ),
+    (
+        638,
+        26,
+        'SP26-3-8',
+        3,
+        8,
+        470000.00,
+        55
+    ),
+    (
+        639,
+        26,
+        'SP26-3-9',
+        3,
+        9,
+        480000.00,
+        52
+    ),
+    (
+        640,
+        26,
+        'SP26-3-10',
+        3,
+        10,
+        490000.00,
+        83
+    ),
+    (
+        641,
+        26,
+        'SP26-4-6',
+        4,
+        6,
+        450000.00,
+        69
+    ),
+    (
+        642,
+        26,
+        'SP26-4-7',
+        4,
+        7,
+        460000.00,
+        89
+    ),
+    (
+        643,
+        26,
+        'SP26-4-8',
+        4,
+        8,
+        470000.00,
+        46
+    ),
+    (
+        644,
+        26,
+        'SP26-4-9',
+        4,
+        9,
+        480000.00,
+        46
+    ),
+    (
+        645,
+        26,
+        'SP26-4-10',
+        4,
+        10,
+        490000.00,
+        82
+    ),
+    (
+        646,
+        26,
+        'SP26-5-6',
+        5,
+        6,
+        450000.00,
+        83
+    ),
+    (
+        647,
+        26,
+        'SP26-5-7',
+        5,
+        7,
+        460000.00,
+        67
+    ),
+    (
+        648,
+        26,
+        'SP26-5-8',
+        5,
+        8,
+        470000.00,
+        78
+    ),
+    (
+        649,
+        26,
+        'SP26-5-9',
+        5,
+        9,
+        480000.00,
+        91
+    ),
+    (
+        650,
+        26,
+        'SP26-5-10',
+        5,
+        10,
+        490000.00,
+        30
+    ),
+    (
+        651,
+        27,
+        'SP27-1-6',
+        1,
+        6,
+        550000.00,
+        47
+    ),
+    (
+        652,
+        27,
+        'SP27-1-7',
+        1,
+        7,
+        560000.00,
+        46
+    ),
+    (
+        653,
+        27,
+        'SP27-1-8',
+        1,
+        8,
+        570000.00,
+        78
+    ),
+    (
+        654,
+        27,
+        'SP27-1-9',
+        1,
+        9,
+        580000.00,
+        64
+    ),
+    (
+        655,
+        27,
+        'SP27-1-10',
+        1,
+        10,
+        590000.00,
+        78
+    ),
+    (
+        656,
+        27,
+        'SP27-2-6',
+        2,
+        6,
+        550000.00,
+        96
+    ),
+    (
+        657,
+        27,
+        'SP27-2-7',
+        2,
+        7,
+        560000.00,
+        57
+    ),
+    (
+        658,
+        27,
+        'SP27-2-8',
+        2,
+        8,
+        570000.00,
+        78
+    ),
+    (
+        659,
+        27,
+        'SP27-2-9',
+        2,
+        9,
+        580000.00,
+        28
+    ),
+    (
+        660,
+        27,
+        'SP27-2-10',
+        2,
+        10,
+        590000.00,
+        79
+    ),
+    (
+        661,
+        27,
+        'SP27-3-6',
+        3,
+        6,
+        550000.00,
+        30
+    ),
+    (
+        662,
+        27,
+        'SP27-3-7',
+        3,
+        7,
+        560000.00,
+        84
+    ),
+    (
+        663,
+        27,
+        'SP27-3-8',
+        3,
+        8,
+        570000.00,
+        51
+    ),
+    (
+        664,
+        27,
+        'SP27-3-9',
+        3,
+        9,
+        580000.00,
+        84
+    ),
+    (
+        665,
+        27,
+        'SP27-3-10',
+        3,
+        10,
+        590000.00,
+        77
+    ),
+    (
+        666,
+        27,
+        'SP27-4-6',
+        4,
+        6,
+        550000.00,
+        34
+    ),
+    (
+        667,
+        27,
+        'SP27-4-7',
+        4,
+        7,
+        560000.00,
+        19
+    ),
+    (
+        668,
+        27,
+        'SP27-4-8',
+        4,
+        8,
+        570000.00,
+        72
+    ),
+    (
+        669,
+        27,
+        'SP27-4-9',
+        4,
+        9,
+        580000.00,
+        24
+    ),
+    (
+        670,
+        27,
+        'SP27-4-10',
+        4,
+        10,
+        590000.00,
+        76
+    ),
+    (
+        671,
+        27,
+        'SP27-5-6',
+        5,
+        6,
+        550000.00,
+        26
+    ),
+    (
+        672,
+        27,
+        'SP27-5-7',
+        5,
+        7,
+        560000.00,
+        74
+    ),
+    (
+        673,
+        27,
+        'SP27-5-8',
+        5,
+        8,
+        570000.00,
+        14
+    ),
+    (
+        674,
+        27,
+        'SP27-5-9',
+        5,
+        9,
+        580000.00,
+        15
+    ),
+    (
+        675,
+        27,
+        'SP27-5-10',
+        5,
+        10,
+        590000.00,
+        27
+    ),
+    (
+        676,
+        28,
+        'SP28-1-6',
+        1,
+        6,
+        500000.00,
+        79
+    ),
+    (
+        677,
+        28,
+        'SP28-1-7',
+        1,
+        7,
+        510000.00,
+        37
+    ),
+    (
+        678,
+        28,
+        'SP28-1-8',
+        1,
+        8,
+        520000.00,
+        25
+    ),
+    (
+        679,
+        28,
+        'SP28-1-9',
+        1,
+        9,
+        530000.00,
+        98
+    ),
+    (
+        680,
+        28,
+        'SP28-1-10',
+        1,
+        10,
+        540000.00,
+        42
+    ),
+    (
+        681,
+        28,
+        'SP28-2-6',
+        2,
+        6,
+        500000.00,
+        89
+    ),
+    (
+        682,
+        28,
+        'SP28-2-7',
+        2,
+        7,
+        510000.00,
+        39
+    ),
+    (
+        683,
+        28,
+        'SP28-2-8',
+        2,
+        8,
+        520000.00,
+        97
+    ),
+    (
+        684,
+        28,
+        'SP28-2-9',
+        2,
+        9,
+        530000.00,
+        90
+    ),
+    (
+        685,
+        28,
+        'SP28-2-10',
+        2,
+        10,
+        540000.00,
+        60
+    ),
+    (
+        686,
+        28,
+        'SP28-3-6',
+        3,
+        6,
+        500000.00,
+        18
+    ),
+    (
+        687,
+        28,
+        'SP28-3-7',
+        3,
+        7,
+        510000.00,
+        82
+    ),
+    (
+        688,
+        28,
+        'SP28-3-8',
+        3,
+        8,
+        520000.00,
+        77
+    ),
+    (
+        689,
+        28,
+        'SP28-3-9',
+        3,
+        9,
+        530000.00,
+        39
+    ),
+    (
+        690,
+        28,
+        'SP28-3-10',
+        3,
+        10,
+        540000.00,
+        45
+    ),
+    (
+        691,
+        28,
+        'SP28-4-6',
+        4,
+        6,
+        500000.00,
+        96
+    ),
+    (
+        692,
+        28,
+        'SP28-4-7',
+        4,
+        7,
+        510000.00,
+        68
+    ),
+    (
+        693,
+        28,
+        'SP28-4-8',
+        4,
+        8,
+        520000.00,
+        42
+    ),
+    (
+        694,
+        28,
+        'SP28-4-9',
+        4,
+        9,
+        530000.00,
+        84
+    ),
+    (
+        695,
+        28,
+        'SP28-4-10',
+        4,
+        10,
+        540000.00,
+        17
+    ),
+    (
+        696,
+        28,
+        'SP28-5-6',
+        5,
+        6,
+        500000.00,
+        93
+    ),
+    (
+        697,
+        28,
+        'SP28-5-7',
+        5,
+        7,
+        510000.00,
+        46
+    ),
+    (
+        698,
+        28,
+        'SP28-5-8',
+        5,
+        8,
+        520000.00,
+        31
+    ),
+    (
+        699,
+        28,
+        'SP28-5-9',
+        5,
+        9,
+        530000.00,
+        98
+    ),
+    (
+        700,
+        28,
+        'SP28-5-10',
+        5,
+        10,
+        540000.00,
+        25
+    ),
+    (
+        701,
+        29,
+        'SP29-1-6',
+        1,
+        6,
+        380000.00,
+        95
+    ),
+    (
+        702,
+        29,
+        'SP29-1-7',
+        1,
+        7,
+        390000.00,
+        28
+    ),
+    (
+        703,
+        29,
+        'SP29-1-8',
+        1,
+        8,
+        400000.00,
+        25
+    ),
+    (
+        704,
+        29,
+        'SP29-1-9',
+        1,
+        9,
+        410000.00,
+        32
+    ),
+    (
+        705,
+        29,
+        'SP29-1-10',
+        1,
+        10,
+        420000.00,
+        77
+    ),
+    (
+        706,
+        29,
+        'SP29-2-6',
+        2,
+        6,
+        380000.00,
+        97
+    ),
+    (
+        707,
+        29,
+        'SP29-2-7',
+        2,
+        7,
+        390000.00,
+        65
+    ),
+    (
+        708,
+        29,
+        'SP29-2-8',
+        2,
+        8,
+        400000.00,
+        23
+    ),
+    (
+        709,
+        29,
+        'SP29-2-9',
+        2,
+        9,
+        410000.00,
+        91
+    ),
+    (
+        710,
+        29,
+        'SP29-2-10',
+        2,
+        10,
+        420000.00,
+        18
+    ),
+    (
+        711,
+        29,
+        'SP29-3-6',
+        3,
+        6,
+        380000.00,
+        77
+    ),
+    (
+        712,
+        29,
+        'SP29-3-7',
+        3,
+        7,
+        390000.00,
+        53
+    ),
+    (
+        713,
+        29,
+        'SP29-3-8',
+        3,
+        8,
+        400000.00,
+        23
+    ),
+    (
+        714,
+        29,
+        'SP29-3-9',
+        3,
+        9,
+        410000.00,
+        35
+    ),
+    (
+        715,
+        29,
+        'SP29-3-10',
+        3,
+        10,
+        420000.00,
+        96
+    ),
+    (
+        716,
+        29,
+        'SP29-4-6',
+        4,
+        6,
+        380000.00,
+        98
+    ),
+    (
+        717,
+        29,
+        'SP29-4-7',
+        4,
+        7,
+        390000.00,
+        13
+    ),
+    (
+        718,
+        29,
+        'SP29-4-8',
+        4,
+        8,
+        400000.00,
+        32
+    ),
+    (
+        719,
+        29,
+        'SP29-4-9',
+        4,
+        9,
+        410000.00,
+        21
+    ),
+    (
+        720,
+        29,
+        'SP29-4-10',
+        4,
+        10,
+        420000.00,
+        91
+    ),
+    (
+        721,
+        29,
+        'SP29-5-6',
+        5,
+        6,
+        380000.00,
+        22
+    ),
+    (
+        722,
+        29,
+        'SP29-5-7',
+        5,
+        7,
+        390000.00,
+        99
+    ),
+    (
+        723,
+        29,
+        'SP29-5-8',
+        5,
+        8,
+        400000.00,
+        56
+    ),
+    (
+        724,
+        29,
+        'SP29-5-9',
+        5,
+        9,
+        410000.00,
+        65
+    ),
+    (
+        725,
+        29,
+        'SP29-5-10',
+        5,
+        10,
+        420000.00,
+        56
+    ),
+    (
+        726,
+        30,
+        'SP30-1-6',
+        1,
+        6,
+        750000.00,
+        78
+    ),
+    (
+        727,
+        30,
+        'SP30-1-7',
+        1,
+        7,
+        760000.00,
+        33
+    ),
+    (
+        728,
+        30,
+        'SP30-1-8',
+        1,
+        8,
+        770000.00,
+        11
+    ),
+    (
+        729,
+        30,
+        'SP30-1-9',
+        1,
+        9,
+        780000.00,
+        35
+    ),
+    (
+        730,
+        30,
+        'SP30-1-10',
+        1,
+        10,
+        790000.00,
+        45
+    ),
+    (
+        731,
+        30,
+        'SP30-2-6',
+        2,
+        6,
+        750000.00,
+        21
+    ),
+    (
+        732,
+        30,
+        'SP30-2-7',
+        2,
+        7,
+        760000.00,
+        48
+    ),
+    (
+        733,
+        30,
+        'SP30-2-8',
+        2,
+        8,
+        770000.00,
+        78
+    ),
+    (
+        734,
+        30,
+        'SP30-2-9',
+        2,
+        9,
+        780000.00,
+        55
+    ),
+    (
+        735,
+        30,
+        'SP30-2-10',
+        2,
+        10,
+        790000.00,
+        34
+    ),
+    (
+        736,
+        30,
+        'SP30-3-6',
+        3,
+        6,
+        750000.00,
+        84
+    ),
+    (
+        737,
+        30,
+        'SP30-3-7',
+        3,
+        7,
+        760000.00,
+        40
+    ),
+    (
+        738,
+        30,
+        'SP30-3-8',
+        3,
+        8,
+        770000.00,
+        27
+    ),
+    (
+        739,
+        30,
+        'SP30-3-9',
+        3,
+        9,
+        780000.00,
+        95
+    ),
+    (
+        740,
+        30,
+        'SP30-3-10',
+        3,
+        10,
+        790000.00,
+        27
+    ),
+    (
+        741,
+        30,
+        'SP30-4-6',
+        4,
+        6,
+        750000.00,
+        19
+    ),
+    (
+        742,
+        30,
+        'SP30-4-7',
+        4,
+        7,
+        760000.00,
+        94
+    ),
+    (
+        743,
+        30,
+        'SP30-4-8',
+        4,
+        8,
+        770000.00,
+        45
+    ),
+    (
+        744,
+        30,
+        'SP30-4-9',
+        4,
+        9,
+        780000.00,
+        22
+    ),
+    (
+        745,
+        30,
+        'SP30-4-10',
+        4,
+        10,
+        790000.00,
+        57
+    ),
+    (
+        746,
+        30,
+        'SP30-5-6',
+        5,
+        6,
+        750000.00,
+        27
+    ),
+    (
+        747,
+        30,
+        'SP30-5-7',
+        5,
+        7,
+        760000.00,
+        48
+    ),
+    (
+        748,
+        30,
+        'SP30-5-8',
+        5,
+        8,
+        770000.00,
+        56
+    ),
+    (
+        749,
+        30,
+        'SP30-5-9',
+        5,
+        9,
+        780000.00,
+        40
+    ),
+    (
+        750,
+        30,
+        'SP30-5-10',
+        5,
+        10,
+        790000.00,
+        20
+    ),
+    (
+        751,
+        31,
+        'SP31-1-6',
+        1,
+        6,
+        390000.00,
+        10
+    ),
+    (
+        752,
+        31,
+        'SP31-1-7',
+        1,
+        7,
+        390000.00,
+        10
+    ),
+    (
+        753,
+        31,
+        'SP31-1-8',
+        1,
+        8,
+        390000.00,
+        10
+    ),
+    (
+        754,
+        31,
+        'SP31-1-9',
+        1,
+        9,
+        390000.00,
+        10
+    ),
+    (
+        755,
+        31,
+        'SP31-1-10',
+        1,
+        10,
+        390000.00,
+        10
+    ),
+    (
+        756,
+        31,
+        'SP31-2-6',
+        2,
+        6,
+        390000.00,
+        10
+    ),
+    (
+        757,
+        31,
+        'SP31-2-7',
+        2,
+        7,
+        390000.00,
+        10
+    ),
+    (
+        758,
+        31,
+        'SP31-2-8',
+        2,
+        8,
+        390000.00,
+        10
+    ),
+    (
+        759,
+        31,
+        'SP31-2-9',
+        2,
+        9,
+        390000.00,
+        10
+    ),
+    (
+        760,
+        31,
+        'SP31-2-10',
+        2,
+        10,
+        390000.00,
+        10
+    ),
+    (
+        761,
+        31,
+        'SP31-3-6',
+        3,
+        6,
+        390000.00,
+        10
+    ),
+    (
+        762,
+        31,
+        'SP31-3-7',
+        3,
+        7,
+        390000.00,
+        10
+    ),
+    (
+        763,
+        31,
+        'SP31-3-8',
+        3,
+        8,
+        390000.00,
+        10
+    ),
+    (
+        764,
+        31,
+        'SP31-3-9',
+        3,
+        9,
+        390000.00,
+        10
+    ),
+    (
+        765,
+        31,
+        'SP31-3-10',
+        3,
+        10,
+        390000.00,
+        10
+    ),
+    (
+        791,
+        35,
+        'SP35-1-6',
+        1,
+        6,
+        350000.00,
+        13
+    ),
+    (
+        792,
+        35,
+        'SP35-1-7',
+        1,
+        7,
+        350000.00,
+        13
+    ),
+    (
+        793,
+        35,
+        'SP35-1-8',
+        1,
+        8,
+        350000.00,
+        13
+    ),
+    (
+        794,
+        35,
+        'SP35-1-9',
+        1,
+        9,
+        350000.00,
+        13
+    ),
+    (
+        795,
+        35,
+        'SP35-1-10',
+        1,
+        10,
+        350000.00,
+        13
+    ),
+    (
+        796,
+        35,
+        'SP35-2-6',
+        2,
+        6,
+        350000.00,
+        13
+    ),
+    (
+        797,
+        35,
+        'SP35-2-7',
+        2,
+        7,
+        350000.00,
+        13
+    ),
+    (
+        798,
+        35,
+        'SP35-2-8',
+        2,
+        8,
+        350000.00,
+        13
+    ),
+    (
+        799,
+        35,
+        'SP35-2-9',
+        2,
+        9,
+        350000.00,
+        13
+    ),
+    (
+        800,
+        35,
+        'SP35-2-10',
+        2,
+        10,
+        350000.00,
+        13
+    ),
+    (
+        801,
+        35,
+        'SP35-4-6',
+        4,
+        6,
+        350000.00,
+        13
+    ),
+    (
+        802,
+        35,
+        'SP35-4-7',
+        4,
+        7,
+        350000.00,
+        13
+    ),
+    (
+        803,
+        35,
+        'SP35-4-8',
+        4,
+        8,
+        350000.00,
+        13
+    ),
+    (
+        804,
+        35,
+        'SP35-4-9',
+        4,
+        9,
+        350000.00,
+        13
+    ),
+    (
+        805,
+        35,
+        'SP35-4-10',
+        4,
+        10,
+        350000.00,
+        13
+    ),
+    (
+        806,
+        36,
+        'SP36-1-6',
+        1,
+        6,
+        245000.00,
+        13
+    ),
+    (
+        807,
+        36,
+        'SP36-1-7',
+        1,
+        7,
+        245000.00,
+        13
+    ),
+    (
+        808,
+        36,
+        'SP36-1-8',
+        1,
+        8,
+        245000.00,
+        13
+    ),
+    (
+        809,
+        36,
+        'SP36-1-9',
+        1,
+        9,
+        245000.00,
+        13
+    ),
+    (
+        810,
+        36,
+        'SP36-1-10',
+        1,
+        10,
+        245000.00,
+        13
+    ),
+    (
+        811,
+        36,
+        'SP36-2-6',
+        2,
+        6,
+        245000.00,
+        13
+    ),
+    (
+        812,
+        36,
+        'SP36-2-7',
+        2,
+        7,
+        245000.00,
+        13
+    ),
+    (
+        813,
+        36,
+        'SP36-2-8',
+        2,
+        8,
+        245000.00,
+        13
+    ),
+    (
+        814,
+        36,
+        'SP36-2-9',
+        2,
+        9,
+        245000.00,
+        13
+    ),
+    (
+        815,
+        36,
+        'SP36-2-10',
+        2,
+        10,
+        245000.00,
+        13
+    ),
+    (
+        816,
+        36,
+        'SP36-4-6',
+        4,
+        6,
+        245000.00,
+        13
+    ),
+    (
+        817,
+        36,
+        'SP36-4-7',
+        4,
+        7,
+        245000.00,
+        13
+    ),
+    (
+        818,
+        36,
+        'SP36-4-8',
+        4,
+        8,
+        245000.00,
+        13
+    ),
+    (
+        819,
+        36,
+        'SP36-4-9',
+        4,
+        9,
+        245000.00,
+        13
+    ),
+    (
+        820,
+        36,
+        'SP36-4-10',
+        4,
+        10,
+        245000.00,
+        13
+    ),
+    (
+        821,
+        37,
+        'SP37-1-6',
+        1,
+        6,
+        394998.00,
+        15
+    ),
+    (
+        822,
+        37,
+        'SP37-1-7',
+        1,
+        7,
+        394998.00,
+        15
+    ),
+    (
+        823,
+        37,
+        'SP37-1-8',
+        1,
+        8,
+        394998.00,
+        15
+    ),
+    (
+        824,
+        37,
+        'SP37-1-9',
+        1,
+        9,
+        394998.00,
+        15
+    ),
+    (
+        825,
+        37,
+        'SP37-1-10',
+        1,
+        10,
+        394998.00,
+        15
+    ),
+    (
+        826,
+        37,
+        'SP37-2-6',
+        2,
+        6,
+        394998.00,
+        15
+    ),
+    (
+        827,
+        37,
+        'SP37-2-7',
+        2,
+        7,
+        394998.00,
+        15
+    ),
+    (
+        828,
+        37,
+        'SP37-2-8',
+        2,
+        8,
+        394998.00,
+        15
+    ),
+    (
+        829,
+        37,
+        'SP37-2-9',
+        2,
+        9,
+        394998.00,
+        15
+    ),
+    (
+        830,
+        37,
+        'SP37-2-10',
+        2,
+        10,
+        394998.00,
+        15
+    ),
+    (
+        831,
+        37,
+        'SP37-4-6',
+        4,
+        6,
+        394998.00,
+        15
+    ),
+    (
+        832,
+        37,
+        'SP37-4-7',
+        4,
+        7,
+        394998.00,
+        15
+    ),
+    (
+        833,
+        37,
+        'SP37-4-8',
+        4,
+        8,
+        394998.00,
+        15
+    ),
+    (
+        834,
+        37,
+        'SP37-4-9',
+        4,
+        9,
+        394998.00,
+        15
+    ),
+    (
+        835,
+        37,
+        'SP37-4-10',
+        4,
+        10,
+        394998.00,
+        15
+    ),
+    (
+        836,
+        38,
+        'SP38-1-6',
+        1,
+        6,
+        290000.00,
+        30
+    ),
+    (
+        837,
+        38,
+        'SP38-1-7',
+        1,
+        7,
+        290000.00,
+        30
+    ),
+    (
+        838,
+        38,
+        'SP38-1-8',
+        1,
+        8,
+        290000.00,
+        30
+    ),
+    (
+        839,
+        38,
+        'SP38-1-9',
+        1,
+        9,
+        290000.00,
+        30
+    ),
+    (
+        840,
+        38,
+        'SP38-1-10',
+        1,
+        10,
+        290000.00,
+        30
+    ),
+    (
+        841,
+        38,
+        'SP38-2-6',
+        2,
+        6,
+        290000.00,
+        30
+    ),
+    (
+        842,
+        38,
+        'SP38-2-7',
+        2,
+        7,
+        290000.00,
+        30
+    ),
+    (
+        843,
+        38,
+        'SP38-2-8',
+        2,
+        8,
+        290000.00,
+        30
+    ),
+    (
+        844,
+        38,
+        'SP38-2-9',
+        2,
+        9,
+        290000.00,
+        30
+    ),
+    (
+        845,
+        38,
+        'SP38-2-10',
+        2,
+        10,
+        290000.00,
+        30
+    ),
+    (
+        846,
+        39,
+        'SP39-1-6',
+        1,
+        6,
+        290000.00,
+        25
+    ),
+    (
+        847,
+        39,
+        'SP39-1-7',
+        1,
+        7,
+        290000.00,
+        25
+    ),
+    (
+        848,
+        39,
+        'SP39-1-8',
+        1,
+        8,
+        290000.00,
+        25
+    ),
+    (
+        849,
+        39,
+        'SP39-1-9',
+        1,
+        9,
+        290000.00,
+        25
+    ),
+    (
+        850,
+        39,
+        'SP39-1-10',
+        1,
+        10,
+        290000.00,
+        25
+    ),
+    (
+        851,
+        39,
+        'SP39-2-6',
+        2,
+        6,
+        290000.00,
+        25
+    ),
+    (
+        852,
+        39,
+        'SP39-2-7',
+        2,
+        7,
+        290000.00,
+        25
+    ),
+    (
+        853,
+        39,
+        'SP39-2-8',
+        2,
+        8,
+        290000.00,
+        25
+    ),
+    (
+        854,
+        39,
+        'SP39-2-9',
+        2,
+        9,
+        290000.00,
+        25
+    ),
+    (
+        855,
+        39,
+        'SP39-2-10',
+        2,
+        10,
+        290000.00,
+        25
+    ),
+    (
+        856,
+        39,
+        'SP39-3-6',
+        3,
+        6,
+        290000.00,
+        25
+    ),
+    (
+        857,
+        39,
+        'SP39-3-7',
+        3,
+        7,
+        290000.00,
+        25
+    ),
+    (
+        858,
+        39,
+        'SP39-3-8',
+        3,
+        8,
+        290000.00,
+        25
+    ),
+    (
+        859,
+        39,
+        'SP39-3-9',
+        3,
+        9,
+        290000.00,
+        25
+    ),
+    (
+        860,
+        39,
+        'SP39-3-10',
+        3,
+        10,
+        290000.00,
+        25
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `ReviewImages`
+--
+
+CREATE TABLE `ReviewImages` (
+    `Id` int(11) NOT NULL,
+    `ReviewId` int(11) NOT NULL,
+    `ImageUrl` varchar(255) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Reviews`
+--
+
+CREATE TABLE `Reviews` (
+    `Id` int(11) NOT NULL,
+    `UserId` int(11) NOT NULL,
+    `ProductId` int(11) NOT NULL,
+    `OrderId` int(11) NOT NULL,
+    `Rating` tinyint(4) DEFAULT NULL CHECK (`Rating` between 1 and 5),
+    `Comment` text DEFAULT NULL,
+    `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `Reviews`
+--
+
+INSERT INTO
+    `Reviews` (
+        `Id`,
+        `UserId`,
+        `ProductId`,
+        `OrderId`,
+        `Rating`,
+        `Comment`,
+        `CreatedAt`
+    )
+VALUES (
+        1,
+        2,
+        1,
+        1,
+        5,
+        'Áo đẹp, vải mát',
+        '2025-12-03 05:43:01'
+    ),
+    (
+        2,
+        1,
+        26,
+        6,
+        4,
+        'Áo khoác ổn, hơi mỏng',
+        '2025-12-03 05:43:01'
+    ),
+    (
+        3,
+        3,
+        15,
+        9,
+        5,
+        'Mua tặng chồng rất ưng',
+        '2025-12-03 05:43:01'
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Roles`
+--
+
+CREATE TABLE `Roles` (
+    `Id` int(11) NOT NULL,
+    `RoleName` varchar(50) NOT NULL,
+    `Description` varchar(255) DEFAULT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `Roles`
+--
+
+INSERT INTO
+    `Roles` (
+        `Id`,
+        `RoleName`,
+        `Description`
+    )
+VALUES (
+        0,
+        'SuperAdmin',
+        'Quản trị viên cấp cao nhất, xem được audit logs'
+    ),
+    (1, 'Admin', 'Quản trị viên'),
+    (2, 'Manager', 'Quản lý kho'),
+    (3, 'Customer', 'Khách hàng'),
+    (
+        4,
+        'Staff',
+        'Store staff account'
+    );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `SKU_AttributeValues`
+--
+
+CREATE TABLE `SKU_AttributeValues` (
+    `ProductSkuId` int(11) NOT NULL,
+    `AttributeValueId` int(11) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `UserAddresses`
+--
+
+CREATE TABLE `UserAddresses` (
+    `Id` int(11) NOT NULL,
+    `UserId` int(11) NOT NULL,
+    `RecipientName` varchar(100) DEFAULT NULL,
+    `PhoneNumber` varchar(20) DEFAULT NULL,
+    `AddressLine` varchar(255) DEFAULT NULL,
+    `Ward` varchar(50) DEFAULT NULL,
+    `District` varchar(50) DEFAULT NULL,
+    `City` varchar(50) DEFAULT NULL,
+    `IsDefault` tinyint(1) DEFAULT 0
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Users`
+--
+
+CREATE TABLE `Users` (
+    `Id` int(11) NOT NULL,
+    `Username` varchar(50) NOT NULL,
+    `PasswordHash` varchar(255) NOT NULL,
+    `Email` varchar(100) NOT NULL,
+    `FullName` varchar(100) DEFAULT NULL,
+    `PhoneNumber` varchar(20) DEFAULT NULL,
+    `AvatarUrl` varchar(255) DEFAULT NULL,
+    `RoleId` int(11) NOT NULL,
+    `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp(),
+    `UpdatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `Users`
+--
+
+INSERT INTO
+    `Users` (
+        `Id`,
+        `Username`,
+        `PasswordHash`,
+        `Email`,
+        `FullName`,
+        `PhoneNumber`,
+        `AvatarUrl`,
+        `RoleId`,
+        `CreatedAt`,
+        `UpdatedAt`
+    )
+VALUES (
+        1,
+        'jatnit',
+        '$2b$10$JFHhikjecb9FfVEeW.NhbOX96DDH/jE.l1ldUqnNlfqKQyZkeIUp2',
+        'jatn.itt@gmail.com',
+        'Jatnit Admin',
+        NULL,
+        NULL,
+        1,
+        '2025-12-03 05:43:01',
+        '2025-12-03 06:19:23'
+    ),
+    (
+        2,
+        'phung',
+        '$2b$10$JFHhikjecb9FfVEeW.NhbOX96DDH/jE.l1ldUqnNlfqKQyZkeIUp2',
+        'phung@gmail.com',
+        'Kim Phụng',
+        NULL,
+        NULL,
+        3,
+        '2025-12-03 05:43:01',
+        '2025-12-03 06:19:22'
+    ),
+    (
+        3,
+        'tulam',
+        '$2b$10$JFHhikjecb9FfVEeW.NhbOX96DDH/jE.l1ldUqnNlfqKQyZkeIUp2',
+        'latu20030409@gmail.com',
+        'Tú Lâm',
+        NULL,
+        NULL,
+        3,
+        '2025-12-03 05:43:01',
+        '2025-12-03 06:19:19'
+    ),
+    (
+        4,
+        'admin_demo',
+        '$2b$10$JFHhikjecb9FfVEeW.NhbOX96DDH/jE.l1ldUqnNlfqKQyZkeIUp2',
+        'admin@demo.com',
+        'Admin Demo',
+        NULL,
+        NULL,
+        1,
+        '2025-12-03 05:43:01',
+        '2025-12-03 06:19:15'
+    ),
+    (
+        5,
+        'manager_kho',
+        '$2b$10$JFHhikjecb9FfVEeW.NhbOX96DDH/jE.l1ldUqnNlfqKQyZkeIUp2',
+        'kho@shop.com',
+        'Trưởng Kho',
+        NULL,
+        NULL,
+        2,
+        '2025-12-03 05:43:01',
+        '2025-12-03 06:19:12'
+    ),
+    (
+        100,
+        'superadmin',
+        '$2b$10$JFHhikjecb9FfVEeW.NhbOX96DDH/jE.l1ldUqnNlfqKQyZkeIUp2',
+        'superadmin@moda.com',
+        'Super Administrator',
+        NULL,
+        NULL,
+        0,
+        '2025-12-06 05:17:32',
+        '2025-12-06 05:17:46'
+    );
+
+--
+-- Chỉ mục cho các bảng đã đổ
+--
+
+--
+-- Chỉ mục cho bảng `Attributes`
+--
+ALTER TABLE `Attributes` ADD PRIMARY KEY (`Id`);
+
+--
+-- Chỉ mục cho bảng `AttributeValues`
+--
+ALTER TABLE `AttributeValues`
+ADD PRIMARY KEY (`Id`),
+ADD KEY `FK_AttributeValues_Attributes` (`AttributeId`);
+
+--
+-- Chỉ mục cho bảng `AuditLogs`
+--
+ALTER TABLE `AuditLogs` ADD PRIMARY KEY (`Id`);
+
+--
+-- Chỉ mục cho bảng `Categories`
+--
+ALTER TABLE `Categories`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `Slug` (`Slug`),
+ADD KEY `FK_Categories_Parent` (`ParentId`);
+
+--
+-- Chỉ mục cho bảng `OrderDetails`
+--
+ALTER TABLE `OrderDetails`
+ADD PRIMARY KEY (`Id`),
+ADD KEY `FK_OD_Order` (`OrderId`),
+ADD KEY `FK_OD_SKU` (`ProductSkuId`);
+
+--
+-- Chỉ mục cho bảng `Orders`
+--
+ALTER TABLE `Orders`
+ADD PRIMARY KEY (`Id`),
+ADD KEY `FK_Orders_Users` (`UserId`);
+
+--
+-- Chỉ mục cho bảng `ProductCategories`
+--
+ALTER TABLE `ProductCategories`
+ADD PRIMARY KEY (`ProductId`, `CategoryId`),
+ADD KEY `FK_PC_Category` (`CategoryId`);
+
+--
+-- Chỉ mục cho bảng `ProductColorImages`
+--
+ALTER TABLE `ProductColorImages`
+ADD PRIMARY KEY (`Id`),
+ADD KEY `FK_PCI_Product` (`ProductId`),
+ADD KEY `FK_PCI_Color` (`ColorValueId`);
+
+--
+-- Chỉ mục cho bảng `ProductGalleries`
+--
+ALTER TABLE `ProductGalleries`
+ADD PRIMARY KEY (`Id`),
+ADD KEY `FK_Gallery_Product` (`ProductId`);
+
+--
+-- Chỉ mục cho bảng `Products`
+--
+ALTER TABLE `Products`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `Slug` (`Slug`);
+
+--
+-- Chỉ mục cho bảng `ProductSKUs`
+--
+ALTER TABLE `ProductSKUs`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `SkuCode` (`SkuCode`),
+ADD KEY `FK_SKU_Product` (`ProductId`),
+ADD KEY `FK_SKU_Color` (`ColorValueId`),
+ADD KEY `FK_SKU_Size` (`SizeValueId`);
+
+--
+-- Chỉ mục cho bảng `ReviewImages`
+--
+ALTER TABLE `ReviewImages`
+ADD PRIMARY KEY (`Id`),
+ADD KEY `FK_RI_Review` (`ReviewId`);
+
+--
+-- Chỉ mục cho bảng `Reviews`
+--
+ALTER TABLE `Reviews`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `Unique_Review` (
+    `UserId`,
+    `OrderId`,
+    `ProductId`
+),
+ADD KEY `FK_Rev_Prod` (`ProductId`),
+ADD KEY `FK_Rev_Order` (`OrderId`);
+
+--
+-- Chỉ mục cho bảng `Roles`
+--
+ALTER TABLE `Roles`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `RoleName` (`RoleName`);
+
+--
+-- Chỉ mục cho bảng `SKU_AttributeValues`
+--
+ALTER TABLE `SKU_AttributeValues`
+ADD PRIMARY KEY (
+    `ProductSkuId`,
+    `AttributeValueId`
+),
+ADD UNIQUE KEY `SKU_AttributeValues_attributeValueId_productSkuId_unique` (
+    `ProductSkuId`,
+    `AttributeValueId`
+),
+ADD KEY `AttributeValueId` (`AttributeValueId`);
+
+--
+-- Chỉ mục cho bảng `UserAddresses`
+--
+ALTER TABLE `UserAddresses`
+ADD PRIMARY KEY (`Id`),
+ADD KEY `FK_UserAddresses_Users` (`UserId`);
+
+--
+-- Chỉ mục cho bảng `Users`
+--
+ALTER TABLE `Users`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `Username` (`Username`),
+ADD UNIQUE KEY `Email` (`Email`),
+ADD KEY `FK_Users_Roles` (`RoleId`);
+
+--
+-- AUTO_INCREMENT cho các bảng đã đổ
+--
+
+--
+-- AUTO_INCREMENT cho bảng `Attributes`
+--
+ALTER TABLE `Attributes`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 3;
+
+--
+-- AUTO_INCREMENT cho bảng `AttributeValues`
+--
+ALTER TABLE `AttributeValues`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 16;
+
+--
+-- AUTO_INCREMENT cho bảng `AuditLogs`
+--
+ALTER TABLE `AuditLogs`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 67;
+
+--
+-- AUTO_INCREMENT cho bảng `Categories`
+--
+ALTER TABLE `Categories`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 10;
+
+--
+-- AUTO_INCREMENT cho bảng `OrderDetails`
+--
+ALTER TABLE `OrderDetails`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 11;
+
+--
+-- AUTO_INCREMENT cho bảng `Orders`
+--
+ALTER TABLE `Orders`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 11;
+
+--
+-- AUTO_INCREMENT cho bảng `ProductColorImages`
+--
+ALTER TABLE `ProductColorImages`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 173;
+
+--
+-- AUTO_INCREMENT cho bảng `ProductGalleries`
+--
+ALTER TABLE `ProductGalleries`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 117;
+
+--
+-- AUTO_INCREMENT cho bảng `Products`
+--
+ALTER TABLE `Products`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 40;
+
+--
+-- AUTO_INCREMENT cho bảng `ProductSKUs`
+--
+ALTER TABLE `ProductSKUs`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 861;
+
+--
+-- AUTO_INCREMENT cho bảng `ReviewImages`
+--
+ALTER TABLE `ReviewImages`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `Reviews`
+--
+ALTER TABLE `Reviews`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 4;
+
+--
+-- AUTO_INCREMENT cho bảng `Roles`
+--
+ALTER TABLE `Roles`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 6;
+
+--
+-- AUTO_INCREMENT cho bảng `UserAddresses`
+--
+ALTER TABLE `UserAddresses`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `Users`
+--
+ALTER TABLE `Users`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 104;
+
+--
+-- Các ràng buộc cho các bảng đã đổ
+--
+
+--
+-- Các ràng buộc cho bảng `AttributeValues`
+--
+ALTER TABLE `AttributeValues`
+ADD CONSTRAINT `FK_AttributeValues_Attributes` FOREIGN KEY (`AttributeId`) REFERENCES `Attributes` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `Categories`
+--
+ALTER TABLE `Categories`
+ADD CONSTRAINT `FK_Categories_Parent` FOREIGN KEY (`ParentId`) REFERENCES `Categories` (`Id`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `OrderDetails`
+--
+ALTER TABLE `OrderDetails`
+ADD CONSTRAINT `FK_OD_Order` FOREIGN KEY (`OrderId`) REFERENCES `Orders` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_OD_SKU` FOREIGN KEY (`ProductSkuId`) REFERENCES `ProductSKUs` (`Id`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `Orders`
+--
+ALTER TABLE `Orders`
+ADD CONSTRAINT `FK_Orders_Users` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `ProductCategories`
+--
+ALTER TABLE `ProductCategories`
+ADD CONSTRAINT `FK_PC_Category` FOREIGN KEY (`CategoryId`) REFERENCES `Categories` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_PC_Product` FOREIGN KEY (`ProductId`) REFERENCES `Products` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `ProductColorImages`
+--
+ALTER TABLE `ProductColorImages`
+ADD CONSTRAINT `FK_PCI_Color` FOREIGN KEY (`ColorValueId`) REFERENCES `AttributeValues` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_PCI_Product` FOREIGN KEY (`ProductId`) REFERENCES `Products` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `ProductGalleries`
+--
+ALTER TABLE `ProductGalleries`
+ADD CONSTRAINT `FK_Gallery_Product` FOREIGN KEY (`ProductId`) REFERENCES `Products` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `ProductSKUs`
+--
+ALTER TABLE `ProductSKUs`
+ADD CONSTRAINT `FK_SKU_Color` FOREIGN KEY (`ColorValueId`) REFERENCES `AttributeValues` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_SKU_Product` FOREIGN KEY (`ProductId`) REFERENCES `Products` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_SKU_Size` FOREIGN KEY (`SizeValueId`) REFERENCES `AttributeValues` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `ReviewImages`
+--
+ALTER TABLE `ReviewImages`
+ADD CONSTRAINT `FK_RI_Review` FOREIGN KEY (`ReviewId`) REFERENCES `Reviews` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `Reviews`
+--
+ALTER TABLE `Reviews`
+ADD CONSTRAINT `FK_Rev_Order` FOREIGN KEY (`OrderId`) REFERENCES `Orders` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_Rev_Prod` FOREIGN KEY (`ProductId`) REFERENCES `Products` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_Rev_User` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `SKU_AttributeValues`
+--
+ALTER TABLE `SKU_AttributeValues`
+ADD CONSTRAINT `sku_attributevalues_ibfk_1` FOREIGN KEY (`ProductSkuId`) REFERENCES `ProductSKUs` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `sku_attributevalues_ibfk_2` FOREIGN KEY (`AttributeValueId`) REFERENCES `AttributeValues` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `UserAddresses`
+--
+ALTER TABLE `UserAddresses`
+ADD CONSTRAINT `FK_UserAddresses_Users` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `Users`
+--
+ALTER TABLE `Users`
+ADD CONSTRAINT `FK_Users_Roles` FOREIGN KEY (`RoleId`) REFERENCES `Roles` (`Id`);
+
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */
+;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */
+;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */
+;

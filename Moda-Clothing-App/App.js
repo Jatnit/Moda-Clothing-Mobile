@@ -9,6 +9,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/HomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import OrdersScreen from './src/screens/OrdersScreen';
+import OrderDetailScreen from './src/screens/OrderDetailScreen';
+import CartScreen from './src/screens/CartScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
+import ProductDetailScreen from './src/screens/ProductDetailScreen';
+import CheckoutScreen from './src/screens/CheckoutScreen';
 
 // Services
 import authService from './src/services/authService';
@@ -21,37 +28,6 @@ LogBox.ignoreLogs([
 ]);
 
 const Stack = createNativeStackNavigator();
-
-// Auth Stack - màn hình đăng nhập/đăng ký
-const AuthStack = ({ onAuthSuccess }) => (
-  <Stack.Navigator 
-    screenOptions={{ 
-      headerShown: false,
-      animation: 'slide_from_right',
-    }}
-  >
-    <Stack.Screen name="Login">
-      {(props) => <LoginScreen {...props} onLoginSuccess={onAuthSuccess} />}
-    </Stack.Screen>
-    <Stack.Screen name="Register">
-      {(props) => <RegisterScreen {...props} onRegisterSuccess={onAuthSuccess} />}
-    </Stack.Screen>
-  </Stack.Navigator>
-);
-
-// Main Stack - màn hình chính sau khi đăng nhập
-const MainStack = ({ user, onLogout }) => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-      animation: 'slide_from_right',
-    }}
-  >
-    <Stack.Screen name="Home">
-      {(props) => <HomeScreen {...props} user={user} onLogout={onLogout} />}
-    </Stack.Screen>
-  </Stack.Navigator>
-);
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -100,11 +76,96 @@ export default function App() {
     <SafeAreaProvider>
       <StatusBar style="dark" />
       <NavigationContainer>
-        {user ? (
-          <MainStack user={user} onLogout={handleLogout} />
-        ) : (
-          <AuthStack onAuthSuccess={handleAuthSuccess} />
-        )}
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        >
+          {/* Home Screen - luôn hiển thị, có thể chưa đăng nhập */}
+          <Stack.Screen name="Home">
+            {(props) => (
+              <HomeScreen 
+                {...props} 
+                user={user} 
+                onLogout={handleLogout} 
+              />
+            )}
+          </Stack.Screen>
+
+          {/* Auth Screens */}
+          <Stack.Screen name="Login">
+            {(props) => (
+              <LoginScreen 
+                {...props} 
+                onLoginSuccess={handleAuthSuccess} 
+              />
+            )}
+          </Stack.Screen>
+
+          <Stack.Screen name="Register">
+            {(props) => (
+              <RegisterScreen 
+                {...props} 
+                onRegisterSuccess={handleAuthSuccess} 
+              />
+            )}
+          </Stack.Screen>
+
+          {/* Profile Screen */}
+          <Stack.Screen name="Profile">
+            {(props) => (
+              <ProfileScreen 
+                {...props} 
+                user={user}
+                onUserUpdate={setUser}
+                onLogout={handleLogout}
+              />
+            )}
+          </Stack.Screen>
+
+          {/* Orders Screen */}
+          <Stack.Screen name="Orders">
+            {(props) => (
+              <OrdersScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* Order Detail Screen */}
+          <Stack.Screen name="OrderDetail">
+            {(props) => (
+              <OrderDetailScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* Cart Screen */}
+          <Stack.Screen name="Cart">
+            {(props) => (
+              <CartScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* Notifications Screen */}
+          <Stack.Screen name="Notifications">
+            {(props) => (
+              <NotificationsScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* Product Detail Screen */}
+          <Stack.Screen name="ProductDetail">
+            {(props) => (
+              <ProductDetailScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* Checkout Screen */}
+          <Stack.Screen name="Checkout">
+            {(props) => (
+              <CheckoutScreen {...props} />
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
   );
