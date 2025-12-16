@@ -3,43 +3,61 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   Image,
   FlatList,
   ActivityIndicator,
   StatusBar,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { colors, shadows } from '../theme/colors';
-
-// Mock cart data (sau này sẽ thay bằng context hoặc redux)
-const MOCK_CART_ITEMS = [
-  {
-    id: 1,
-    name: 'DRY-EX Áo Thun Hoạ Tiết',
-    color: 'Trắng',
-    size: 'M',
-    price: 299000,
-    quantity: 2,
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200',
-  },
-  {
-    id: 2,
-    name: 'Áo Khoác Dù Nhẹ',
-    color: 'Đen',
-    size: 'L',
-    price: 599000,
-    quantity: 1,
-    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200',
-  },
-];
+import cartService from '../services/cartService';
 
 const CartScreen = ({ navigation }) => {
-  const [cartItems, setCartItems] = useState(MOCK_CART_ITEMS);
-  const [loading, setLoading] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [updating, setUpdating] = useState(null); // Track which item is being updated
+
+  // Fetch cart from API
+  const fetchCart = async () => {
+    try {
+      const response = await cartService.getCart();
+      if (response.success) {
+        setCartItems(response.data?.items || []);
+      }
+    } catch (error) {
+      console.log('Fetch cart error:', error.message);
+      if (error.message?.includes('401') || error.message?.includes('token')) {
+        // Not logged in - show empty cart
+        setCartItems([]);
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  // Refresh when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchCart();
+    }, [])
+  );
+
+  // Refresh handler
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchCart();
+  }, []);
 
   // Handle go back
   const handleGoBack = () => {
@@ -51,39 +69,62 @@ const CartScreen = ({ navigation }) => {
   };
 
   // Update quantity
-  const updateQuantity = (itemId, delta) => {
-    setCartItems(items => 
-      items.map(item => {
-        if (item.id === itemId) {
-          const newQuantity = Math.max(1, item.quantity + delta);
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      })
-    );
+  const updateQuantity = async (cartId, currentQty, delta) => {
+    const newQuantity = currentQty + delta;
+    
+    if (newQuantity < 1) return;
+    
+    setUpdating(cartId);
+    try {
+      const response = await cartService.updateQuantity(cartId, newQuantity);
+      if (response.success) {
+        setCartItems(items =>
+          items.map(item =>
+            item.CartId === cartId ? { ...item, Quantity: newQuantity } : item
+          )
+        );
+      } else {
+        Alert.alert('Lỗi', response.message || 'Không thể cập nhật số lượng');
+      }
+    } catch (error) {
+      Alert.alert('Lỗi', error.message || 'Không thể cập nhật số lượng');
+    } finally {
+      setUpdating(null);
+    }
   };
 
   // Remove item
-  const removeItem = (itemId) => {
+  const removeItem = (cartId) => {
     Alert.alert(
       'Xóa sản phẩm',
       'Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?',
       [
         { text: 'Hủy', style: 'cancel' },
-        { 
-          text: 'Xóa', 
+        {
+          text: 'Xóa',
           style: 'destructive',
-          onPress: () => setCartItems(items => items.filter(item => item.id !== itemId))
+          onPress: async () => {
+            try {
+              const response = await cartService.removeFromCart(cartId);
+              if (response.success) {
+                setCartItems(items => items.filter(item => item.CartId !== cartId));
+              } else {
+                Alert.alert('Lỗi', response.message);
+              }
+            } catch (error) {
+              Alert.alert('Lỗi', error.message || 'Không thể xóa sản phẩm');
+            }
+          },
         },
       ]
     );
   };
 
   // Calculate totals
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.Price * item.Quantity), 0);
   const shipping = 0; // Free shipping
   const total = subtotal + shipping;
-  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = cartItems.reduce((sum, item) => sum + item.Quantity, 0);
 
   // Format price
   const formatPrice = (price) => {
@@ -99,18 +140,19 @@ const CartScreen = ({ navigation }) => {
       Alert.alert('Giỏ hàng trống', 'Vui lòng thêm sản phẩm vào giỏ hàng');
       return;
     }
-    
+
     // Chuyển đổi format cho checkout
     const checkoutItems = cartItems.map(item => ({
-      productId: item.id,
-      name: item.name,
-      price: item.price,
-      color: { Value: item.color },
-      size: { Value: item.size },
-      quantity: item.quantity,
-      image: item.image,
+      skuId: item.SkuId,
+      productId: item.ProductId,
+      name: item.ProductName,
+      price: item.Price,
+      color: { Value: item.ColorName },
+      size: { Value: item.SizeName },
+      quantity: item.Quantity,
+      image: item.ThumbnailUrl,
     }));
-    
+
     navigation?.navigate?.('Checkout', {
       items: checkoutItems,
       total,
@@ -120,38 +162,53 @@ const CartScreen = ({ navigation }) => {
   // Render cart item
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItem}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
-      
+      <Image 
+        source={{ uri: item.ThumbnailUrl || 'https://placehold.co/200x200/f5f5f5/666' }} 
+        style={styles.itemImage} 
+      />
+
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+        <Text style={styles.itemName} numberOfLines={2}>{item.ProductName}</Text>
         <View style={styles.itemVariants}>
-          <Text style={styles.variantText}>Màu: {item.color}</Text>
-          <Text style={styles.variantText}>Size: {item.size}</Text>
+          {item.ColorName && <Text style={styles.variantText}>Màu: {item.ColorName}</Text>}
+          {item.SizeName && <Text style={styles.variantText}>Size: {item.SizeName}</Text>}
         </View>
-        <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
+        <Text style={styles.itemPrice}>{formatPrice(item.Price)}</Text>
       </View>
 
       <View style={styles.itemActions}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.removeButton}
-          onPress={() => removeItem(item.id)}
+          onPress={() => removeItem(item.CartId)}
         >
           <Ionicons name="trash-outline" size={18} color={colors.error} />
         </TouchableOpacity>
-        
+
         <View style={styles.quantityControl}>
-          <TouchableOpacity 
-            style={styles.quantityButton}
-            onPress={() => updateQuantity(item.id, -1)}
+          <TouchableOpacity
+            style={[styles.quantityButton, updating === item.CartId && styles.quantityButtonDisabled]}
+            onPress={() => updateQuantity(item.CartId, item.Quantity, -1)}
+            disabled={updating === item.CartId || item.Quantity <= 1}
           >
-            <Ionicons name="remove" size={16} color={colors.textPrimary} />
+            <Ionicons name="remove" size={16} color={item.Quantity <= 1 ? colors.textLight : colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.quantityText}>{item.quantity}</Text>
-          <TouchableOpacity 
-            style={styles.quantityButton}
-            onPress={() => updateQuantity(item.id, 1)}
+          
+          {updating === item.CartId ? (
+            <ActivityIndicator size="small" color={colors.accent} style={{ width: 30 }} />
+          ) : (
+            <Text style={styles.quantityText}>{item.Quantity}</Text>
+          )}
+          
+          <TouchableOpacity
+            style={[styles.quantityButton, updating === item.CartId && styles.quantityButtonDisabled]}
+            onPress={() => updateQuantity(item.CartId, item.Quantity, 1)}
+            disabled={updating === item.CartId || item.Quantity >= item.StockQuantity}
           >
-            <Ionicons name="add" size={16} color={colors.textPrimary} />
+            <Ionicons 
+              name="add" 
+              size={16} 
+              color={item.Quantity >= item.StockQuantity ? colors.textLight : colors.textPrimary} 
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -168,7 +225,7 @@ const CartScreen = ({ navigation }) => {
       <Text style={styles.emptySubtitle}>
         Bạn chưa có sản phẩm nào trong giỏ hàng. Hãy khám phá ngay!
       </Text>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.shopNowButton}
         onPress={() => navigation?.navigate?.('Home')}
       >
@@ -176,6 +233,15 @@ const CartScreen = ({ navigation }) => {
       </TouchableOpacity>
     </View>
   );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.accent} />
+        <Text style={styles.loadingText}>Đang tải giỏ hàng...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -186,43 +252,48 @@ const CartScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Giỏ hàng ({itemCount})</Text>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>Giỏ hàng</Text>
+          {itemCount > 0 && (
+            <Text style={styles.itemCountText}>{itemCount} sản phẩm</Text>
+          )}
+        </View>
         <View style={{ width: 40 }} />
       </View>
 
+      {/* Cart Items */}
       {cartItems.length === 0 ? (
         renderEmptyState()
       ) : (
         <>
-          {/* Cart Items */}
           <FlatList
             data={cartItems}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.CartId?.toString()}
             renderItem={renderCartItem}
             contentContainerStyle={styles.listContainer}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           />
 
-          {/* Bottom Summary */}
-          <View style={styles.bottomContainer}>
+          {/* Summary */}
+          <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Tạm tính</Text>
               <Text style={styles.summaryValue}>{formatPrice(subtotal)}</Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Phí vận chuyển</Text>
-              <Text style={styles.summaryValueFree}>Miễn phí</Text>
+              <Text style={[styles.summaryValue, { color: colors.success }]}>Miễn phí</Text>
             </View>
-            <View style={styles.summaryDivider} />
-            <View style={styles.totalRow}>
+            <View style={styles.divider} />
+            <View style={styles.summaryRow}>
               <Text style={styles.totalLabel}>Tổng cộng</Text>
               <Text style={styles.totalValue}>{formatPrice(total)}</Text>
             </View>
-            
-            <TouchableOpacity 
-              style={styles.checkoutButton}
-              onPress={handleCheckout}
-            >
+
+            <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
               <Text style={styles.checkoutButtonText}>Thanh toán</Text>
               <Ionicons name="arrow-forward" size={20} color={colors.white} />
             </TouchableOpacity>
@@ -238,12 +309,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundSecondary,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: colors.textSecondary,
+  },
 
   // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: colors.background,
@@ -256,16 +337,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: colors.textPrimary,
   },
+  itemCountText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
 
   // List
   listContainer: {
     padding: 16,
-    paddingBottom: 220,
+    paddingBottom: 10,
   },
 
   // Cart Item
@@ -278,9 +368,9 @@ const styles = StyleSheet.create({
     ...shadows.small,
   },
   itemImage: {
-    width: 90,
-    height: 90,
-    borderRadius: 12,
+    width: 80,
+    height: 80,
+    borderRadius: 10,
     backgroundColor: colors.gray100,
   },
   itemDetails: {
@@ -297,23 +387,23 @@ const styles = StyleSheet.create({
   itemVariants: {
     flexDirection: 'row',
     gap: 12,
+    marginBottom: 6,
   },
   variantText: {
     fontSize: 12,
     color: colors.textSecondary,
   },
   itemPrice: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     color: colors.accent,
   },
   itemActions: {
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    marginLeft: 8,
   },
   removeButton: {
-    padding: 4,
+    padding: 6,
   },
   quantityControl: {
     flexDirection: 'row',
@@ -322,16 +412,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   quantityButton: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  quantityButtonDisabled: {
+    opacity: 0.5,
   },
   quantityText: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.textPrimary,
-    minWidth: 24,
+    width: 30,
     textAlign: 'center',
   },
 
@@ -376,24 +469,18 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
 
-  // Bottom Summary
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+  // Summary
+  summaryContainer: {
     backgroundColor: colors.background,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 30,
+    padding: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    ...shadows.large,
+    ...shadows.medium,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   summaryLabel: {
     fontSize: 14,
@@ -402,21 +489,12 @@ const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 14,
     color: colors.textPrimary,
+    fontWeight: '500',
   },
-  summaryValueFree: {
-    fontSize: 14,
-    color: colors.success,
-    fontWeight: '600',
-  },
-  summaryDivider: {
+  divider: {
     height: 1,
     backgroundColor: colors.border,
     marginVertical: 12,
-  },
-  totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
   },
   totalLabel: {
     fontSize: 16,
@@ -432,15 +510,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
     paddingVertical: 16,
     borderRadius: 14,
+    marginTop: 16,
     gap: 8,
-    ...shadows.medium,
   },
   checkoutButtonText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.white,
   },
 });

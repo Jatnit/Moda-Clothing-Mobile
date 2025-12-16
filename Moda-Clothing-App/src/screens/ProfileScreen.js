@@ -312,8 +312,7 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
           <Text style={styles.logoutText}>Đăng xuất</Text>
         </TouchableOpacity>
 
-        {/* Version */}
-        <Text style={styles.versionText}>Phiên bản 1.0.0</Text>
+
 
         <View style={{ height: 30 }} />
       </ScrollView>

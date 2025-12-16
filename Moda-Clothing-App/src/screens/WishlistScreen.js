@@ -135,10 +135,10 @@ const WishlistScreen = ({ navigation }) => {
         <Text style={styles.productName} numberOfLines={2}>{item.ProductName}</Text>
         
         {/* Rating */}
-        {item.AvgRating > 0 && (
+        {parseFloat(item.AvgRating) > 0 && (
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={12} color="#fbbf24" />
-            <Text style={styles.ratingText}>{item.AvgRating?.toFixed(1)}</Text>
+            <Text style={styles.ratingText}>{parseFloat(item.AvgRating || 0).toFixed(1)}</Text>
             <Text style={styles.reviewCount}>({item.ReviewCount || 0})</Text>
           </View>
         )}

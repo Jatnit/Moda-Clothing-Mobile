@@ -28,7 +28,15 @@ const ProductCard = ({ product, onPress, onFavorite, isFavorite, style }) => {
           resizeMode="cover"
         />
         
-        {/* Favorite Button */}
+        {/* Rating Badge - Góc trái */}
+        {product.AvgRating && parseFloat(product.AvgRating) > 0 && (
+          <View style={styles.ratingBadge}>
+            <Ionicons name="star" size={10} color="#FFD700" />
+            <Text style={styles.ratingBadgeText}>{parseFloat(product.AvgRating).toFixed(1)}</Text>
+          </View>
+        )}
+        
+        {/* Favorite Button - Góc phải */}
         <TouchableOpacity 
           style={[
             styles.favoriteButton,
@@ -78,15 +86,9 @@ const ProductCard = ({ product, onPress, onFavorite, isFavorite, style }) => {
           )}
         </View>
 
-        {/* Rating */}
-        {product.AvgRating && (
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={12} color="#FFD700" />
-            <Text style={styles.rating}>{parseFloat(product.AvgRating).toFixed(1)}</Text>
-            {product.ReviewCount > 0 && (
-              <Text style={styles.reviewCount}>({product.ReviewCount})</Text>
-            )}
-          </View>
+        {/* Sold Count */}
+        {product.TotalSold > 0 && (
+          <Text style={styles.soldText}>Đã bán {product.TotalSold}</Text>
         )}
       </View>
     </TouchableOpacity>
@@ -112,6 +114,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  // Rating badge ở góc trái
+  ratingBadge: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 3,
+  },
+  ratingBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.white,
+  },
   favoriteButton: {
     position: 'absolute',
     top: 10,
@@ -129,7 +149,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: 10,
+    bottom: 10,
     left: 10,
     backgroundColor: colors.accent,
     paddingHorizontal: 10,
@@ -174,20 +194,10 @@ const styles = StyleSheet.create({
     color: colors.textLight,
     textDecorationLine: 'line-through',
   },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    gap: 4,
-  },
-  rating: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  reviewCount: {
+  soldText: {
     fontSize: 11,
     color: colors.textLight,
+    marginTop: 6,
   },
 });
 

@@ -16,12 +16,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { colors, shadows } from '../theme/colors';
 import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import SectionHeader from '../components/SectionHeader';
 import { productService, categoryService } from '../services/productService';
 import wishlistService from '../services/wishlistService';
+import cartService from '../services/cartService';
 
 const { width } = Dimensions.get('window');
 const BANNER_HEIGHT = 200;
@@ -60,7 +62,24 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
   const [activeBanner, setActiveBanner] = useState(0);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [wishlistIds, setWishlistIds] = useState(new Set()); // Track wishlist product IDs
+  const [cartCount, setCartCount] = useState(0); // Track cart count
   const bannerRef = useRef(null);
+
+  // Fetch cart count
+  const fetchCartCount = useCallback(async () => {
+    if (!user) {
+      setCartCount(0);
+      return;
+    }
+    try {
+      const response = await cartService.getCartCount();
+      if (response.success) {
+        setCartCount(response.data?.count || 0);
+      }
+    } catch (error) {
+      console.log('Cart count fetch skipped:', error.message);
+    }
+  }, [user]);
 
   // Fetch wishlist IDs
   const fetchWishlistIds = useCallback(async () => {
@@ -92,19 +111,27 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
       setFeaturedProducts(featuredRes.data || []);
       setNewProducts(newRes.data || []);
       
-      // Fetch wishlist after products loaded
+      // Fetch wishlist and cart count after products loaded
       fetchWishlistIds();
+      fetchCartCount();
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [fetchWishlistIds]);
+  }, [fetchWishlistIds, fetchCartCount]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Refresh cart count when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchCartCount();
+    }, [fetchCartCount])
+  );
 
   // Auto scroll banner
   useEffect(() => {
@@ -366,9 +393,11 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
             onPress={() => navigation?.navigate?.('Cart')}
           >
             <Ionicons name="cart-outline" size={24} color={colors.textPrimary} />
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>3</Text>
-            </View>
+            {cartCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{cartCount > 99 ? '99+' : cartCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
 
           {/* Account Button */}
@@ -418,7 +447,7 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
       <SectionHeader 
         title="Danh mục" 
         subtitle="Khám phá theo phong cách"
-        onSeeAll={() => console.log('See all categories')}
+        onSeeAll={() => navigation?.navigate?.('AllCategories')}
       />
       <ScrollView
         horizontal
@@ -438,12 +467,12 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
   );
 
   // Render product grid
-  const renderProductGrid = (products, title, subtitle) => (
+  const renderProductGrid = (products, title, subtitle, type) => (
     <View>
       <SectionHeader 
         title={title}
         subtitle={subtitle}
-        onSeeAll={() => console.log('See all', title)}
+        onSeeAll={() => navigation?.navigate?.('AllProducts', { type, title })}
       />
       <View style={styles.productGrid}>
         {products.map((product) => (
@@ -497,7 +526,8 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
           renderProductGrid(
             featuredProducts.slice(0, 4), 
             'Bán chạy nhất', 
-            'Được yêu thích nhất tuần này'
+            'Được yêu thích nhất tuần này',
+            'featured'
           )
         }
 
@@ -524,7 +554,8 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
           renderProductGrid(
             newProducts.slice(0, 4), 
             'Hàng mới về', 
-            'Cập nhật xu hướng mới nhất'
+            'Cập nhật xu hướng mới nhất',
+            'new'
           )
         }
 

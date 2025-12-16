@@ -403,9 +403,11 @@
           <a href="#auth" class="nav-link">🔐 Authentication</a>
           <a href="#products" class="nav-link">📦 Products</a>
           <a href="#categories" class="nav-link">📁 Categories</a>
-          <a href="#orders" class="nav-link">🛒 Orders</a>
-          <a href="#addresses" class="nav-link">📍 Addresses</a>
+          <a href="#cart" class="nav-link">🛒 Cart</a>
+          <a href="#orders" class="nav-link">📋 Orders</a>
+          <a href="#wishlist" class="nav-link">❤️ Wishlist</a>
           <a href="#reviews" class="nav-link">⭐ Reviews</a>
+          <a href="#addresses" class="nav-link">📍 Addresses</a>
         </div>
       </div>
 
@@ -703,9 +705,154 @@
         </div>
       </div>
 
+      <!-- ============== CART ============== -->
+      <div class="api-section" id="cart">
+        <h2>🛒 Cart (Giỏ hàng)</h2>
+
+        <!-- Get Cart -->
+        <div class="endpoint" id="endpoint-cart">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-cart')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/cart</span>
+            <span class="endpoint-desc">Lấy giỏ hàng của user</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <button class="try-btn" onclick="tryGetCart()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="cart-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add to Cart -->
+        <div class="endpoint" id="endpoint-add-cart">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-add-cart')">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/cart</span>
+            <span class="endpoint-desc">Thêm sản phẩm vào giỏ hàng</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <table class="params-table">
+              <tr><th>Tham số</th><th>Kiểu</th><th>Mô tả</th></tr>
+              <tr><td class="param-name">skuId</td><td><span class="param-type">number</span></td><td>ID của ProductSKU (bắt buộc)</td></tr>
+              <tr><td class="param-name">quantity</td><td><span class="param-type">number</span></td><td>Số lượng (mặc định: 1)</td></tr>
+            </table>
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>SKU ID <span class="required">*</span></label>
+                  <input type="number" id="cart-sku" placeholder="vd: 1" />
+                  <div class="hint">ID của biến thể sản phẩm (ProductSKU)</div>
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" id="cart-qty" placeholder="1" value="1" />
+                </div>
+              </div>
+              <button class="try-btn" onclick="tryAddToCart()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="add-cart-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Cart Item -->
+        <div class="endpoint" id="endpoint-update-cart">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-update-cart')">
+            <span class="method put">PUT</span>
+            <span class="endpoint-path">/cart/:cartId</span>
+            <span class="endpoint-desc">Cập nhật số lượng sản phẩm</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Cart ID <span class="required">*</span></label>
+                  <input type="number" id="update-cart-id" placeholder="vd: 1" />
+                </div>
+                <div class="form-group">
+                  <label>New Quantity <span class="required">*</span></label>
+                  <input type="number" id="update-cart-qty" placeholder="2" />
+                </div>
+              </div>
+              <button class="try-btn" onclick="tryUpdateCart()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="update-cart-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Cart Item -->
+        <div class="endpoint" id="endpoint-delete-cart">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-delete-cart')">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint-path">/cart/:cartId</span>
+            <span class="endpoint-desc">Xóa sản phẩm khỏi giỏ hàng</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-group">
+                <label>Cart ID <span class="required">*</span></label>
+                <input type="number" id="delete-cart-id" placeholder="vd: 1" />
+              </div>
+              <button class="try-btn" onclick="tryDeleteCartItem()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="delete-cart-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clear Cart -->
+        <div class="endpoint" id="endpoint-clear-cart">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-clear-cart')">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint-path">/cart</span>
+            <span class="endpoint-desc">Xóa toàn bộ giỏ hàng</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <button class="try-btn" onclick="tryClearCart()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="clear-cart-response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ============== ORDERS ============== -->
       <div class="api-section" id="orders">
-        <h2>🛒 Orders</h2>
+        <h2>📋 Orders</h2>
 
         <!-- Get Orders -->
         <div class="endpoint" id="endpoint-orders">
@@ -824,6 +971,60 @@
                 <span>▶ Execute</span>
               </button>
               <div id="addresses-response"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== WISHLIST ============== -->
+      <div class="api-section" id="wishlist">
+        <h2>❤️ Wishlist (Yêu thích)</h2>
+
+        <!-- Get Wishlist -->
+        <div class="endpoint" id="endpoint-wishlist">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-wishlist')">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/wishlist</span>
+            <span class="endpoint-desc">Lấy danh sách yêu thích</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <button class="try-btn" onclick="tryGetWishlist()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="wishlist-response"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toggle Wishlist -->
+        <div class="endpoint" id="endpoint-toggle-wishlist">
+          <div class="endpoint-header" onclick="toggleEndpoint('endpoint-toggle-wishlist')">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/wishlist/:productId</span>
+            <span class="endpoint-desc">Thêm/Xóa sản phẩm khỏi yêu thích (Toggle)</span>
+            <span class="auth-badge">🔒 AUTH</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="endpoint-details">
+            <div class="try-section">
+              <div class="try-header">
+                <h4>🧪 Try it out</h4>
+              </div>
+              <div class="form-group">
+                <label>Product ID <span class="required">*</span></label>
+                <input type="number" id="toggle-wishlist-id" placeholder="vd: 1" />
+                <div class="hint">Nếu sản phẩm đã trong wishlist → sẽ xóa. Nếu chưa → sẽ thêm.</div>
+              </div>
+              <button class="try-btn" onclick="tryToggleWishlist()">
+                <span>▶ Execute</span>
+              </button>
+              <div id="toggle-wishlist-response"></div>
             </div>
           </div>
         </div>
@@ -1084,6 +1285,78 @@
       if (!productId) return alert('Vui lòng nhập Product ID');
       const result = await apiCall('/reviews/product/' + productId);
       showResponse('reviews-response', result.status, result.data, result.time);
+    }
+    
+    // ============== CART ==============
+    // Try Get Cart
+    async function tryGetCart() {
+      const result = await apiCall('/cart', { auth: true });
+      showResponse('cart-response', result.status, result.data, result.time);
+    }
+    
+    // Try Add to Cart
+    async function tryAddToCart() {
+      const skuId = document.getElementById('cart-sku').value;
+      const quantity = document.getElementById('cart-qty').value || 1;
+      if (!skuId) return alert('Vui lòng nhập SKU ID');
+      const result = await apiCall('/cart', {
+        method: 'POST',
+        auth: true,
+        body: JSON.stringify({ skuId: parseInt(skuId), quantity: parseInt(quantity) })
+      });
+      showResponse('add-cart-response', result.status, result.data, result.time);
+    }
+    
+    // Try Update Cart
+    async function tryUpdateCart() {
+      const cartId = document.getElementById('update-cart-id').value;
+      const quantity = document.getElementById('update-cart-qty').value;
+      if (!cartId || !quantity) return alert('Vui lòng nhập Cart ID và số lượng');
+      const result = await apiCall('/cart/' + cartId, {
+        method: 'PUT',
+        auth: true,
+        body: JSON.stringify({ quantity: parseInt(quantity) })
+      });
+      showResponse('update-cart-response', result.status, result.data, result.time);
+    }
+    
+    // Try Delete Cart Item
+    async function tryDeleteCartItem() {
+      const cartId = document.getElementById('delete-cart-id').value;
+      if (!cartId) return alert('Vui lòng nhập Cart ID');
+      const result = await apiCall('/cart/' + cartId, {
+        method: 'DELETE',
+        auth: true
+      });
+      showResponse('delete-cart-response', result.status, result.data, result.time);
+    }
+    
+    // Try Clear Cart
+    async function tryClearCart() {
+      if (!confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')) return;
+      const result = await apiCall('/cart', {
+        method: 'DELETE',
+        auth: true
+      });
+      showResponse('clear-cart-response', result.status, result.data, result.time);
+    }
+    
+    // ============== WISHLIST ==============
+    // Try Get Wishlist
+    async function tryGetWishlist() {
+      const result = await apiCall('/wishlist', { auth: true });
+      showResponse('wishlist-response', result.status, result.data, result.time);
+    }
+    
+    // Try Toggle Wishlist
+    async function tryToggleWishlist() {
+      const productId = document.getElementById('toggle-wishlist-id').value;
+      if (!productId) return alert('Vui lòng nhập Product ID');
+      const result = await apiCall('/wishlist/' + productId, {
+        method: 'POST',
+        auth: true
+      });
+      showResponse('toggle-wishlist-response', result.status, result.data, result.time);
     }
     
     // Load saved token on page load

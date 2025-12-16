@@ -1,17 +1,36 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
-// ⚠️ QUAN TRỌNG: Thay đổi IP này thành IP máy tính của bạn
+// ⚠️ QUAN TRỌNG: Đổi IP này thành IP máy tính của bạn khi dùng điện thoại thật
 // Tìm IP bằng lệnh: ipconfig getifaddr en0
-const LOCAL_IP = '192.168.1.27';
+const LOCAL_IP = '192.168.1.21';
 
 // Base URL cho API
 const getBaseUrl = () => {
   if (__DEV__) {
-    // Development - sử dụng IP thực thay vì localhost
-    // localhost chỉ hoạt động trên web, không hoạt động trên Simulator/thiết bị thật
-    return `http://${LOCAL_IP}:8080/api`;
+    // Kiểm tra xem có phải physical device không (Expo Go trên điện thoại thật)
+    const isPhysicalDevice = !Constants.isDevice || Constants.appOwnership === 'expo';
+    
+    // Physical device - phải dùng IP thực
+    // Expo Go trên điện thoại thật sẽ không thể connect tới localhost
+    if (Platform.OS === 'ios' && Constants.appOwnership === 'expo') {
+      // iOS Physical Device via Expo Go
+      return `http://${LOCAL_IP}:8080/api`;
+    }
+    
+    if (Platform.OS === 'android') {
+      // Android Emulator: 10.0.2.2 maps to host localhost
+      // Android Physical Device: cũng cần IP thực
+      if (Constants.appOwnership === 'expo') {
+        return `http://${LOCAL_IP}:8080/api`;
+      }
+      return 'http://10.0.2.2:8080/api';
+    }
+    
+    // iOS Simulator hoặc Web - localhost hoạt động
+    return 'http://localhost:8080/api';
   }
   // Production
   return 'https://your-production-api.com/api';

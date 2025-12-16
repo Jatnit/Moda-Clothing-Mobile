@@ -20,6 +20,8 @@ import WishlistScreen from './src/screens/WishlistScreen';
 import ReviewsScreen from './src/screens/ReviewsScreen';
 import CategoryProductsScreen from './src/screens/CategoryProductsScreen';
 import SearchScreen from './src/screens/SearchScreen';
+import AllProductsScreen from './src/screens/AllProductsScreen';
+import AllCategoriesScreen from './src/screens/AllCategoriesScreen';
 
 // Services
 import authService from './src/services/authService';
@@ -195,6 +197,20 @@ export default function App() {
           <Stack.Screen name="Search">
             {(props) => (
               <SearchScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* All Products Screen */}
+          <Stack.Screen name="AllProducts">
+            {(props) => (
+              <AllProductsScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* All Categories Screen */}
+          <Stack.Screen name="AllCategories">
+            {(props) => (
+              <AllCategoriesScreen {...props} />
             )}
           </Stack.Screen>
         </Stack.Navigator>

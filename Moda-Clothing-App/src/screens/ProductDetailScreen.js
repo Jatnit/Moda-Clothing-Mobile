@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, shadows } from '../theme/colors';
 import productService from '../services/productService';
 import wishlistService from '../services/wishlistService';
+import cartService from '../services/cartService';
 
 const { width } = Dimensions.get('window');
 
@@ -233,7 +234,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
   };
 
   // Add to cart
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedColor || !selectedSize) {
       Alert.alert('Thông báo', 'Vui lòng chọn màu sắc và kích thước');
       return;
@@ -244,28 +245,39 @@ const ProductDetailScreen = ({ navigation, route }) => {
       return;
     }
 
-    const cartItem = {
-      productId: product.Id,
-      skuId: currentSku?.Id,
-      name: product.Name,
-      price: currentPrice,
-      color: selectedColor,
-      size: selectedSize,
-      quantity,
-      image: currentImages[0],
-    };
+    if (!currentSku?.Id) {
+      Alert.alert('Thông báo', 'Không tìm thấy thông tin sản phẩm');
+      return;
+    }
 
-    // TODO: Add to cart context/redux
-    console.log('Add to cart:', cartItem);
-    
-    Alert.alert(
-      '🛒 Đã thêm vào giỏ hàng',
-      `${product.Name}\n${selectedColor.Value} - ${selectedSize.Value} x ${quantity}`,
-      [
-        { text: 'Tiếp tục mua', style: 'cancel' },
-        { text: 'Xem giỏ hàng', onPress: () => navigation?.navigate?.('Cart') }
-      ]
-    );
+    try {
+      const response = await cartService.addToCart(currentSku.Id, quantity);
+      if (response.success) {
+        Alert.alert(
+          '🛒 Đã thêm vào giỏ hàng',
+          `${product.Name}\n${selectedColor.Value} - ${selectedSize.Value} x ${quantity}`,
+          [
+            { text: 'Tiếp tục mua', style: 'cancel' },
+            { text: 'Xem giỏ hàng', onPress: () => navigation?.navigate?.('Cart') }
+          ]
+        );
+      } else {
+        Alert.alert('Lỗi', response.message || 'Không thể thêm vào giỏ hàng');
+      }
+    } catch (error) {
+      if (error.message?.includes('401') || error.message?.includes('token')) {
+        Alert.alert(
+          'Chưa đăng nhập',
+          'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng',
+          [
+            { text: 'Đóng', style: 'cancel' },
+            { text: 'Đăng nhập', onPress: () => navigation?.navigate?.('Login') }
+          ]
+        );
+      } else {
+        Alert.alert('Lỗi', error.message || 'Không thể thêm vào giỏ hàng');
+      }
+    }
   };
 
   // Buy now
@@ -499,7 +511,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
             <View style={styles.rating}>
               <Ionicons name="star" size={16} color="#fbbf24" />
               <Text style={styles.ratingText}>
-                {product.AvgRating?.toFixed(1) || '0.0'}
+                {parseFloat(product.AvgRating || 0).toFixed(1)}
               </Text>
               <Text style={styles.reviewCount}>
                 ({product.ReviewCount || 0} đánh giá)
@@ -584,6 +596,81 @@ const ProductDetailScreen = ({ navigation, route }) => {
               <Text style={styles.shippingText}>Bảo hành chính hãng</Text>
             </View>
           </View>
+
+          {/* Reviews Section */}
+          {product.reviews && product.reviews.length > 0 && (
+            <View style={styles.reviewsSection}>
+              <View style={styles.reviewsHeader}>
+                <View style={styles.reviewsTitleRow}>
+                  <Text style={styles.sectionTitle}>Đánh giá sản phẩm</Text>
+                  <View style={styles.reviewsBadge}>
+                    <Ionicons name="star" size={14} color="#fbbf24" />
+                    <Text style={styles.reviewsAvg}>{parseFloat(product.AvgRating || 0).toFixed(1)}</Text>
+                    <Text style={styles.reviewsCount}>({product.ReviewCount || 0})</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Reviews List */}
+              {product.reviews.slice(0, 3).map((review, index) => (
+                <View key={review.Id || index} style={styles.reviewCard}>
+                  <View style={styles.reviewHeader}>
+                    <View style={styles.reviewerInfo}>
+                      {review.AvatarUrl ? (
+                        <Image source={{ uri: review.AvatarUrl }} style={styles.reviewerAvatar} />
+                      ) : (
+                        <View style={styles.reviewerAvatarPlaceholder}>
+                          <Text style={styles.reviewerAvatarText}>
+                            {(review.FullName || review.Username || 'U').charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                      )}
+                      <View style={styles.reviewerDetails}>
+                        <Text style={styles.reviewerName}>{review.FullName || review.Username}</Text>
+                        <Text style={styles.reviewDate}>
+                          {new Date(review.CreatedAt).toLocaleDateString('vi-VN')}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.reviewRating}>
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Ionicons
+                          key={star}
+                          name={star <= review.Rating ? 'star' : 'star-outline'}
+                          size={14}
+                          color="#fbbf24"
+                        />
+                      ))}
+                    </View>
+                  </View>
+                  {review.Comment && (
+                    <Text style={styles.reviewComment}>{review.Comment}</Text>
+                  )}
+                </View>
+              ))}
+
+              {/* See All Reviews */}
+              {product.ReviewCount > 3 && (
+                <TouchableOpacity style={styles.seeAllReviewsButton}>
+                  <Text style={styles.seeAllReviewsText}>
+                    Xem tất cả {product.ReviewCount} đánh giá
+                  </Text>
+                  <Ionicons name="chevron-forward" size={18} color={colors.accent} />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+          {/* No Reviews Yet */}
+          {(!product.reviews || product.reviews.length === 0) && (
+            <View style={styles.noReviewsSection}>
+              <View style={styles.noReviewsIcon}>
+                <Ionicons name="chatbubble-outline" size={32} color={colors.gray300} />
+              </View>
+              <Text style={styles.noReviewsText}>Chưa có đánh giá nào</Text>
+              <Text style={styles.noReviewsSubtext}>Hãy là người đầu tiên đánh giá sản phẩm này!</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
 
@@ -986,6 +1073,141 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'rgba(255,255,255,0.8)',
     marginTop: 2,
+  },
+
+  // Reviews Section
+  reviewsSection: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  reviewsHeader: {
+    marginBottom: 16,
+  },
+  reviewsTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  reviewsBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fffbeb',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  reviewsAvg: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  reviewsCount: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  reviewCard: {
+    backgroundColor: colors.gray50,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  reviewerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  reviewerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  reviewerAvatarPlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  reviewerAvatarText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.white,
+  },
+  reviewerDetails: {
+    flex: 1,
+  },
+  reviewerName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 2,
+  },
+  reviewDate: {
+    fontSize: 12,
+    color: colors.textLight,
+  },
+  reviewRating: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  reviewComment: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
+  },
+  seeAllReviewsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: colors.gray100,
+    gap: 6,
+  },
+  seeAllReviewsText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.accent,
+  },
+
+  // No Reviews
+  noReviewsSection: {
+    alignItems: 'center',
+    paddingVertical: 30,
+    marginTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  noReviewsIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: colors.gray100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  noReviewsText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  noReviewsSubtext: {
+    fontSize: 13,
+    color: colors.textSecondary,
   },
 });
 
