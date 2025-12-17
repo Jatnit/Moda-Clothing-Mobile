@@ -285,8 +285,7 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
               style={styles.menuItem}
               onPress={() => {
                 setShowAccountMenu(false);
-                // navigation?.navigate?.('Addresses');
-                console.log('View addresses');
+                navigation?.navigate?.('Addresses');
               }}
             >
               <Ionicons name="location-outline" size={20} color={colors.textPrimary} />
@@ -340,10 +339,6 @@ const HomeScreen = ({ navigation, user, onLogout }) => {
             <View style={[styles.bannerOverlay, { backgroundColor: banner.color + '99' }]}>
               <Text style={styles.bannerSubtitle}>{banner.subtitle}</Text>
               <Text style={styles.bannerTitle}>{banner.title}</Text>
-              <TouchableOpacity style={styles.bannerButton}>
-                <Text style={styles.bannerButtonText}>Khám phá ngay</Text>
-                <Ionicons name="arrow-forward" size={16} color={colors.white} />
-              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         ))}

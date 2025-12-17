@@ -22,6 +22,7 @@ import CategoryProductsScreen from './src/screens/CategoryProductsScreen';
 import SearchScreen from './src/screens/SearchScreen';
 import AllProductsScreen from './src/screens/AllProductsScreen';
 import AllCategoriesScreen from './src/screens/AllCategoriesScreen';
+import AddressesScreen from './src/screens/AddressesScreen';
 
 // Services
 import authService from './src/services/authService';
@@ -211,6 +212,13 @@ export default function App() {
           <Stack.Screen name="AllCategories">
             {(props) => (
               <AllCategoriesScreen {...props} />
+            )}
+          </Stack.Screen>
+
+          {/* Addresses Screen */}
+          <Stack.Screen name="Addresses">
+            {(props) => (
+              <AddressesScreen {...props} />
             )}
           </Stack.Screen>
         </Stack.Navigator>

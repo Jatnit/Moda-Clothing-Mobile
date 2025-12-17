@@ -27,8 +27,11 @@ const CartScreen = ({ navigation }) => {
   const fetchCart = async () => {
     try {
       const response = await cartService.getCart();
+      console.log('📦 Cart API Response:', JSON.stringify(response, null, 2));
       if (response.success) {
-        setCartItems(response.data?.items || []);
+        const items = response.data?.items || [];
+        console.log('🛒 Cart Items with SkuId:', items.map(i => ({ name: i.ProductName, SkuId: i.SkuId })));
+        setCartItems(items);
       }
     } catch (error) {
       console.log('Fetch cart error:', error.message);

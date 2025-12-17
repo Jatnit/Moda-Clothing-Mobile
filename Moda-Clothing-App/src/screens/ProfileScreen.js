@@ -135,7 +135,7 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
     {
       icon: 'location-outline',
       label: 'Địa chỉ giao hàng',
-      onPress: () => console.log('Addresses'),
+      onPress: () => navigation?.navigate?.('Addresses'),
       badge: null,
     },
     {
@@ -311,8 +311,6 @@ const ProfileScreen = ({ navigation, user, onUserUpdate, onLogout }) => {
           <Ionicons name="log-out-outline" size={22} color={colors.error} />
           <Text style={styles.logoutText}>Đăng xuất</Text>
         </TouchableOpacity>
-
-
 
         <View style={{ height: 30 }} />
       </ScrollView>

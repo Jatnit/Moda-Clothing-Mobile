@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,18 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { CommonActions } from '@react-navigation/native';
 import { colors, shadows } from '../theme/colors';
 import orderService from '../services/orderService';
+import cartService from '../services/cartService';
+
+// Vietnam Provinces API (esgoo.net)
+const PROVINCES_API = 'https://esgoo.net/api-tinhthanh';
 
 const CheckoutScreen = ({ navigation, route }) => {
   const { items = [], total = 0 } = route?.params || {};
@@ -27,11 +34,28 @@ const CheckoutScreen = ({ navigation, route }) => {
     phone: '',
     address: '',
     city: '',
+    cityCode: '',
     district: '',
+    districtCode: '',
     ward: '',
+    wardCode: '',
     note: '',
   });
   const [paymentMethod, setPaymentMethod] = useState('COD');
+
+  // Provinces data
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [loadingProvinces, setLoadingProvinces] = useState(false);
+  const [loadingDistricts, setLoadingDistricts] = useState(false);
+  const [loadingWards, setLoadingWards] = useState(false);
+
+  // Modal states
+  const [showProvinceModal, setShowProvinceModal] = useState(false);
+  const [showDistrictModal, setShowDistrictModal] = useState(false);
+  const [showWardModal, setShowWardModal] = useState(false);
+  const [searchText, setSearchText] = useState('');
 
   const paymentMethods = [
     { id: 'COD', label: 'Thanh toán khi nhận hàng', icon: 'cash-outline' },
@@ -39,6 +63,113 @@ const CheckoutScreen = ({ navigation, route }) => {
     { id: 'MOMO', label: 'Ví MoMo', icon: 'wallet-outline' },
     { id: 'VNPAY', label: 'VNPay', icon: 'phone-portrait-outline' },
   ];
+
+  // Fetch provinces on mount
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  // Fetch provinces (Tỉnh/Thành phố)
+  const fetchProvinces = async () => {
+    setLoadingProvinces(true);
+    try {
+      const response = await fetch(`${PROVINCES_API}/1/0.htm`);
+      const data = await response.json();
+      if (data.error === 0) {
+        // Map to standard format
+        const mapped = data.data.map(p => ({
+          code: p.id,
+          name: p.full_name || p.name,
+        }));
+        setProvinces(mapped);
+      }
+    } catch (error) {
+      console.error('Error fetching provinces:', error);
+    } finally {
+      setLoadingProvinces(false);
+    }
+  };
+
+  // Fetch districts (Quận/Huyện) when province changes
+  const fetchDistricts = async (provinceCode) => {
+    setLoadingDistricts(true);
+    try {
+      const response = await fetch(`${PROVINCES_API}/2/${provinceCode}.htm`);
+      const data = await response.json();
+      if (data.error === 0) {
+        const mapped = data.data.map(d => ({
+          code: d.id,
+          name: d.full_name || d.name,
+        }));
+        setDistricts(mapped);
+      }
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    } finally {
+      setLoadingDistricts(false);
+    }
+  };
+
+  // Fetch wards (Phường/Xã) when district changes
+  const fetchWards = async (districtCode) => {
+    setLoadingWards(true);
+    try {
+      const response = await fetch(`${PROVINCES_API}/3/${districtCode}.htm`);
+      const data = await response.json();
+      if (data.error === 0) {
+        const mapped = data.data.map(w => ({
+          code: w.id,
+          name: w.full_name || w.name,
+        }));
+        setWards(mapped);
+      }
+    } catch (error) {
+      console.error('Error fetching wards:', error);
+    } finally {
+      setLoadingWards(false);
+    }
+  };
+
+  // Handle province select
+  const handleProvinceSelect = (province) => {
+    setShippingInfo({
+      ...shippingInfo,
+      city: province.name,
+      cityCode: province.code,
+      district: '',
+      districtCode: '',
+      ward: '',
+      wardCode: '',
+    });
+    setDistricts([]);
+    setWards([]);
+    setShowProvinceModal(false);
+    fetchDistricts(province.code);
+  };
+
+  // Handle district select
+  const handleDistrictSelect = (district) => {
+    setShippingInfo({
+      ...shippingInfo,
+      district: district.name,
+      districtCode: district.code,
+      ward: '',
+      wardCode: '',
+    });
+    setWards([]);
+    setShowDistrictModal(false);
+    fetchWards(district.code);
+  };
+
+  // Handle ward select
+  const handleWardSelect = (ward) => {
+    setShippingInfo({
+      ...shippingInfo,
+      ward: ward.name,
+      wardCode: ward.code,
+    });
+    setShowWardModal(false);
+  };
 
   // Handle go back
   const handleGoBack = () => {
@@ -80,6 +211,14 @@ const CheckoutScreen = ({ navigation, route }) => {
       Alert.alert('Thông báo', 'Vui lòng nhập địa chỉ giao hàng');
       return false;
     }
+    if (!shippingInfo.city) {
+      Alert.alert('Thông báo', 'Vui lòng chọn Tỉnh/Thành phố');
+      return false;
+    }
+    if (!shippingInfo.district) {
+      Alert.alert('Thông báo', 'Vui lòng chọn Quận/Huyện');
+      return false;
+    }
     return true;
   };
 
@@ -87,40 +226,78 @@ const CheckoutScreen = ({ navigation, route }) => {
   const handlePlaceOrder = async () => {
     if (!validateForm()) return;
 
+    // Validate items have skuId
+    const invalidItems = items.filter(item => !item.skuId);
+    if (invalidItems.length > 0) {
+      Alert.alert('Lỗi', 'Một số sản phẩm không có thông tin SKU. Vui lòng quay lại giỏ hàng và thử lại.');
+      return;
+    }
+
     setLoading(true);
     try {
+      // Build full address
+      const fullAddress = [
+        shippingInfo.address,
+        shippingInfo.ward,
+        shippingInfo.district,
+        shippingInfo.city,
+      ].filter(Boolean).join(', ');
+
       const orderData = {
         items: items.map(item => ({
-          productSkuId: item.skuId,
+          skuId: item.skuId,
           quantity: item.quantity,
-          unitPrice: item.price,
-          productName: item.name,
-          color: item.color?.Value,
-          size: item.size?.Value,
         })),
         shippingName: shippingInfo.name,
         shippingPhone: shippingInfo.phone,
-        shippingAddress: `${shippingInfo.address}, ${shippingInfo.ward}, ${shippingInfo.district}, ${shippingInfo.city}`.replace(/^, |, $/g, '').replace(/, ,/g, ','),
+        shippingAddress: fullAddress,
         paymentMethod,
         note: shippingInfo.note,
-        totalAmount: grandTotal,
       };
+
+      console.log('📦 Creating order with data:', JSON.stringify(orderData, null, 2));
 
       const response = await orderService.createOrder(orderData);
 
       if (response.success) {
+        // Clear cart after successful order
+        try {
+          await cartService.clearCart();
+        } catch (e) {
+          console.log('Clear cart error:', e);
+        }
+
         Alert.alert(
           '🎉 Đặt hàng thành công!',
           `Đơn hàng #${response.data?.Id || ''} đã được tạo.\nChúng tôi sẽ sớm liên hệ với bạn.`,
           [
             {
               text: 'Xem đơn hàng',
-              onPress: () => navigation?.navigate?.('Orders'),
+              onPress: () => {
+                // Reset stack để khi back sẽ về Home thay vì Checkout
+                navigation?.dispatch(
+                  CommonActions.reset({
+                    index: 1,
+                    routes: [
+                      { name: 'Home' },
+                      { name: 'Orders' },
+                    ],
+                  })
+                );
+              },
             },
             {
               text: 'Về trang chủ',
               style: 'cancel',
-              onPress: () => navigation?.navigate?.('Home'),
+              onPress: () => {
+                // Reset về Home
+                navigation?.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }],
+                  })
+                );
+              },
             },
           ]
         );
@@ -157,6 +334,79 @@ const CheckoutScreen = ({ navigation, route }) => {
       </View>
     </View>
   );
+
+  // Render picker modal
+  const renderPickerModal = (visible, onClose, data, onSelect, title, loadingData) => {
+    const filteredData = searchText
+      ? data.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()))
+      : data;
+
+    return (
+      <Modal
+        visible={visible}
+        animationType="slide"
+        transparent
+        onRequestClose={onClose}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{title}</Text>
+              <TouchableOpacity onPress={onClose}>
+                <Ionicons name="close" size={24} color={colors.textPrimary} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Search */}
+            <View style={styles.modalSearch}>
+              <Ionicons name="search-outline" size={20} color={colors.textLight} />
+              <TextInput
+                style={styles.modalSearchInput}
+                placeholder="Tìm kiếm..."
+                placeholderTextColor={colors.textLight}
+                value={searchText}
+                onChangeText={setSearchText}
+              />
+              {searchText ? (
+                <TouchableOpacity onPress={() => setSearchText('')}>
+                  <Ionicons name="close-circle" size={20} color={colors.textLight} />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+
+            {loadingData ? (
+              <View style={styles.modalLoading}>
+                <ActivityIndicator size="large" color={colors.accent} />
+                <Text style={styles.modalLoadingText}>Đang tải...</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={filteredData}
+                keyExtractor={(item) => item.code?.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.modalItem}
+                    onPress={() => {
+                      setSearchText('');
+                      onSelect(item);
+                    }}
+                  >
+                    <Text style={styles.modalItemText}>{item.name}</Text>
+                    <Ionicons name="chevron-forward" size={18} color={colors.textLight} />
+                  </TouchableOpacity>
+                )}
+                ListEmptyComponent={
+                  <View style={styles.modalEmpty}>
+                    <Text style={styles.modalEmptyText}>Không tìm thấy kết quả</Text>
+                  </View>
+                }
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -195,74 +445,128 @@ const CheckoutScreen = ({ navigation, route }) => {
               <Ionicons name="location-outline" size={18} /> Thông tin giao hàng
             </Text>
             <View style={styles.formCard}>
+              {/* Họ tên */}
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Họ tên người nhận *</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Nhập họ và tên"
-                  placeholderTextColor={colors.textLight}
-                  value={shippingInfo.name}
-                  onChangeText={(text) => setShippingInfo({...shippingInfo, name: text})}
-                />
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Số điện thoại *</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Nhập số điện thoại"
-                  placeholderTextColor={colors.textLight}
-                  keyboardType="phone-pad"
-                  value={shippingInfo.phone}
-                  onChangeText={(text) => setShippingInfo({...shippingInfo, phone: text})}
-                />
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Địa chỉ *</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Số nhà, tên đường"
-                  placeholderTextColor={colors.textLight}
-                  value={shippingInfo.address}
-                  onChangeText={(text) => setShippingInfo({...shippingInfo, address: text})}
-                />
-              </View>
-
-              <View style={styles.inputRow}>
-                <View style={[styles.inputGroup, { flex: 1 }]}>
-                  <Text style={styles.inputLabel}>Tỉnh/Thành phố</Text>
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="person-outline" size={14} color={colors.textSecondary} /> Họ tên người nhận *
+                </Text>
+                <View style={styles.inputWithIcon}>
+                  <Ionicons name="person" size={18} color={colors.textLight} style={styles.inputIcon} />
                   <TextInput
-                    style={styles.input}
-                    placeholder="Thành phố"
+                    style={styles.inputIconField}
+                    placeholder="Nhập họ và tên"
                     placeholderTextColor={colors.textLight}
-                    value={shippingInfo.city}
-                    onChangeText={(text) => setShippingInfo({...shippingInfo, city: text})}
-                  />
-                </View>
-                <View style={[styles.inputGroup, { flex: 1 }]}>
-                  <Text style={styles.inputLabel}>Quận/Huyện</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Quận/Huyện"
-                    placeholderTextColor={colors.textLight}
-                    value={shippingInfo.district}
-                    onChangeText={(text) => setShippingInfo({...shippingInfo, district: text})}
+                    value={shippingInfo.name}
+                    onChangeText={(text) => setShippingInfo({...shippingInfo, name: text})}
                   />
                 </View>
               </View>
 
+              {/* Số điện thoại */}
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Ghi chú</Text>
-                <TextInput
-                  style={[styles.input, styles.inputMultiline]}
-                  placeholder="Ghi chú cho đơn hàng (không bắt buộc)"
-                  placeholderTextColor={colors.textLight}
-                  multiline
-                  numberOfLines={3}
-                  value={shippingInfo.note}
-                  onChangeText={(text) => setShippingInfo({...shippingInfo, note: text})}
-                />
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="call-outline" size={14} color={colors.textSecondary} /> Số điện thoại *
+                </Text>
+                <View style={styles.inputWithIcon}>
+                  <Ionicons name="call" size={18} color={colors.textLight} style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.inputIconField}
+                    placeholder="Nhập số điện thoại"
+                    placeholderTextColor={colors.textLight}
+                    keyboardType="phone-pad"
+                    value={shippingInfo.phone}
+                    onChangeText={(text) => setShippingInfo({...shippingInfo, phone: text})}
+                  />
+                </View>
+              </View>
+
+              {/* Province Picker */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="business-outline" size={14} color={colors.textSecondary} /> Tỉnh/Thành phố *
+                </Text>
+                <TouchableOpacity
+                  style={styles.pickerWithIcon}
+                  onPress={() => setShowProvinceModal(true)}
+                >
+                  <Ionicons name="business" size={18} color={colors.textLight} style={styles.inputIcon} />
+                  <Text style={[styles.pickerIconText, shippingInfo.city ? styles.pickerTextFilled : null]}>
+                    {shippingInfo.city || 'Chọn Tỉnh/Thành phố'}
+                  </Text>
+                  <Ionicons name="chevron-down" size={20} color={colors.textLight} />
+                </TouchableOpacity>
+              </View>
+
+              {/* District Picker */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="map-outline" size={14} color={colors.textSecondary} /> Quận/Huyện *
+                </Text>
+                <TouchableOpacity
+                  style={[styles.pickerWithIcon, !shippingInfo.city && styles.pickerDisabled]}
+                  onPress={() => shippingInfo.city && setShowDistrictModal(true)}
+                  disabled={!shippingInfo.city}
+                >
+                  <Ionicons name="map" size={18} color={colors.textLight} style={styles.inputIcon} />
+                  <Text style={[styles.pickerIconText, shippingInfo.district ? styles.pickerTextFilled : null]}>
+                    {shippingInfo.district || 'Chọn Quận/Huyện'}
+                  </Text>
+                  <Ionicons name="chevron-down" size={20} color={colors.textLight} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Ward Picker */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="navigate-outline" size={14} color={colors.textSecondary} /> Phường/Xã
+                </Text>
+                <TouchableOpacity
+                  style={[styles.pickerWithIcon, !shippingInfo.district && styles.pickerDisabled]}
+                  onPress={() => shippingInfo.district && setShowWardModal(true)}
+                  disabled={!shippingInfo.district}
+                >
+                  <Ionicons name="navigate" size={18} color={colors.textLight} style={styles.inputIcon} />
+                  <Text style={[styles.pickerIconText, shippingInfo.ward ? styles.pickerTextFilled : null]}>
+                    {shippingInfo.ward || 'Chọn Phường/Xã'}
+                  </Text>
+                  <Ionicons name="chevron-down" size={20} color={colors.textLight} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Địa chỉ chi tiết */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="home-outline" size={14} color={colors.textSecondary} /> Địa chỉ chi tiết *
+                </Text>
+                <View style={styles.inputWithIcon}>
+                  <Ionicons name="home" size={18} color={colors.textLight} style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.inputIconField}
+                    placeholder="Số nhà, tên đường..."
+                    placeholderTextColor={colors.textLight}
+                    value={shippingInfo.address}
+                    onChangeText={(text) => setShippingInfo({...shippingInfo, address: text})}
+                  />
+                </View>
+              </View>
+
+              {/* Ghi chú */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="chatbubble-outline" size={14} color={colors.textSecondary} /> Ghi chú
+                </Text>
+                <View style={[styles.inputWithIcon, styles.inputWithIconMultiline]}>
+                  <Ionicons name="chatbubble" size={18} color={colors.textLight} style={[styles.inputIcon, { marginTop: 12 }]} />
+                  <TextInput
+                    style={[styles.inputIconField, styles.inputMultiline]}
+                    placeholder="Ghi chú cho đơn hàng (không bắt buộc)"
+                    placeholderTextColor={colors.textLight}
+                    multiline
+                    numberOfLines={3}
+                    value={shippingInfo.note}
+                    onChangeText={(text) => setShippingInfo({...shippingInfo, note: text})}
+                  />
+                </View>
               </View>
             </View>
           </View>
@@ -356,6 +660,36 @@ const CheckoutScreen = ({ navigation, route }) => {
           )}
         </TouchableOpacity>
       </View>
+
+      {/* Province Modal */}
+      {renderPickerModal(
+        showProvinceModal,
+        () => { setShowProvinceModal(false); setSearchText(''); },
+        provinces,
+        handleProvinceSelect,
+        'Chọn Tỉnh/Thành phố',
+        loadingProvinces
+      )}
+
+      {/* District Modal */}
+      {renderPickerModal(
+        showDistrictModal,
+        () => { setShowDistrictModal(false); setSearchText(''); },
+        districts,
+        handleDistrictSelect,
+        'Chọn Quận/Huyện',
+        loadingDistricts
+      )}
+
+      {/* Ward Modal */}
+      {renderPickerModal(
+        showWardModal,
+        () => { setShowWardModal(false); setSearchText(''); },
+        wards,
+        handleWardSelect,
+        'Chọn Phường/Xã',
+        loadingWards
+      )}
     </SafeAreaView>
   );
 };
@@ -490,9 +824,137 @@ const styles = StyleSheet.create({
     height: 80,
     textAlignVertical: 'top',
   },
-  inputRow: {
+  picker: {
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
     flexDirection: 'row',
-    gap: 12,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  pickerDisabled: {
+    backgroundColor: colors.gray100,
+  },
+  pickerText: {
+    fontSize: 15,
+    color: colors.textPrimary,
+  },
+  pickerPlaceholder: {
+    fontSize: 15,
+    color: colors.textLight,
+  },
+  
+  // Input with Icon styles
+  inputWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  inputWithIconMultiline: {
+    alignItems: 'flex-start',
+  },
+  inputIcon: {
+    marginRight: 10,
+  },
+  inputIconField: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: colors.textPrimary,
+  },
+  pickerWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  pickerIconText: {
+    flex: 1,
+    fontSize: 15,
+    color: colors.textLight,
+  },
+  pickerTextFilled: {
+    color: colors.textPrimary,
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: colors.background,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  modalSearch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.gray100,
+    margin: 16,
+    marginTop: 8,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    gap: 8,
+  },
+  modalSearchInput: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: colors.textPrimary,
+  },
+  modalLoading: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  modalLoadingText: {
+    marginTop: 12,
+    color: colors.textSecondary,
+  },
+  modalItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  modalItemText: {
+    fontSize: 15,
+    color: colors.textPrimary,
+  },
+  modalEmpty: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  modalEmptyText: {
+    color: colors.textSecondary,
   },
 
   // Payment
