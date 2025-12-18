@@ -443,28 +443,6 @@ FLUSH PRIVILEGES;
 | `phung@gmail.com` | `123456`   | User  |
 | `admin@moda.com`  | `admin123` | Admin |
 
----
-
-## 📄 LICENSE
-
-MIT License - Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
-
----
-
-## 🤝 ĐÓNG GÓP
-
-1. Fork repository
-2. Tạo branch mới (`git checkout -b feature/TinhNangMoi`)
-3. Commit changes (`git commit -m 'Thêm tính năng mới'`)
-4. Push to branch (`git push origin feature/TinhNangMoi`)
-5. Tạo Pull Request
-
----
-
-## 📞 LIÊN HỆ
-
-- **Email**: your-email@example.com
-- **GitHub**: https://github.com/your-username
 
 ---
 
