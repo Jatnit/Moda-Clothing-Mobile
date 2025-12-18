@@ -1,19 +1,36 @@
--- ========================================================
--- PHẦN 1: KHỞI TẠO DATABASE (LÀM SẠCH VÀ TẠO MỚI)
--- ========================================================
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: localhost
+-- Thời gian đã tạo: Th12 18, 2025 lúc 11:54 AM
+-- Phiên bản máy phục vụ: 10.4.28-MariaDB
+-- Phiên bản PHP: 8.2.4
 
-DROP DATABASE IF EXISTS jwt;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 
-CREATE DATABASE jwt CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+START TRANSACTION;
 
-USE jwt;
+SET time_zone = "+00:00";
 
--- Tắt kiểm tra khóa ngoại để nạp dữ liệu nhanh và tránh lỗi thứ tự
-SET FOREIGN_KEY_CHECKS = 0;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */
+;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */
+;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */
+;
+/*!40101 SET NAMES utf8mb4 */
+;
 
--- ========================================================
--- PHẦN 2: TẠO CẤU TRÚC BẢNG (SCHEMA)
--- ========================================================
+--
+-- Cơ sở dữ liệu: `jwt`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Attributes`
+--
 
 CREATE TABLE `Attributes` (
     `Id` int(11) NOT NULL,
@@ -725,7 +742,7 @@ VALUES (
         'products',
         34,
         NULL,
-        '{\"name\":\"AIRism Cotton Áo Thun 3\",\"slug\":\"airism-cotton-ao-thun-3\",\"basePrice\":\"390000\"}',
+        '{\"name\":\"AIRism Cotton Áo Thun 3\",\"slug\":\"airism-cotton-ao-thun-3\",\"basePrice\":\"390000\"}',
         NULL,
         '::1',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
@@ -775,7 +792,7 @@ VALUES (
         'DELETE',
         'products',
         34,
-        '{\"name\":\"AIRism Cotton Áo Thun 3\",\"slug\":\"airism-cotton-ao-thun-3\"}',
+        '{\"name\":\"AIRism Cotton Áo Thun 3\",\"slug\":\"airism-cotton-ao-thun-3\"}',
         NULL,
         NULL,
         '::1',
@@ -792,7 +809,7 @@ VALUES (
         'DELETE',
         'products',
         33,
-        '{\"name\":\"AIRism Cotton Áo Thun 2\",\"slug\":\"airism-cotton-ao-thun-2\"}',
+        '{\"name\":\"AIRism Cotton Áo Thun 2\",\"slug\":\"airism-cotton-ao-thun-2\"}',
         NULL,
         NULL,
         '::1',
@@ -827,7 +844,7 @@ VALUES (
         'products',
         35,
         NULL,
-        '{\"name\":\"AIRism Cotton Áo Thun Dáng Rộng | Tay Lỡ\",\"slug\":\"airismcotton-ao-thundang-rong-tay-lo\",\"basePrice\":\"350000\"}',
+        '{\"name\":\"AIRism Cotton Áo Thun Dáng Rộng | Tay Lỡ\",\"slug\":\"airismcotton-ao-thundang-rong-tay-lo\",\"basePrice\":\"350000\"}',
         NULL,
         '::1',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
@@ -946,7 +963,7 @@ VALUES (
         'products',
         36,
         NULL,
-        '{\"name\":\"AIRism Cotton Áo Thun ngắn tay\",\"slug\":\"airism-cotton-ao-thun-ngan-tay\",\"basePrice\":\"245000\"}',
+        '{\"name\":\"AIRism Cotton Áo Thun ngắn tay\",\"slug\":\"airism-cotton-ao-thun-ngan-tay\",\"basePrice\":\"245000\"}',
         NULL,
         '::1',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
@@ -963,7 +980,7 @@ VALUES (
         'products',
         37,
         NULL,
-        '{\"name\":\"Áo Giả Lông Cừu Đan Len Mềm Cổ Tròn\",\"slug\":\"ao-gia-long-cuu-dan-len-mem-co-tron\",\"basePrice\":\"394998\"}',
+        '{\"name\":\"Áo Giả Lông Cừu Đan Len Mềm Cổ Tròn\",\"slug\":\"ao-gia-long-cuu-dan-len-mem-co-tron\",\"basePrice\":\"394998\"}',
         NULL,
         '::1',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
@@ -980,7 +997,7 @@ VALUES (
         'products',
         38,
         NULL,
-        '{\"name\":\"DRY-EX Áo Thun Hoạ Tiết 1\",\"slug\":\"dry-ex-ao-thun-hoa-tiet-1\",\"basePrice\":\"290000\"}',
+        '{\"name\":\"DRY-EX Áo Thun Hoạ Tiết 1\",\"slug\":\"dry-ex-ao-thun-hoa-tiet-1\",\"basePrice\":\"290000\"}',
         NULL,
         '::1',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
@@ -997,7 +1014,7 @@ VALUES (
         'products',
         39,
         NULL,
-        '{\"name\":\"DRY-EX Áo Thun Hoạ Tiết 2\",\"slug\":\"dry-ex-ao-thun-hoa-tiet-2\",\"basePrice\":\"290000\"}',
+        '{\"name\":\"DRY-EX Áo Thun Hoạ Tiết 2\",\"slug\":\"dry-ex-ao-thun-hoa-tiet-2\",\"basePrice\":\"290000\"}',
         NULL,
         '::1',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
@@ -1176,7 +1193,209 @@ VALUES (
         'Đăng nhập hệ thống thành công',
         NULL,
         '2025-12-07 12:06:40.453'
+    ),
+    (
+        63,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-09 11:20:26.523'
+    ),
+    (
+        64,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-10 14:33:37.518'
+    ),
+    (
+        65,
+        1,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-10 14:38:52.745'
+    ),
+    (
+        66,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-10 14:40:43.809'
+    ),
+    (
+        67,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-17 13:16:07.027'
+    ),
+    (
+        68,
+        100,
+        'UPDATE',
+        'orders',
+        13,
+        '{\"status\":\"Mới\"}',
+        '{\"status\":\"Hoàn thành\"}',
+        '[\"status\"]',
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'PUT',
+        '/api/orders/13/status',
+        'Cập nhật orders: status: \"Mới\" → \"Hoàn thành\"',
+        NULL,
+        '2025-12-17 13:17:33.284'
+    ),
+    (
+        69,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-17 13:24:46.970'
+    ),
+    (
+        70,
+        100,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-17 13:39:41.560'
+    ),
+    (
+        71,
+        2,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-17 13:39:52.280'
+    ),
+    (
+        72,
+        2,
+        'LOGOUT',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/logout',
+        'Đăng xuất hệ thống',
+        NULL,
+        '2025-12-17 13:40:35.712'
+    ),
+    (
+        73,
+        100,
+        'LOGIN',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '::1',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+        'POST',
+        '/signin',
+        'Đăng nhập hệ thống thành công',
+        NULL,
+        '2025-12-17 13:40:42.731'
     );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Cart`
+--
+
+CREATE TABLE `Cart` (
+    `Id` int(11) NOT NULL,
+    `UserId` int(11) NOT NULL,
+    `ProductSkuId` int(11) NOT NULL,
+    `Quantity` int(11) NOT NULL DEFAULT 1,
+    `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp(),
+    `UpdatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1382,6 +1601,56 @@ VALUES (
         'S',
         1,
         150000.00
+    ),
+    (
+        11,
+        11,
+        846,
+        'DRY-EX Áo Thun Hoạ Tiết 2',
+        'Trắng',
+        'S',
+        1,
+        290000.00
+    ),
+    (
+        12,
+        12,
+        836,
+        'DRY-EX Áo Thun Hoạ Tiết 1',
+        'Trắng',
+        'S',
+        1,
+        290000.00
+    ),
+    (
+        13,
+        13,
+        846,
+        'DRY-EX Áo Thun Hoạ Tiết 2',
+        'Trắng',
+        'S',
+        1,
+        290000.00
+    ),
+    (
+        14,
+        14,
+        701,
+        'Hoodie Nỉ',
+        'Trắng',
+        'S',
+        1,
+        380000.00
+    ),
+    (
+        15,
+        15,
+        846,
+        'DRY-EX Áo Thun Hoạ Tiết 2',
+        'Trắng',
+        'S',
+        1,
+        290000.00
     );
 
 -- --------------------------------------------------------
@@ -1412,7 +1681,8 @@ CREATE TABLE `Orders` (
     `ShippingName` varchar(100) DEFAULT NULL,
     `ShippingPhone` varchar(20) DEFAULT NULL,
     `ShippingAddress` text DEFAULT NULL,
-    `Note` text DEFAULT NULL
+    `Note` text DEFAULT NULL,
+    `CompletedAt` timestamp NULL DEFAULT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 --
@@ -1431,7 +1701,8 @@ INSERT INTO
         `ShippingName`,
         `ShippingPhone`,
         `ShippingAddress`,
-        `Note`
+        `Note`,
+        `CompletedAt`
     )
 VALUES (
         1,
@@ -1443,6 +1714,7 @@ VALUES (
         1,
         'Kim Phụng',
         '0909123456',
+        NULL,
         NULL,
         NULL
     ),
@@ -1457,6 +1729,7 @@ VALUES (
         'Tú Lâm',
         '0988777666',
         NULL,
+        NULL,
         NULL
     ),
     (
@@ -1469,6 +1742,7 @@ VALUES (
         0,
         'Kim Phụng',
         '0909123456',
+        NULL,
         NULL,
         NULL
     ),
@@ -1483,6 +1757,7 @@ VALUES (
         'Tú Lâm',
         '0988777666',
         NULL,
+        NULL,
         NULL
     ),
     (
@@ -1495,6 +1770,7 @@ VALUES (
         1,
         'Kim Phụng',
         '0909123456',
+        NULL,
         NULL,
         NULL
     ),
@@ -1509,6 +1785,7 @@ VALUES (
         'Jatnit Admin',
         '0123456789',
         NULL,
+        NULL,
         NULL
     ),
     (
@@ -1521,6 +1798,7 @@ VALUES (
         0,
         'Khách Vãng Lai',
         '0999888777',
+        NULL,
         NULL,
         NULL
     ),
@@ -1535,6 +1813,7 @@ VALUES (
         'Kim Phụng',
         '0909123456',
         NULL,
+        NULL,
         NULL
     ),
     (
@@ -1547,6 +1826,7 @@ VALUES (
         1,
         'Tú Lâm',
         '0988777666',
+        NULL,
         NULL,
         NULL
     ),
@@ -1561,6 +1841,77 @@ VALUES (
         'Kim Phụng',
         '0909123456',
         NULL,
+        NULL,
+        NULL
+    ),
+    (
+        11,
+        2,
+        '2025-12-17 12:30:57',
+        290000.00,
+        'Đã hủy',
+        'COD',
+        0,
+        'Phùng',
+        '0918724783',
+        '2 đường duy tan, Xã Tân Phú, Huyện Châu Thành, Tỉnh An Giang',
+        '',
+        NULL
+    ),
+    (
+        12,
+        2,
+        '2025-12-17 12:33:06',
+        290000.00,
+        'Đã hủy',
+        'Banking',
+        0,
+        'Phùng',
+        '0918724783',
+        '10 đường so 3, Phường Mỹ Độ, Thành phố Bắc Giang, Tỉnh Bắc Giang',
+        '',
+        NULL
+    ),
+    (
+        13,
+        2,
+        '2025-12-17 12:39:05',
+        290000.00,
+        'Hoàn thành',
+        'COD',
+        0,
+        'Phá',
+        '0918724783',
+        '21 đường 2, Xã Châu Hòa, Huyện Giồng Trôm, Tỉnh Bến Tre',
+        '',
+        NULL
+    ),
+    (
+        14,
+        2,
+        '2025-12-17 13:25:15',
+        380000.00,
+        'Mới',
+        'COD',
+        0,
+        'Salsas',
+        '0918724783',
+        'aasdada, Xã Phong Thạnh Tây B, Huyện Phước Long, Tỉnh Bạc Liêu',
+        '',
+        NULL
+    ),
+    (
+        15,
+        2,
+        '2025-12-17 13:37:24',
+        290000.00,
+        'Đã hủy',
+        'COD',
+        0,
+        'Sadasdas',
+        '0918724783',
+        '213213123, Xã Phú Lương, Huyện Lương Tài, Tỉnh Bắc Ninh',
+        '',
         NULL
     );
 
@@ -3718,7 +4069,7 @@ VALUES (
     ),
     (
         31,
-        'AIRism Cotton Áo Thun Tay Dài',
+        'AIRism Cotton Áo Thun Tay Dài',
         'airism-cotton-ao-thun-tay-dai',
         'Phom dáng rộng hiện đại, dễ phối đồ.\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng rộng thoải mái\r\n- Túi: Không túi\r\n- Những hình ảnh sản phẩm có thể bao gồm Những màu không có sẵn.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ C4giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.',
         390000.00,
@@ -3729,7 +4080,7 @@ VALUES (
     ),
     (
         35,
-        'AIRism Cotton Áo Thun Tay Lỡ',
+        'AIRism Cotton Áo Thun Tay Lỡ',
         'airismcotton-ao-thun-tay-lo',
         '- The fabric makes for a clean silhouette.\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.',
         350000.00,
@@ -3740,7 +4091,7 @@ VALUES (
     ),
     (
         36,
-        'AIRism Cotton Áo Thun ngắn tay',
+        'AIRism Cotton Áo Thun ngắn tay',
         'airism-cotton-ao-thun-ngan-tay',
         'Vải\r\n61% Bông, 33% Polyeste, 6% Elastan\r\nHướng dẫn giặt\r\nGiặt máy nước lạnh, giặt nhẹ, Không giặt khô, Không sấy khô',
         245000.00,
@@ -3751,7 +4102,7 @@ VALUES (
     ),
     (
         37,
-        'Áo Giả Lông Cừu Đan Len Mềm Cổ Tròn',
+        'Áo Giả Lông Cừu Đan Len Mềm Cổ Tròn',
         'ao-gia-long-cuu-dan-len-mem-co-tron',
         '- Kiểu dáng thông thường, đa năng, tinh tế.\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng suông\r\n- Túi: Không túi\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.\r\n',
         394998.00,
@@ -3762,7 +4113,7 @@ VALUES (
     ),
     (
         38,
-        'DRY-EX Áo Thun Hoạ Tiết 1',
+        'DRY-EX Áo Thun Hoạ Tiết 1',
         'dry-ex-ao-thun-hoa-tiet-1',
         'Vải\r\nThân Trước: Tay Áo: 100% Polyeste ( 53% Sử Dụng Sợi Polyeste Tái Chế )/ Thân Sau: Cổ Áo: 100% Polyeste ( 50% Sử Dụng Sợi Polyeste Tái Chế )\r\nHướng dẫn giặt\r\nGiặt máy nước lạnh, giặt nhẹ, Không giặt khô, Không sấy khô',
         290000.00,
@@ -3773,7 +4124,7 @@ VALUES (
     ),
     (
         39,
-        'DRY-EX Áo Thun Hoạ Tiết 2',
+        'DRY-EX Áo Thun Hoạ Tiết 2',
         'dry-ex-ao-thun-hoa-tiet-2',
         '- Áo thun dày dặn, phù hợp cho phong cách năng động hay ngày thường.\r\n- Công nghệ “DRY-EX”.\r\n- Tính năng kiểm soát mùi.\r\nChi tiết về chức năng\r\n- Độ xuyên thấu: Không xuyên thấu\r\n- Dáng: Dáng suông\r\n- Túi: Không túi\r\n- Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.\r\n- Quần áo sử dụng vật liệu tái chế là một phần trong nỗ lực của chúng tôi nhằm hỗ trợ giảm thiểu chất thải và sử dụng vật liệu mới. Tỷ lệ vật liệu tái chế khác nhau tùy theo từng sản phẩm. Vui lòng kiểm tra \'Vật liệu\' trên tag giá hoặc nhãn chăm sóc để biết chi tiết.',
         290000.00,
@@ -10120,7 +10471,7 @@ VALUES (
         1,
         6,
         380000.00,
-        95
+        94
     ),
     (
         702,
@@ -11200,7 +11551,7 @@ VALUES (
         1,
         6,
         290000.00,
-        25
+        23
     ),
     (
         847,
@@ -11397,6 +11748,15 @@ VALUES (
         5,
         'Mua tặng chồng rất ưng',
         '2025-12-03 05:43:01'
+    ),
+    (
+        4,
+        2,
+        39,
+        13,
+        5,
+        'Đẹp lam nha',
+        '2025-12-17 13:19:58'
     );
 
 -- --------------------------------------------------------
@@ -11463,6 +11823,56 @@ CREATE TABLE `UserAddresses` (
     `City` varchar(50) DEFAULT NULL,
     `IsDefault` tinyint(1) DEFAULT 0
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `UserAddresses`
+--
+
+INSERT INTO
+    `UserAddresses` (
+        `Id`,
+        `UserId`,
+        `RecipientName`,
+        `PhoneNumber`,
+        `AddressLine`,
+        `Ward`,
+        `District`,
+        `City`,
+        `IsDefault`
+    )
+VALUES (
+        3,
+        2,
+        'Phùng thanh',
+        '0918724783',
+        '213123213',
+        'Xã Phước Tỉnh',
+        'Huyện Long Điền',
+        'Tỉnh Bà Rịa - Vũng Tàu',
+        0
+    ),
+    (
+        4,
+        2,
+        'Phùng',
+        '0918724783',
+        '213123213',
+        'Xã Phước Tỉnh',
+        'Huyện Long Điền',
+        'Tỉnh Bà Rịa - Vũng Tàu',
+        0
+    ),
+    (
+        5,
+        2,
+        'Sadasdas',
+        '0918724783',
+        '213213123',
+        'Xã Phú Lương',
+        'Huyện Lương Tài',
+        'Tỉnh Bắc Ninh',
+        1
+    );
 
 -- --------------------------------------------------------
 
@@ -11571,7 +11981,32 @@ VALUES (
         0,
         '2025-12-06 05:17:32',
         '2025-12-06 05:17:46'
+    ),
+    (
+        104,
+        'testuser',
+        '$2a$10$42YM/keabOIHiiEzq33/RegCv11yQzJtqSDAMkmEVrfWZImqcQt9m',
+        'test@test.com',
+        'Test User',
+        NULL,
+        NULL,
+        3,
+        '2025-12-16 06:31:15',
+        '2025-12-16 06:31:15'
     );
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `Wishlist`
+--
+
+CREATE TABLE `Wishlist` (
+    `Id` int(11) NOT NULL,
+    `UserId` int(11) NOT NULL,
+    `ProductId` int(11) NOT NULL,
+    `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -11593,6 +12028,16 @@ ADD KEY `FK_AttributeValues_Attributes` (`AttributeId`);
 -- Chỉ mục cho bảng `AuditLogs`
 --
 ALTER TABLE `AuditLogs` ADD PRIMARY KEY (`Id`);
+
+--
+-- Chỉ mục cho bảng `Cart`
+--
+ALTER TABLE `Cart`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `UK_Cart_User_Sku` (`UserId`, `ProductSkuId`),
+ADD KEY `FK_Cart_User` (`UserId`),
+ADD KEY `FK_Cart_Sku` (`ProductSkuId`),
+ADD KEY `idx_cart_user` (`UserId`);
 
 --
 -- Chỉ mục cho bảng `Categories`
@@ -11714,6 +12159,14 @@ ADD UNIQUE KEY `Email` (`Email`),
 ADD KEY `FK_Users_Roles` (`RoleId`);
 
 --
+-- Chỉ mục cho bảng `Wishlist`
+--
+ALTER TABLE `Wishlist`
+ADD PRIMARY KEY (`Id`),
+ADD UNIQUE KEY `unique_user_product` (`UserId`, `ProductId`),
+ADD KEY `ProductId` (`ProductId`);
+
+--
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
@@ -11736,7 +12189,14 @@ AUTO_INCREMENT = 16;
 --
 ALTER TABLE `AuditLogs`
 MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
-AUTO_INCREMENT = 63;
+AUTO_INCREMENT = 74;
+
+--
+-- AUTO_INCREMENT cho bảng `Cart`
+--
+ALTER TABLE `Cart`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 2;
 
 --
 -- AUTO_INCREMENT cho bảng `Categories`
@@ -11750,14 +12210,14 @@ AUTO_INCREMENT = 10;
 --
 ALTER TABLE `OrderDetails`
 MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
-AUTO_INCREMENT = 11;
+AUTO_INCREMENT = 16;
 
 --
 -- AUTO_INCREMENT cho bảng `Orders`
 --
 ALTER TABLE `Orders`
 MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
-AUTO_INCREMENT = 11;
+AUTO_INCREMENT = 16;
 
 --
 -- AUTO_INCREMENT cho bảng `ProductColorImages`
@@ -11798,7 +12258,7 @@ MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 --
 ALTER TABLE `Reviews`
 MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
-AUTO_INCREMENT = 4;
+AUTO_INCREMENT = 5;
 
 --
 -- AUTO_INCREMENT cho bảng `Roles`
@@ -11811,14 +12271,22 @@ AUTO_INCREMENT = 6;
 -- AUTO_INCREMENT cho bảng `UserAddresses`
 --
 ALTER TABLE `UserAddresses`
-MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 6;
 
 --
 -- AUTO_INCREMENT cho bảng `Users`
 --
 ALTER TABLE `Users`
 MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
-AUTO_INCREMENT = 104;
+AUTO_INCREMENT = 105;
+
+--
+-- AUTO_INCREMENT cho bảng `Wishlist`
+--
+ALTER TABLE `Wishlist`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,
+AUTO_INCREMENT = 4;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -11829,6 +12297,13 @@ AUTO_INCREMENT = 104;
 --
 ALTER TABLE `AttributeValues`
 ADD CONSTRAINT `FK_AttributeValues_Attributes` FOREIGN KEY (`AttributeId`) REFERENCES `Attributes` (`Id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `Cart`
+--
+ALTER TABLE `Cart`
+ADD CONSTRAINT `FK_Cart_Sku` FOREIGN KEY (`ProductSkuId`) REFERENCES `ProductSKUs` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `FK_Cart_User` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `Categories`
@@ -11910,6 +12385,13 @@ ADD CONSTRAINT `FK_UserAddresses_Users` FOREIGN KEY (`UserId`) REFERENCES `Users
 ALTER TABLE `Users`
 ADD CONSTRAINT `FK_Users_Roles` FOREIGN KEY (`RoleId`) REFERENCES `Roles` (`Id`);
 
+--
+-- Các ràng buộc cho bảng `Wishlist`
+--
+ALTER TABLE `Wishlist`
+ADD CONSTRAINT `wishlist_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE,
+ADD CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`ProductId`) REFERENCES `Products` (`Id`) ON DELETE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */
@@ -11918,5 +12400,3 @@ COMMIT;
 ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */
 ;
--- Bật lại kiểm tra khóa ngoại
-SET FOREIGN_KEY_CHECKS = 1;
